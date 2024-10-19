@@ -14,7 +14,9 @@ function createWindow(): void {
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
-    }
+    },
+    vibrancy: 'fullscreen-ui', // on MacOS
+    backgroundMaterial: 'acrylic' // on Windows 11
   })
 
   mainWindow.on('ready-to-show', () => {
