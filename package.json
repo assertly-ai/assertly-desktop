@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "electron-updater": "^6.1.7",
     "lucide-react": "^0.453.0",
+    "react-resizable-panels": "^2.1.4",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7"
   },

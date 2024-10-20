@@ -1,11 +1,9 @@
-import { Button } from './../../components/ui/button'
+import { Tests } from './pages/Tests'
 
 function App(): JSX.Element {
   return (
-    <div className="flex w-screen h-screen bg-transparent justify-center items-center">
-      <div className="flex justify-center items-center">
-        <Button>Test</Button>
-      </div>
+    <div className="w-screen h-screen">
+      <Tests />
     </div>
   )
 }
