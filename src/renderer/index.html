@@ -8,5 +8,10 @@
   <body class="dark">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        window.require('electron').webFrame.setZoomFactor(1)
+      })
+    </script>
   </body>
 </html>
