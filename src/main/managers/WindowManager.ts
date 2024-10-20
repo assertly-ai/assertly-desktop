@@ -6,7 +6,6 @@ import { is } from '@electron-toolkit/utils'
 
 export class WindowManager {
   private mainWindow: BrowserWindow | null = null
-  private resizeTimeout: NodeJS.Timeout | null = null
   previewWindow: WebContentsView | null = null
 
   constructor(private electronAdapter: ElectronAdapter) {}
@@ -23,10 +22,19 @@ export class WindowManager {
         sandbox: false,
         zoomFactor: 1
       },
-      titleBarStyle: 'hidden',
-      vibrancy: 'fullscreen-ui', // on MacOS
-      backgroundMaterial: 'acrylic', // on Windows 11
-      trafficLightPosition: { x: 23, y: 23 }
+      // Use conditional properties based on the platform
+      ...(process.platform === 'darwin'
+        ? {
+            titleBarStyle: 'hidden',
+            trafficLightPosition: { x: 23, y: 23 },
+            vibrancy: 'fullscreen-ui'
+          }
+        : {
+            // For Windows and other platforms
+            frame: true // This ensures the titlebar is visible
+          }),
+      // Keep backgroundMaterial for Windows 11
+      ...(process.platform === 'win32' ? { backgroundMaterial: 'acrylic' } : {})
     })
 
     window.on('ready-to-show', () => {
@@ -102,38 +110,28 @@ export class WindowManager {
   updatePreviewWindowBounds(rightPanelPercentage?: number): void {
     if (!this.previewWindow || !this.mainWindow) return
 
-    if (this.resizeTimeout) {
-      clearTimeout(this.resizeTimeout)
-    }
+    rightPanelPercentage = rightPanelPercentage
+      ? Math.round(rightPanelPercentage * 10) / 10
+      : undefined
 
-    this.resizeTimeout = setTimeout(() => {
-      if (!this.previewWindow || !this.mainWindow) return
+    const { width, height } = this.mainWindow.getBounds()
+    const desiredWidth = 1512
+    const desiredHeight = 982
 
-      rightPanelPercentage = rightPanelPercentage
-        ? Math.round(rightPanelPercentage * 10) / 10
-        : undefined
+    const previewWidth = rightPanelPercentage
+      ? (width * rightPanelPercentage) / 100
+      : (width * 70) / 100
+    const previewX = Math.floor(width - previewWidth)
 
-      const { width, height } = this.mainWindow.getBounds()
-      const desiredWidth = 1512
-      const desiredHeight = 982
+    const scaleFactor = Math.min(previewWidth / desiredWidth, height / desiredHeight)
 
-      const previewWidth = rightPanelPercentage
-        ? (width * rightPanelPercentage) / 100
-        : (width * 2) / 3
-      const previewX = Math.floor(width - previewWidth)
-
-      const scaleFactor = Math.min(previewWidth / desiredWidth, height / desiredHeight)
-
-      this.previewWindow.setBounds({
-        x: previewX + 2,
-        y: 10,
-        width: Math.ceil(previewWidth) - 10,
-        height: height - 18
-      })
-      this.previewWindow.webContents.setZoomFactor(scaleFactor)
-
-      this.resizeTimeout = null
-    }, 16) // 60 fps
+    this.previewWindow.setBounds({
+      x: previewX + 2,
+      y: 10,
+      width: Math.ceil(previewWidth) - 10,
+      height: height - 18
+    })
+    this.previewWindow.webContents.setZoomFactor(scaleFactor)
   }
 
   getAllWindows(): BrowserWindow[] {
