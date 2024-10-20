@@ -69,16 +69,3 @@
     --radius: 0.5rem;
   }
 }
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    font-feature-settings:
-      'rlig' 1,
-      'calt' 1;
-  }
-  width: 100vw;
-  height: 100vh;
-}
