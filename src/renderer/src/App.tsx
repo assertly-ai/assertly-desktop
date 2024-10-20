@@ -1,11 +1,9 @@
-import { Button } from './../../components/ui/button'
+import LayoutSlider from './components/LayoutSlider'
 
 function App(): JSX.Element {
   return (
     <div className="flex w-screen h-screen bg-transparent justify-center items-center">
-      <div className="flex justify-center items-center">
-        <Button>Test</Button>
-      </div>
+      <LayoutSlider></LayoutSlider>
     </div>
   )
 }
