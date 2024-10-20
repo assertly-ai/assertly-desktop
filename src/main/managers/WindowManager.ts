@@ -128,7 +128,7 @@ export class WindowManager {
         x: previewX + 2,
         y: 10,
         width: Math.ceil(previewWidth) - 10,
-        height: height - 20
+        height: height - 18
       })
       this.previewWindow.webContents.setZoomFactor(scaleFactor)
 
