@@ -1,9 +1,10 @@
-import { TestRuns } from './pages/TestRuns'
+import { Button } from '@components/ui/button'
+import { Tests } from './pages/Tests'
 
 function App(): JSX.Element {
   return (
-    <div className="flex w-screen h-screen bg-transparent justify-center items-center">
-      <TestRuns></TestRuns>
+    <div className="w-screen h-screen">
+      <Tests />
     </div>
   )
 }
