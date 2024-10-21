@@ -9,7 +9,7 @@ export class PlaywrightAdapter {
 
   async getPage(guid: string): Promise<Page | null> {
     if (!this.browser) {
-      console.log('browser not found')
+      console.error('browser not found')
       return null
     }
     const pages = this.browser.contexts()[0].pages()
@@ -18,7 +18,7 @@ export class PlaywrightAdapter {
         try {
           return await page.evaluate('window.playwright')
         } catch {
-          console.log('error')
+          console.error('error while evaluating page')
           return undefined
         }
       })

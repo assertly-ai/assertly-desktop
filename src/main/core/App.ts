@@ -2,6 +2,7 @@ import { Container } from './Container'
 import { ElectronAdapter } from '../adapters/ElectronAdapter'
 import { WindowManager } from '../managers/WindowManager'
 import { BrowserManager } from '../managers/BrowserManager'
+import { StorageManager } from '../managers/StorageManager'
 import { IpcHandler } from '../handlers/IpcHandler'
 import { PlaywrightAdapter } from '../adapters/PlaywrightAdapter'
 
@@ -9,6 +10,7 @@ export class App {
   private electronAdapter: ElectronAdapter
   private windowManager: WindowManager
   private browserManager: BrowserManager
+  private storageManager: StorageManager
   private ipcHandler: IpcHandler
   private playwrightAdapter: PlaywrightAdapter
 
@@ -18,10 +20,12 @@ export class App {
     this.browserManager = this.container.get('browserManager')
     this.ipcHandler = this.container.get('ipcHandler')
     this.playwrightAdapter = this.container.get('playwrightAdapter')
+    this.storageManager = this.container.get('storageManager')
   }
 
   async start(): Promise<void> {
     await this.electronAdapter.initializeDebuggingPort()
+    await this.storageManager.initialize()
 
     this.electronAdapter.onReady(async () => {
       const mainWindow = this.windowManager.createMainWindow()

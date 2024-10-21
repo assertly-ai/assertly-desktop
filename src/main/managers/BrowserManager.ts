@@ -18,7 +18,7 @@ export class BrowserManager {
     return page
   }
 
-  async executePlaywrightCode(code: string): Promise<any> {
+  async executePlaywrightCode(code: string): Promise<unknown> {
     if (!this.windowManager.previewWindow) {
       console.error('Preview window not found')
       throw new Error('Preview window not found')
