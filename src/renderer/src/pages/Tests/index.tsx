@@ -1,15 +1,13 @@
 import { Button } from '@components/ui/button'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
-import { useTestStore } from '@renderer/store/testStore'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip'
 import { useEffect, useRef } from 'react'
-import { RiArrowRightLine, RiArrowLeftLine } from 'react-icons/ri'
+import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
 import { ImperativePanelHandle } from 'react-resizable-panels'
-import NewTestForm from './NewTestForm'
+import NewTestForm from './TestForm'
 import { TestList } from './TestList'
 
 export const Tests = () => {
-  const { data: tests } = useTestStore()
   const panelRef = useRef<ImperativePanelHandle | null>(null)
 
   const resizePreview = (sizes) => {
@@ -62,7 +60,7 @@ export const Tests = () => {
       className="h-screen w-screen md:min-w-[450px]"
       onLayout={resizePreview}
     >
-      <ResizablePanel defaultSize={30} minSize={25} maxSize={45} ref={panelRef}>
+      <ResizablePanel defaultSize={28} minSize={28} maxSize={40} ref={panelRef}>
         <div className="flex m-2 flex-col bg-zinc-50 shadow h-[calc(100vh-1rem)] rounded-lg p-1">
           <div className="flex justify-between items-center h-10 bg-zinc-800 rounded-lg">
             <div className="flex h-full w-full flex-1 window-drag-region"></div>
@@ -75,8 +73,7 @@ export const Tests = () => {
               </Button>
             </div>
           </div>
-          <span className="text-xl font-semibold">Tests</span>
-          <div className="flex justify-between items-center pt-5 px-2">
+          <div className="flex justify-between items-center pt-3 px-2">
             <span className="text-xl font-semibold">Tests</span>
             <TooltipProvider>
               <Tooltip>
@@ -98,7 +95,7 @@ export const Tests = () => {
         </div>
       </ResizablePanel>
       <ResizableHandle className="bg-transparent ml-[-0.7rem]" withHandle />
-      <ResizablePanel defaultSize={70}>
+      <ResizablePanel defaultSize={72}>
         <div className="flex m-2 flex-col justify-end h-screen rounded-lg"></div>
       </ResizablePanel>
     </ResizablePanelGroup>

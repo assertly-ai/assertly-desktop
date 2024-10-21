@@ -1,6 +1,6 @@
 import { createSyncedStore } from '@renderer/lib/createSyncedStore'
 
-interface Test {
+export interface Test {
   id: number
   name: string
   description?: string
