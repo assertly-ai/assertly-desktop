@@ -16,7 +16,10 @@ container.register(
   'browserManager',
   (c) => new BrowserManager(c.get('playwrightAdapter'), c.get('windowManager'))
 )
-container.register('ipcHandler', (c) => new IpcHandler(c.get('windowManager')))
+container.register(
+  'ipcHandler',
+  (c) => new IpcHandler(c.get('windowManager'), c.get('browserManager'))
+)
 
 const application = new App(container)
 application.start().catch((error) => {

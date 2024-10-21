@@ -41,8 +41,6 @@ export class App {
 
       this.ipcHandler.setupHandlers()
 
-      await this.browserManager.setup()
-
       this.electronAdapter.onActivate(() => {
         if (this.windowManager.getAllWindows().length === 0) {
           const newMainWindow = this.windowManager.createMainWindow()
