@@ -6,17 +6,22 @@ import { PlaywrightAdapter } from './adapters/PlaywrightAdapter'
 import { WindowManager } from './managers/WindowManager'
 import { BrowserManager } from './managers/BrowserManager'
 import { IpcHandler } from './handlers/IpcHandler'
+import { StorageManager } from './managers/StorageManager'
 
 const container = new Container()
 
 container.register('electronAdapter', () => new ElectronAdapter(app))
 container.register('playwrightAdapter', () => new PlaywrightAdapter())
+container.register('storageManager', () => new StorageManager())
 container.register('windowManager', (c) => new WindowManager(c.get('electronAdapter')))
 container.register(
   'browserManager',
   (c) => new BrowserManager(c.get('playwrightAdapter'), c.get('windowManager'))
 )
-container.register('ipcHandler', (c) => new IpcHandler(c.get('windowManager')))
+container.register(
+  'ipcHandler',
+  (c) => new IpcHandler(c.get('windowManager'), c.get('browserManager'), c.get('storageManager'))
+)
 
 const application = new App(container)
 application.start().catch((error) => {
