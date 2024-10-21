@@ -1,8 +1,9 @@
-import { Button } from '@components/ui/button'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
-import { useTestStore } from '@renderer/store/testStore'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip'
 import { useEffect, useRef } from 'react'
-import { RiArrowRightLine, RiArrowLeftLine } from 'react-icons/ri'
+import NewTestForm from './NewTestForm'
+import { TestList } from './TestList'
+import { useTestStore } from '@renderer/store/testStore'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 
 export const Tests = () => {
@@ -59,30 +60,33 @@ export const Tests = () => {
       className="h-screen w-screen md:min-w-[450px]"
       onLayout={resizePreview}
     >
-      <ResizablePanel defaultSize={30} minSize={25} maxSize={45} ref={panelRef}>
-        <div className="flex m-2 flex-col bg-zinc-50 shadow h-[calc(100vh-1rem)] rounded-lg p-1">
-          <div className="flex justify-between items-center h-10 bg-zinc-800 rounded-lg">
-            <div className="flex h-full w-full flex-1 window-drag-region"></div>
-            <div className="flex items-center justify-center px-4 text-zinc-50">
-              <Button variant="default" size="icon">
-                <RiArrowLeftLine />
-              </Button>
-              <Button variant="default" size="icon">
-                <RiArrowRightLine />
-              </Button>
-            </div>
+      <ResizablePanel defaultSize={25} minSize={20} maxSize={30}>
+        <div className="flex flex-col h-[calc(100vh-1rem)] bg-zinc-50 shadow rounded-lg m-2">
+          <div className="flex h-screen window-drag-region bg-zinc-800 rounded-lg text-white"></div>
+          <div className="flex justify-between items-center pt-5 px-2">
+            <span className="text-xl font-semibold">Tests</span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <NewTestForm />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  align="center"
+                  sideOffset={8}
+                  className="bg-[#1a1a1a] rounded-md p-2 shadow-md"
+                >
+                  <p className="text-white text-sm">Start a new Test</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-          <span className="text-xl font-semibold">Tests</span>
-          <div className="flex flex-col w-full p-4">
-            {tests.map((test) => (
-              <span key={test.id}>{test.name}</span>
-            ))}
-          </div>
+          <TestList />
         </div>
       </ResizablePanel>
       <ResizableHandle className="bg-transparent ml-[-0.7rem]" withHandle />
-      <ResizablePanel defaultSize={70}>
-        <div className="flex m-2 flex-col justify-end h-screen rounded-lg"></div>
+      <ResizablePanel defaultSize={60}>
+        <div className="flex flex-col justify-end h-screen m-2 rounded-lg"></div>
       </ResizablePanel>
     </ResizablePanelGroup>
   )
