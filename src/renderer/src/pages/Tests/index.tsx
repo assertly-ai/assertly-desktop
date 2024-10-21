@@ -1,5 +1,8 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip'
 import { useEffect } from 'react'
+import NewTestForm from './NewTestForm'
+import { TestList } from './TestList'
 
 export const Tests = () => {
   const resizePreview = (sizes) => {
@@ -22,16 +25,33 @@ export const Tests = () => {
       className="h-screen w-screen md:min-w-[450px]"
       onLayout={resizePreview}
     >
-      <ResizablePanel defaultSize={30}>
-        <div className="flex m-2 flex-col bg-zinc-50 shadow h-[calc(100vh-1rem)] rounded-lg p-1">
-          <div className="flex h-10 window-drag-region bg-zinc-800 rounded-lg"></div>
-
-          <span className="text-xl font-semibold">Tests</span>
+      <ResizablePanel defaultSize={25} minSize={20} maxSize={30}>
+        <div className="flex flex-col h-[calc(100vh-1rem)] bg-zinc-50 shadow rounded-lg m-2">
+          <div className="flex h-screen window-drag-region bg-zinc-800 rounded-lg text-white"></div>
+          <div className="flex justify-between items-center pt-5 px-2">
+            <span className="text-xl font-semibold">Tests</span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <NewTestForm />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  align="center"
+                  sideOffset={8}
+                  className="bg-[#1a1a1a] rounded-md p-2 shadow-md"
+                >
+                  <p className="text-white text-sm">Start a new Test</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <TestList />
         </div>
       </ResizablePanel>
       <ResizableHandle className="bg-transparent ml-[-0.7rem]" withHandle />
       <ResizablePanel defaultSize={60}>
-        <div className="flex m-2 flex-col justify-end h-screen rounded-lg"></div>
+        <div className="flex flex-col justify-end h-screen m-2 rounded-lg"></div>
       </ResizablePanel>
     </ResizablePanelGroup>
   )

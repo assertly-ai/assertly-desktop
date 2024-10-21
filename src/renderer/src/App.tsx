@@ -1,4 +1,3 @@
-import { Button } from '@components/ui/button'
 import { Tests } from './pages/Tests'
 
 function App(): JSX.Element {
