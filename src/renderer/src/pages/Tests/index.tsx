@@ -4,8 +4,8 @@ import { useEffect, useRef } from 'react'
 import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 import NewTestForm from './TestForm'
-import { TestList } from './TestList'
 import { Button } from '@components/ui/button'
+import { TestList } from './TestList'
 
 export const Tests = () => {
   const panelRef = useRef<ImperativePanelHandle | null>(null)

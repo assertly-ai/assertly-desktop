@@ -1,3 +1,3 @@
-export const TestRunDetails = () => {
+export const TestRunDetails = (): JSX.Element => {
   return <></>
 }
