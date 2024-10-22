@@ -60,7 +60,7 @@ export const Tests = () => {
       className="h-screen w-screen md:min-w-[450px]"
       onLayout={resizePreview}
     >
-      <ResizablePanel defaultSize={40} minSize={28} maxSize={40} ref={panelRef}>
+      <ResizablePanel defaultSize={30} minSize={28} maxSize={40} ref={panelRef}>
         <div className="flex m-2 flex-col bg-zinc-50 shadow h-[calc(100vh-1rem)] rounded-lg p-1">
           <div className="flex justify-between items-center h-10 bg-zinc-800 rounded-lg">
             <div className="flex h-full w-full flex-1 window-drag-region"></div>
@@ -95,7 +95,7 @@ export const Tests = () => {
         </div>
       </ResizablePanel>
       <ResizableHandle className="bg-transparent ml-[-0.7rem]" withHandle />
-      <ResizablePanel defaultSize={60}>
+      <ResizablePanel defaultSize={70}>
         <div className="flex flex-col justify-end h-screen m-2 rounded-lg"></div>
       </ResizablePanel>
     </ResizablePanelGroup>
