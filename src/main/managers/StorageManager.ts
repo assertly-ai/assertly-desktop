@@ -1,28 +1,20 @@
-import sqlite3 from 'sqlite3'
-import { open, Database } from 'sqlite'
+import Database, { Database as DatabaseType } from 'better-sqlite3'
 import path from 'path'
 import { app } from 'electron'
 
 export class StorageManager {
-  private db: Database | null = null
+  private db: DatabaseType | null = null
 
-  async initialize(): Promise<void> {
+  initialize(): void {
     const dbPath = path.join(app.getPath('userData'), 'database.sqlite')
-
-    this.db = await open({
-      filename: dbPath,
-      driver: sqlite3.Database
-    })
-
-    // Initialize your tables here
-    await this.createTables()
+    this.db = new Database(dbPath)
+    this.createTables()
   }
 
-  private async createTables(): Promise<void> {
+  private createTables(): void {
     if (!this.db) throw new Error('Database not initialized')
 
-    // Create your tables here
-    await this.db.exec(`
+    this.db.exec(`
       CREATE TABLE IF NOT EXISTS Users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE NOT NULL,
@@ -67,7 +59,7 @@ export class StorageManager {
     `)
   }
 
-  async create(table: string, data: Record<string, unknown>): Promise<number> {
+  create(table: string, data: Record<string, unknown>): number {
     if (!this.db) throw new Error('Database not initialized')
 
     const columns = Object.keys(data).join(', ')
@@ -77,18 +69,20 @@ export class StorageManager {
     const values = Object.values(data)
 
     const query = `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`
-    const result = await this.db.run(query, values)
-    return result.lastID!
+    const stmt = this.db.prepare(query)
+    const result = stmt.run(values)
+    return result.lastInsertRowid as number
   }
 
-  async read(table: string, id: number): Promise<unknown> {
+  read(table: string, id: number): unknown {
     if (!this.db) throw new Error('Database not initialized')
 
     const query = `SELECT * FROM ${table} WHERE id = ?`
-    return this.db.get(query, id)
+    const stmt = this.db.prepare(query)
+    return stmt.get(id)
   }
 
-  async update(table: string, id: number, data: Record<string, unknown>): Promise<void> {
+  update(table: string, id: number, data: Record<string, unknown>): void {
     if (!this.db) throw new Error('Database not initialized')
 
     const setClause = Object.keys(data)
@@ -97,17 +91,19 @@ export class StorageManager {
     const values = [...Object.values(data), id]
 
     const query = `UPDATE ${table} SET ${setClause} WHERE id = ?`
-    await this.db.run(query, values)
+    const stmt = this.db.prepare(query)
+    stmt.run(values)
   }
 
-  async delete(table: string, id: number): Promise<void> {
+  delete(table: string, id: number): void {
     if (!this.db) throw new Error('Database not initialized')
 
     const query = `DELETE FROM ${table} WHERE id = ?`
-    await this.db.run(query, id)
+    const stmt = this.db.prepare(query)
+    stmt.run(id)
   }
 
-  async list(table: string, conditions?: Record<string, unknown>): Promise<unknown[]> {
+  list(table: string, conditions?: Record<string, unknown>): unknown[] {
     if (!this.db) throw new Error('Database not initialized')
 
     let query = `SELECT * FROM ${table}`
@@ -121,6 +117,7 @@ export class StorageManager {
       values.push(...Object.values(conditions))
     }
 
-    return this.db.all(query, values)
+    const stmt = this.db.prepare(query)
+    return stmt.all(values)
   }
 }
