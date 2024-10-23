@@ -6,6 +6,7 @@ import { ImperativePanelHandle } from 'react-resizable-panels'
 import NewTestForm from './TestForm'
 import { Button } from '@components/ui/button'
 import { TestList } from './TestList'
+import { TestBuilder } from './TestBuilder'
 
 export const Tests = () => {
   const panelRef = useRef<ImperativePanelHandle | null>(null)
@@ -91,7 +92,7 @@ export const Tests = () => {
               </Tooltip>
             </TooltipProvider>
           </div>
-          <TestList />
+          <TestBuilder />
         </div>
       </ResizablePanel>
       <ResizableHandle className="bg-transparent ml-[-0.7rem]" withHandle />
