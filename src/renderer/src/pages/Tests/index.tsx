@@ -5,7 +5,7 @@ import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 import NewTestForm from './TestForm'
 import { Button } from '@components/ui/button'
-import { TestBuilder } from './TestBuilder'
+import { TestList } from './TestList'
 
 export const Tests = () => {
   const panelRef = useRef<ImperativePanelHandle | null>(null)
@@ -17,7 +17,6 @@ export const Tests = () => {
   useEffect(() => {
     const handleResize = () => {
       window.electron.ipcRenderer.send('resize-preview')
-
       if (panelRef.current) {
         panelRef.current.resize(30)
       }
@@ -91,7 +90,7 @@ export const Tests = () => {
               </Tooltip>
             </TooltipProvider>
           </div>
-          <TestBuilder />
+          <TestList />
         </div>
       </ResizablePanel>
       <ResizableHandle className="bg-transparent ml-[-0.7rem]" withHandle />

@@ -4,7 +4,7 @@ export interface Test {
   id: number
   name: string
   description?: string
-  playwrightCode?: string
+  code?: string
   testSuiteId?: number
   userId?: number
 }
@@ -15,6 +15,7 @@ interface TestState {
   createTest: (testData: Omit<Test, 'id'>) => Promise<void>
   updateTest: (id: number, testData: Partial<Test>) => Promise<void>
   deleteTest: (id: number) => Promise<void>
+  getTest: (id: number) => Promise<Test>
 }
 
 export const useTestStore = createSyncedStore<Test, TestState>('Tests', (set) => ({
@@ -28,5 +29,8 @@ export const useTestStore = createSyncedStore<Test, TestState>('Tests', (set) =>
   },
   deleteTest: async (id) => {
     await window.api.storage.delete('Tests', id)
+  },
+  getTest: async (id) => {
+    return (await window.api.storage.read('Tests', id)) as Test
   }
 }))

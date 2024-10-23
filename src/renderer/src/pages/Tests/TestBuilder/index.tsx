@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
 import ExpandableEditor from '@components/ui/expandableEditor'
 
-export const TestBuilder = (): JSX.Element => {
+export const TestBuilder = ({ id }: { id: number }): JSX.Element => {
   return (
     <Tabs defaultValue="code" className="w-full p-2 ">
       <TabsList className="bg-zinc-800">
@@ -19,10 +19,10 @@ export const TestBuilder = (): JSX.Element => {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="code">
-        <ExpandableEditor language="javascript" />
+        <ExpandableEditor language="javascript" id={id} />
       </TabsContent>
       <TabsContent value="text">
-        <ExpandableEditor language="markdown" />
+        <ExpandableEditor language="markdown" id={id} />
       </TabsContent>
     </Tabs>
   )

@@ -3,12 +3,15 @@ import { LoaderCircle, PlayCircle } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import * as monaco from 'monaco-editor'
 import { DEMO_CODE, PLAY_WRIGHT_DEFINITIONS } from '@renderer/lib/constants'
+import { Test, useTestStore } from '@renderer/store/testStore'
 
-export default function ExpandableEditor({ language }: { language: string }) {
+export default function ExpandableEditor({ language, id }: { language: string; id: number }) {
   const [value, setValue] = useState<string | undefined>(DEMO_CODE)
+  const { updateTest, getTest } = useTestStore()
   const [editorHeight, setEditorheight] = useState('200px')
   const monacoRef = useRef<Monaco | null>(null)
   const [running, setRunning] = useState<boolean>(false)
+
   useEffect(() => {
     if (monacoRef.current && language === 'javascript') {
       const monaco = monacoRef.current
@@ -33,17 +36,29 @@ export default function ExpandableEditor({ language }: { language: string }) {
     }
   }, [language, monacoRef.current])
 
-  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: Monaco) => {
+  const handleEditorDidMount = async (
+    editor: monaco.editor.IStandaloneCodeEditor,
+    monaco: Monaco
+  ) => {
     monacoRef.current = monaco
-
     if (language === 'javascript') {
-      // Set initial value after monaco is mounted
-      editor.setValue(DEMO_CODE)
+      try {
+        const test: Test = await getTest(id)
+        if (test && test.code) {
+          editor.setValue(test.code)
+        } else {
+          editor.setValue(DEMO_CODE)
+        }
+      } catch (e) {
+        console.log('Error occurred while reading test with id: ', id)
+        editor.setValue(DEMO_CODE)
+      }
     }
   }
 
   const handleChange = (value: string | undefined, e: monaco.editor.IModelContentChangedEvent) => {
     setValue(value)
+    updateTest(id, { code: value })
     adjustHeight(e?.changes?.[0]?.range?.endLineNumber)
   }
 
