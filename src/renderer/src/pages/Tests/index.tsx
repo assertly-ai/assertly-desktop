@@ -5,7 +5,6 @@ import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 import NewTestForm from './TestForm'
 import { Button } from '@components/ui/button'
-import { TestList } from './TestList'
 import { TestBuilder } from './TestBuilder'
 
 export const Tests = () => {
