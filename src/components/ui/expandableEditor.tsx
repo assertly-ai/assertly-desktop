@@ -8,9 +8,23 @@ import { Test, useTestStore } from '@renderer/store/testStore'
 export default function ExpandableEditor({ language, id }: { language: string; id: number }) {
   const [value, setValue] = useState<string | undefined>(DEMO_CODE)
   const { updateTest, getTest } = useTestStore()
-  const [editorHeight, setEditorheight] = useState('200px')
   const monacoRef = useRef<Monaco | null>(null)
   const [running, setRunning] = useState<boolean>(false)
+
+  const editorWrapperRef = useRef(null)
+  const [editorHeight, setEditorHeight] = useState(200)
+  const MIN_EDITOR_HEIGHT = 200
+  const MAX_EDITOR_HEIGHT = window.innerHeight * 0.6
+  useEffect(() => {
+    const handleResize = () => {
+      const maxHeight = window.innerHeight * 0.6
+      setEditorHeight((prevHeight) => Math.min(prevHeight, maxHeight))
+    }
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   useEffect(() => {
     if (monacoRef.current && language === 'javascript') {
@@ -40,6 +54,13 @@ export default function ExpandableEditor({ language, id }: { language: string; i
     editor: monaco.editor.IStandaloneCodeEditor,
     monaco: Monaco
   ) => {
+    editor.onDidContentSizeChange(() => {
+      const contentHeight = Math.min(
+        Math.max(editor.getContentHeight() * 0.6, MIN_EDITOR_HEIGHT),
+        MAX_EDITOR_HEIGHT
+      )
+      setEditorHeight(contentHeight)
+    })
     monacoRef.current = monaco
     if (language === 'javascript') {
       try {
@@ -56,16 +77,9 @@ export default function ExpandableEditor({ language, id }: { language: string; i
     }
   }
 
-  const handleChange = (value: string | undefined, e: monaco.editor.IModelContentChangedEvent) => {
+  const handleChange = (value: string | undefined) => {
     setValue(value)
     updateTest(id, { code: value })
-    adjustHeight(e?.changes?.[0]?.range?.endLineNumber)
-  }
-
-  const adjustHeight = (lineNumber: number | undefined) => {
-    if (lineNumber) {
-      setEditorheight(Math.min(400, Math.max(lineNumber * 10, 200)).toString() + 'px')
-    }
   }
 
   async function runPlaywrightCode(code: string) {
@@ -104,7 +118,17 @@ export default function ExpandableEditor({ language, id }: { language: string; i
           )}
         </button>
       </div>
-      <div className="w-full p-0 m-0 overflow-hidden">
+      <div
+        ref={editorWrapperRef}
+        style={{
+          width: '100%',
+          height: `${editorHeight}px`, // Dynamic height based on content
+          minHeight: `${MIN_EDITOR_HEIGHT}px`, // Minimum height
+          maxHeight: `${MAX_EDITOR_HEIGHT}px`, // Max height limit
+          // resize: 'vertical', // Make editor resizable
+          overflow: 'hidden' // Prevent overflow
+        }}
+      >
         <Editor
           height={editorHeight}
           theme="vs-dark"
