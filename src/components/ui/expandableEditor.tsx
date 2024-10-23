@@ -31,7 +31,7 @@ export default function ExpandableEditor({ language }: { language: string }) {
         'playwright.d.ts'
       )
     }
-  }, [language])
+  }, [language, monacoRef.current])
 
   const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: Monaco) => {
     monacoRef.current = monaco
