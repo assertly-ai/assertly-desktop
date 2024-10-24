@@ -32,9 +32,7 @@ export class WindowManager {
         : {
             // For Windows and other platforms
             frame: true // This ensures the titlebar is visible
-          }),
-      // Keep backgroundMaterial for Windows 11
-      ...(process.platform === 'win32' ? { backgroundMaterial: 'acrylic' } : {})
+          })
     })
 
     window.on('ready-to-show', () => {

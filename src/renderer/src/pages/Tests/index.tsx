@@ -114,7 +114,9 @@ export const Tests = () => {
       </ResizablePanel>
       <ResizableHandle className="bg-transparent" withHandle />
       <ResizablePanel defaultSize={70}>
-        <div className="flex flex-col justify-end h-screen m-2 rounded-lg"></div>
+        <div className="flex justify-center items-center h-screen">
+          <div className="flex h-[calc(100vh-1rem)] mr-2 flex-1 rounded-lg shadow-xl bg-purple-500 bg-opacity-10"></div>
+        </div>
       </ResizablePanel>
     </ResizablePanelGroup>
   )
