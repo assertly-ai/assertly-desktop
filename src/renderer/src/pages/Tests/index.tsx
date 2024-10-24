@@ -11,17 +11,17 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@compo
 
 export const Tests = () => {
   const panelRef = useRef<ImperativePanelHandle | null>(null)
+  const lastKnownSizes = useRef<number[]>([20, 70])
 
-  const resizePreview = (sizes) => {
+  const resizePreview = (sizes: number[]) => {
+    lastKnownSizes.current = sizes
     window.electron.ipcRenderer.send('panel-resized', sizes)
   }
 
   useEffect(() => {
     const handleResize = () => {
-      window.electron.ipcRenderer.send('resize-preview')
-      if (panelRef.current) {
-        panelRef.current.resize(30)
-      }
+      // Always send the last known sizes
+      window.electron.ipcRenderer.send('panel-resized', lastKnownSizes.current)
     }
 
     window.addEventListener('resize', handleResize)

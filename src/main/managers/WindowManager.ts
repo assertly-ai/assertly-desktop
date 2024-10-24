@@ -7,6 +7,7 @@ import { is } from '@electron-toolkit/utils'
 export class WindowManager {
   private mainWindow: BrowserWindow | null = null
   previewWindow: WebContentsView | null = null
+  private lastKnownPercentage: number = 70
 
   constructor(private electronAdapter: ElectronAdapter) {}
 
@@ -57,6 +58,7 @@ export class WindowManager {
     this.mainWindow = window
   }
 
+  // When creating the preview window, use the last known percentage
   createPreviewWindow(): WebContentsView {
     if (this.previewWindow) return this.previewWindow
 
@@ -73,26 +75,24 @@ export class WindowManager {
       this.mainWindow.contentView.addChildView(this.previewWindow)
     }
 
-    // Setup context menu
     this.setupContextMenu(this.previewWindow)
 
-    // Update bounds
-    this.updatePreviewWindowBounds()
+    // Use lastKnownPercentage when initializing
+    this.updatePreviewWindowBounds(this.lastKnownPercentage)
 
-    // Add resize listener to main window
     if (this.mainWindow) {
       this.mainWindow.on('resize', () => {
-        this.updatePreviewWindowBounds()
+        // Pass the lastKnownPercentage during resize
+        this.updatePreviewWindowBounds(this.lastKnownPercentage)
       })
     }
 
     this.previewWindow.webContents.once('did-finish-load', () => {
       if (this.mainWindow) {
-        this.mainWindow.focus() // Ensure the main window remains focused
+        this.mainWindow.focus()
       }
     })
 
-    // Load initial blank page
     this.previewWindow.webContents.loadURL('about:blank')
 
     return this.previewWindow
@@ -116,17 +116,17 @@ export class WindowManager {
   updatePreviewWindowBounds(rightPanelPercentage?: number): void {
     if (!this.previewWindow || !this.mainWindow) return
 
-    rightPanelPercentage = rightPanelPercentage
-      ? Math.round(rightPanelPercentage * 10) / 10
-      : undefined
+    // Update last known percentage if provided
+    if (rightPanelPercentage) {
+      this.lastKnownPercentage = rightPanelPercentage
+    }
 
     const { width, height } = this.mainWindow.getBounds()
     const desiredWidth = 1512
     const desiredHeight = 982
 
-    const previewWidth = rightPanelPercentage
-      ? (width * rightPanelPercentage) / 100
-      : (width * 70) / 100
+    // Always use lastKnownPercentage
+    const previewWidth = (width * this.lastKnownPercentage) / 100
     const previewX = Math.floor(width - previewWidth)
 
     const scaleFactor = Math.min(previewWidth / desiredWidth, height / desiredHeight)
