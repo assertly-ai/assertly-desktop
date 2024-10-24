@@ -11,9 +11,9 @@ export const TestList = () => {
   const [hoveredTestId, setHoveredTestId] = useState<number | null>(null)
 
   return (
-    <div className="flex flex-col h-full px-1 pr-0 py-2">
+    <div className="flex flex-col h-full pr-0 py-1">
       <ScrollArea className="relative">
-        <nav className="flex flex-col space-y-2 text-zinc-300 font-normal">
+        <nav className="flex flex-col space-y-0.5 text-zinc-300 font-normal">
           {tests.map((test: Test) => (
             <>
               <div
@@ -22,11 +22,12 @@ export const TestList = () => {
                 onMouseEnter={() => setHoveredTestId(test.id)} // Set hovered ID on mouse enter
                 onMouseLeave={() => setHoveredTestId(null)} // Clear hovered ID on mouse leave
               >
-                <Button className="flex justify-start w-full shadow-none p-1 px-3 text-zinc-300 font-normal">
-                  <IoDocumentTextOutline />
+                <Button className="flex justify-start w-full shadow-none p-1 px-3 text-zinc-300 text-opacity-90 font-normal text-sm">
+                  <div className="rounded-md bg-purple-500 bg-opacity-10 p-1">
+                    <IoDocumentTextOutline />
+                  </div>
                   {test.name}
                 </Button>
-                {/* Show trash icon only if the current test ID is hovered */}
                 {hoveredTestId === test.id && (
                   <span className="cursor-pointer  hover:bg-purple-500 hover:bg-opacity-10 p-[6px] rounded me-2">
                     <TestForm type="edit" data={test} />
@@ -41,7 +42,6 @@ export const TestList = () => {
                   </span>
                 )}
               </div>
-              {/* <TestBuilder id={test.id} /> */}
             </>
           ))}
         </nav>

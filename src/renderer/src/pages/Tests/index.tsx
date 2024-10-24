@@ -66,16 +66,24 @@ export const Tests = () => {
           <div className="flex justify-between items-center  rounded-lg">
             <div className="flex h-full w-full flex-1 window-drag-region"></div>
             <div className="flex items-center justify-center px-1.5 pr-1 py-1 text-zinc-700">
-              <Button variant="default" size="icon" className="text-zinc-400 text-xl">
+              <Button
+                variant="default"
+                size="icon"
+                className="text-purple-50 hover:text-opacity-60 text-opacity-30 text-xl"
+              >
                 <GoArrowLeft />
               </Button>
-              <Button variant="default" size="icon">
+              <Button
+                variant="default"
+                size="icon"
+                className="text-purple-50 text-opacity-30  hover:text-opacity-60 text-xl"
+              >
                 <GoArrowRight />
               </Button>
             </div>
           </div>
           <div className="flex items-center px-4 pr-3 py-2">
-            <div className="flex justify-start items-center flex-1 bg-purple-50 bg-opacity-5 rounded-lg focus-visible:ring-0 px-3 py-0.5">
+            <div className="flex justify-start items-center flex-1 bg-purple-50 bg-opacity-[0.08] rounded-lg focus-visible:ring-0 px-3 py-0.5">
               <span className="text-purple-50 text-opacity-20 text-sm">
                 <RiSearch2Line />
               </span>
@@ -86,12 +94,12 @@ export const Tests = () => {
             </div>
           </div>
 
-          <div className="flex justify-start  items-center px-5 pr-3.5 py-2 text-purple-50 text-opacity-30">
+          <div className="flex justify-start  items-center px-5 pr-2 py-2 text-purple-50 text-opacity-30">
             <div className="flex flex-1 gap-2 justify-start items-center">
               <RiQuillPenLine />
               <span className="text-md font-semibold text-purple-50 text-opacity-30">Scripts</span>
             </div>
-            <div className="flex justify-start items-center gap-1">
+            <div className="flex justify-start items-center">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
