@@ -26,7 +26,7 @@ export class WindowManager {
       ...(process.platform === 'darwin'
         ? {
             titleBarStyle: 'hidden',
-            trafficLightPosition: { x: 23, y: 23 },
+            trafficLightPosition: { x: 14, y: 14 },
             vibrancy: 'fullscreen-ui'
           }
         : {
@@ -69,6 +69,8 @@ export class WindowManager {
       }
     })
 
+    this.previewWindow.setBorderRadius(8)
+
     if (this.mainWindow) {
       this.mainWindow.contentView.addChildView(this.previewWindow)
     }
@@ -85,6 +87,12 @@ export class WindowManager {
         this.updatePreviewWindowBounds()
       })
     }
+
+    this.previewWindow.webContents.once('did-finish-load', () => {
+      if (this.mainWindow) {
+        this.mainWindow.focus() // Ensure the main window remains focused
+      }
+    })
 
     // Load initial blank page
     this.previewWindow.webContents.loadURL('about:blank')

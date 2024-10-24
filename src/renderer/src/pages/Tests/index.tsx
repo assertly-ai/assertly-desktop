@@ -1,11 +1,13 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip'
 import { useEffect, useRef } from 'react'
-import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
+import { GoArrowLeft, GoArrowRight } from 'react-icons/go'
+import { RiQuillPenLine, RiSearch2Line } from 'react-icons/ri'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 import NewTestForm from './TestForm'
 import { Button } from '@components/ui/button'
 import { TestList } from './TestList'
+import { Input } from '@components/ui/input'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
 
 export const Tests = () => {
   const panelRef = useRef<ImperativePanelHandle | null>(null)
@@ -59,41 +61,58 @@ export const Tests = () => {
       className="h-screen w-screen md:min-w-[450px]"
       onLayout={resizePreview}
     >
-      <ResizablePanel defaultSize={30} minSize={28} maxSize={40} ref={panelRef}>
-        <div className="flex m-2 flex-col bg-zinc-50 shadow h-[calc(100vh-1rem)] rounded-lg p-1">
-          <div className="flex justify-between items-center h-10 bg-zinc-800 rounded-lg">
+      <ResizablePanel defaultSize={20} minSize={20} maxSize={40} ref={panelRef}>
+        <div className="flex flex-col h-[calc(100vh-1rem)] rounded-lg">
+          <div className="flex justify-between items-center  rounded-lg">
             <div className="flex h-full w-full flex-1 window-drag-region"></div>
-            <div className="flex items-center justify-center px-4 text-zinc-50">
-              <Button variant="default" size="icon">
-                <RiArrowLeftLine />
+            <div className="flex items-center justify-center px-1.5 pr-1 py-1 text-zinc-700">
+              <Button variant="default" size="icon" className="text-zinc-400 text-xl">
+                <GoArrowLeft />
               </Button>
               <Button variant="default" size="icon">
-                <RiArrowRightLine />
+                <GoArrowRight />
               </Button>
             </div>
           </div>
-          <div className="flex justify-between items-center pt-3 px-2">
-            <span className="text-xl font-semibold">Tests</span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <NewTestForm />
-                </TooltipTrigger>
-                <TooltipContent
-                  side="bottom"
-                  align="center"
-                  sideOffset={8}
-                  className="bg-[#1a1a1a] rounded-md p-2 shadow-md"
-                >
-                  <p className="text-white text-sm">Start a new Test</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          <div className="flex items-center px-4 pr-3 py-2">
+            <div className="flex justify-start items-center flex-1 bg-purple-50 bg-opacity-5 rounded-lg focus-visible:ring-0 px-3 py-0.5">
+              <span className="text-purple-50 text-opacity-20 text-sm">
+                <RiSearch2Line />
+              </span>
+              <Input
+                placeholder="Search"
+                className="text-white placeholder:text-md placeholder:text-purple-50 placeholder:text-opacity-20 placeholder:font-medium border-transparent rounded-lg focus-visible:ring-0 px-1.5"
+              ></Input>
+            </div>
+          </div>
+
+          <div className="flex justify-start  items-center px-5 pr-3.5 py-2 text-purple-50 text-opacity-30">
+            <div className="flex flex-1 gap-2 justify-start items-center">
+              <RiQuillPenLine />
+              <span className="text-md font-semibold text-purple-50 text-opacity-30">Scripts</span>
+            </div>
+            <div className="flex justify-start items-center gap-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <NewTestForm />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    align="center"
+                    sideOffset={8}
+                    className="bg-[#1a1a1a] rounded-md p-2"
+                  >
+                    <p className="text-white text-sm">Start a new Test</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
           <TestList />
         </div>
       </ResizablePanel>
-      <ResizableHandle className="bg-transparent ml-[-0.7rem]" withHandle />
+      <ResizableHandle className="bg-transparent" withHandle />
       <ResizablePanel defaultSize={70}>
         <div className="flex flex-col justify-end h-screen m-2 rounded-lg"></div>
       </ResizablePanel>

@@ -1,7 +1,6 @@
 import { Test, useTestStore } from '@renderer/store/testStore'
 import { useState } from 'react'
-import { FaPlus } from 'react-icons/fa'
-import { FiEdit3 } from 'react-icons/fi'
+import { FiEdit3, FiPlus } from 'react-icons/fi'
 import { Button } from '../../../../../components/ui/button'
 import {
   Dialog,
@@ -35,13 +34,18 @@ const TestForm = ({ type, data }: PropType) => {
   return (
     <div className="">
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
+        <DialogTrigger>
           {type === 'edit' ? (
             <FiEdit3 className=" text-sm" />
           ) : (
-            <Button className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md bg-[#ddd] text-[#303030] hover:bg-[#ccc] transition">
-              {/* <Button className="w-8 h-8 flex items-center justify-center p-0 rounded-md bg-[#1a1a1a] text-[#f1f1f1] hover:bg-[#303030] transition"> */}
-              <FaPlus />
+            <Button
+              variant={'default'}
+              size={'icon'}
+              className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md transition text-purple-50 text-opacity-30 border-none"
+            >
+              <span className="text-lg font-semibold">
+                <FiPlus />
+              </span>
             </Button>
           )}
         </DialogTrigger>
