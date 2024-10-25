@@ -73,6 +73,7 @@
 
 body {
   font-family: 'Inter', sans-serif;
+  background-color: rgb(94 55 114 / 40%);
 }
 
 .window-drag-region {
