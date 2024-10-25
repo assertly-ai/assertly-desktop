@@ -1,6 +1,6 @@
-import { Tests } from './pages/Tests'
+import { Outlet } from 'react-router-dom'
 
-const App = () => {
+const AppLayout = () => {
   return (
     <>
       <svg className="fixed -z-10 opacity-10 hidden">
@@ -23,11 +23,11 @@ const App = () => {
           />
         </div>
         <div className="relative z-10">
-          <Tests />
+          <Outlet />
         </div>
       </div>
     </>
   )
 }
 
-export default App
+export default AppLayout
