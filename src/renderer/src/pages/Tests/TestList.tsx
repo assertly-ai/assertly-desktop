@@ -70,10 +70,13 @@ export const TestList = () => {
                 <Button
                   variant={'default'}
                   size={'icon'}
+                  disabled={creatingNewTest}
                   className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md transition text-purple-50 text-opacity-30 hover:text-opacity-60 border-none"
                   onClick={() => {
-                    setCreatingNewTest(true)
-                    setNewTestName('')
+                    if (!creatingNewTest) {
+                      setCreatingNewTest(true)
+                      setNewTestName('')
+                    }
                   }}
                 >
                   <span className="text-lg font-semibold">
@@ -118,7 +121,7 @@ export const TestList = () => {
                             if (e.key === 'Enter') handleNewTestSave(true)
                           }}
                           autoFocus
-                          className="flex-1 text-zinc-300 text-opacity-90 font-normal text-sm p-0 mx-2 h-full border-none focus:ring-0 focus:outline-none"
+                          className="flex-1 text-zinc-300 rounded-none placeholder:text-purple-50  placeholder:text-opacity-50 text-opacity-90 font-normal text-sm p-0 mx-2 h-full border-none focus:ring-0 focus:outline-none"
                           placeholder="New Test Name"
                           style={{ boxShadow: 'none' }} // Remove any default box shadow
                         />
@@ -155,7 +158,7 @@ export const TestList = () => {
                         if (e.key === 'Enter') handleNameSave(test.id)
                       }}
                       autoFocus
-                      className="flex-1 text-zinc-300 text-opacity-90 font-normal text-sm p-0 h-full border-none focus:ring-0 focus:outline-none"
+                      className="flex-1 text-zinc-300 rounded-none placeholder:text-purple-50 placeholder:text-opacity-50 text-opacity-90 font-normal text-sm p-0 h-full border-none focus:ring-0 focus:outline-none"
                       style={{ boxShadow: 'none' }} // Remove any default box shadow
                     />
                   </div>
