@@ -84,8 +84,7 @@ export const TestList = () => {
               <TooltipContent
                 side="left"
                 align="center"
-                
-                sideOffset={-14}
+                sideOffset={-4}
                 className="bg-[#1a1a1a] text-[10px] rounded-md p-2"
               >
                 <p className="text-white">Start a new Test</p>
@@ -102,25 +101,28 @@ export const TestList = () => {
               <TooltipProvider>
                 <Tooltip open={showErrorTooltip}>
                   <TooltipTrigger asChild>
-                    <div className="flex justify-start items-center gap-2 w-full shadow-none p-2 text-zinc-300 text-opacity-90 font-normal text-sm">
-                      <div className="rounded-md bg-purple-500 bg-opacity-10 p-1">
-                        <IoDocumentTextOutline />
+                    <div className="bg-transparent flex justify-between items-center mx-2 mr-1 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition">
+                      <div className="flex justify-start items-center gap-2 w-full shadow-none p-2 text-zinc-300 text-opacity-90 font-normal text-sm">
+                        <div className="rounded-md bg-purple-500 bg-opacity-10 p-1">
+                          <IoDocumentTextOutline />
+                        </div>
+                        <Input
+                          value={newTestName}
+                          onChange={handleNameChange}
+                          onBlur={() => {
+                            setShowErrorTooltip(false)
+                            handleNewTestSave()
+                            setCreatingNewTest(false)
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleNewTestSave(true)
+                          }}
+                          autoFocus
+                          className="flex-1 text-zinc-300 text-opacity-90 font-normal text-sm p-0 mx-2 h-full border-none focus:ring-0 focus:outline-none"
+                          placeholder="New Test Name"
+                          style={{ boxShadow: 'none' }} // Remove any default box shadow
+                        />
                       </div>
-                      <Input
-                        value={newTestName}
-                        onChange={handleNameChange}
-                        onBlur={() => {
-                          setShowErrorTooltip(false)
-                          handleNewTestSave()
-                          setCreatingNewTest(false)
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleNewTestSave(true)
-                        }}
-                        autoFocus
-                        className="w-full text-zinc-300 text-opacity-90 font-normal text-sm p-2 py-0 mx-2"
-                        placeholder="New Test Name"
-                      />
                     </div>
                   </TooltipTrigger>
                   <TooltipContent
@@ -153,7 +155,8 @@ export const TestList = () => {
                         if (e.key === 'Enter') handleNameSave(test.id)
                       }}
                       autoFocus
-                      className="w-full text-zinc-300 text-opacity-90 font-normal text-sm p-2"
+                      className="flex-1 text-zinc-300 text-opacity-90 font-normal text-sm p-0 h-full border-none focus:ring-0 focus:outline-none"
+                      style={{ boxShadow: 'none' }} // Remove any default box shadow
                     />
                   </div>
                 ) : (
