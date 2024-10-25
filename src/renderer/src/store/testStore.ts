@@ -20,7 +20,7 @@ interface TestState {
 
 export const useTestStore = createSyncedStore<Test, TestState>('Tests', (set) => ({
   data: [],
-  setData: (data) => set({ data }),
+  setData: (data) => set({ data: data.reverse() }),
   createTest: async (testData) => {
     await window.api.storage.create('Tests', testData)
   },

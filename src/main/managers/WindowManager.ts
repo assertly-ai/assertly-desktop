@@ -28,11 +28,12 @@ export class WindowManager {
         ? {
             titleBarStyle: 'hidden',
             trafficLightPosition: { x: 14, y: 14 },
-            vibrancy: 'fullscreen-ui'
+            vibrancy: 'fullscreen-ui',
           }
         : {
             // For Windows and other platforms
-            frame: true // This ensures the titlebar is visible
+            backgroundMaterial: "acrylic",
+            frame: true, // This ensures the titlebar is visible
           })
     })
 
