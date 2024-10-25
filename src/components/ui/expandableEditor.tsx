@@ -105,7 +105,7 @@ export default function ExpandableEditor({ language, id }: { language: string; i
   }
 
   return (
-    <div className="flex min-h-2 bg-transparent rounded-sm overflow-hidden">
+    <div className="flex min-h-2 bg-transparent rounded-lg overflow-hidden">
       <div className="max-w-16 flex p-1 rounded-l-sm bg-zinc-700 ">
         <button
           onClick={handleRunCode}

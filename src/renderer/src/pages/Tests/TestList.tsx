@@ -17,7 +17,7 @@ export const TestList = () => {
   return (
     <>
       <div className="flex items-center px-4 pr-3 py-2">
-        <div className="flex justify-start items-center flex-1 bg-purple-50 bg-opacity-[0.08] rounded-lg focus-visible:ring-0 px-3 py-0.5">
+        <div className="flex justify-start items-center flex-1 bg-purple-50 bg-opacity-[0.1] rounded-lg focus-visible:ring-0 px-3 py-0.5">
           <span className="text-purple-50 text-opacity-20 text-sm">
             <RiSearch2Line />
           </span>
@@ -28,10 +28,10 @@ export const TestList = () => {
         </div>
       </div>
 
-      <div className="flex justify-start  items-center px-5 pr-2 py-2 text-purple-50 text-opacity-30">
+      <div className="flex justify-start  items-center px-5 pr-2 py-2 text-purple-50 text-opacity-40">
         <div className="flex flex-1 gap-2 justify-start items-center">
           <RiQuillPenLine />
-          <span className="text-md font-semibold text-purple-50 text-opacity-30">Scripts</span>
+          <span className="text-md font-semibold text-purple-50 text-opacity-40">Scripts</span>
         </div>
         <div className="flex justify-start items-center">
           <TooltipProvider>
@@ -58,7 +58,7 @@ export const TestList = () => {
               <>
                 <div
                   key={test.id}
-                  className="bg-transparent flex justify-between items-center mx-2 pe-2 py-[0.2px] rounded-lg hover:bg-purple-300 hover:bg-opacity-5 hover:shadow-sm transition"
+                  className="bg-transparent flex justify-between items-center mx-2 mr-1 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition"
                   onMouseEnter={() => setHoveredTestId(test.id)} // Set hovered ID on mouse enter
                   onMouseLeave={() => setHoveredTestId(null)} // Clear hovered ID on mouse leave
                 >
