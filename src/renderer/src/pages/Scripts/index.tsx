@@ -1,10 +1,10 @@
-import { TestList } from './TestList'
+import { ScriptList } from './ScriptList'
 import { PanelLayout } from '@renderer/components/PanelLayout/PanelLayout'
 
-export const Tests = () => {
+export const Scripts = () => {
   return (
     <PanelLayout
-      leftPanel={<TestList />}
+      leftPanel={<ScriptList />}
       leftPanelConfig={{
         defaultWidth: 300,
         minWidth: 250,

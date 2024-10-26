@@ -1,4 +1,4 @@
-import { Test, useTestStore } from '@renderer/store/testStore'
+import { useScriptStore } from '@renderer/store/scriptStore'
 import { useState } from 'react'
 import { FiEdit3, FiPlus } from 'react-icons/fi'
 import { Button } from '../../../../../components/ui/button'
@@ -9,23 +9,24 @@ import {
   DialogTitle,
   DialogTrigger
 } from '../../../../../components/ui/dialog'
+import Script from '@renderer/types/script'
 
 type PropType = {
   type?: string
-  data?: Test
+  data?: Script
 }
 
-const TestForm = ({ type, data }: PropType) => {
+const ScriptForm = ({ type, data }: PropType) => {
   const [name, setName] = useState(data?.name || '')
-  const { createTest, updateTest } = useTestStore()
+  const { createScript, updateScript } = useScriptStore()
   const [isOpen, setIsOpen] = useState(false) // State to manage dialog visibility
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (type === 'edit' && data) {
-      updateTest(data?.id, { name })
+      updateScript(data?.id, { name })
     } else {
-      createTest({ name })
+      createScript({ name })
     }
     setName('') // Clear input field after submission
     setIsOpen(false) // Close the dialog
@@ -83,4 +84,4 @@ const TestForm = ({ type, data }: PropType) => {
   )
 }
 
-export default TestForm
+export default ScriptForm

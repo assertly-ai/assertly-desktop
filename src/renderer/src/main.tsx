@@ -5,8 +5,8 @@ import ReactDOM from 'react-dom/client'
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import AppLayout from './AppLayout'
-import { Tests } from './pages/Tests'
-import { TestBuilder } from './pages/Tests/TestBuilder'
+import { Scripts } from './pages/Scripts'
+import { ScriptBuilder } from './pages/Scripts/ScriptBuilder'
 
 const router = createBrowserRouter([
   {
@@ -15,11 +15,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Tests />
+        element: <Scripts />
       },
       {
-        path: 'tests/:testId',
-        element: <TestBuilder />
+        path: 'scripts/:scriptId',
+        element: <ScriptBuilder />
       }
     ]
   }

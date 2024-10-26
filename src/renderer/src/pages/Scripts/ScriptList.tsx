@@ -1,43 +1,44 @@
 import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
+import { ScrollArea } from '@components/ui/scroll-area'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
-import { Test, useTestStore } from '@renderer/store/testStore'
+import { useScriptStore } from '@renderer/store/scriptStore'
+import Script from '@renderer/types/script'
 import { useState } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import { FiEdit3, FiPlus } from 'react-icons/fi'
 import { IoDocumentTextOutline } from 'react-icons/io5'
 import { RiQuillPenLine, RiSearch2Line } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
-import { ScrollArea } from '../../../../components/ui/scroll-area'
 
-export const TestList = () => {
-  const { data: tests, deleteTest, updateTest, createTest } = useTestStore()
-  const [hoveredTestId, setHoveredTestId] = useState<number | null>(null)
-  const [editableTestId, setEditableTestId] = useState<number | null>(null)
-  const [newTestName, setNewTestName] = useState<string>('')
-  const [creatingNewTest, setCreatingNewTest] = useState<boolean>(false)
+export const ScriptList = () => {
+  const { data: scripts, createScript, deleteScript, updateScript } = useScriptStore()
+  const [hoveredScriptId, setHoveredScriptId] = useState<number | null>(null)
+  const [editableScriptId, setEditableScriptId] = useState<number | null>(null)
+  const [newScriptName, setNewScriptName] = useState<string>('')
+  const [creatingNewScript, setCreatingNewScript] = useState<boolean>(false)
   const [showErrorTooltip, setShowErrorTooltip] = useState<boolean>(false)
 
-  const handleEditClick = (testId: number, testName: string) => {
-    setEditableTestId(testId)
-    setNewTestName(testName)
+  const handleEditClick = (scriptId: number, scriptName: string) => {
+    setEditableScriptId(scriptId)
+    setNewScriptName(scriptName)
   }
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewTestName(e.target.value)
+    setNewScriptName(e.target.value)
     if (showErrorTooltip) setShowErrorTooltip(false)
   }
 
-  const handleNameSave = (testId: number) => {
-    if (newTestName.trim()) updateTest(testId, { name: newTestName })
-    setEditableTestId(null)
+  const handleNameSave = (scriptId: number) => {
+    if (newScriptName.trim()) updateScript(scriptId, { name: newScriptName })
+    setEditableScriptId(null)
   }
 
-  const handleNewTestSave = (isKey?: boolean) => {
-    if (newTestName.trim()) {
-      createTest({ name: newTestName })
-      setCreatingNewTest(false)
-      setNewTestName('')
+  const handleNewScriptSave = (isKey?: boolean) => {
+    if (newScriptName.trim()) {
+      createScript({ name: newScriptName })
+      setCreatingNewScript(false)
+      setNewScriptName('')
       setShowErrorTooltip(false)
     } else if (isKey) {
       setShowErrorTooltip(true)
@@ -70,12 +71,12 @@ export const TestList = () => {
                 <Button
                   variant={'default'}
                   size={'icon'}
-                  disabled={creatingNewTest}
+                  disabled={creatingNewScript}
                   className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md transition text-purple-50 text-opacity-30 hover:text-opacity-60 border-none"
                   onClick={() => {
-                    if (!creatingNewTest) {
-                      setCreatingNewTest(true)
-                      setNewTestName('')
+                    if (!creatingNewScript) {
+                      setCreatingNewScript(true)
+                      setNewScriptName('')
                     }
                   }}
                 >
@@ -90,7 +91,7 @@ export const TestList = () => {
                 sideOffset={-4}
                 className="bg-[#1a1a1a] text-[10px] rounded-md p-2"
               >
-                <p className="text-white">Start a new Test</p>
+                <p className="text-white">Start a new Script</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -100,7 +101,7 @@ export const TestList = () => {
       <div className="flex flex-col h-full pr-0 py-1">
         <ScrollArea className="relative">
           <nav className="flex flex-col space-y-0.5 text-zinc-300 font-normal">
-            {creatingNewTest && (
+            {creatingNewScript && (
               <TooltipProvider>
                 <Tooltip open={showErrorTooltip}>
                   <TooltipTrigger asChild>
@@ -110,19 +111,19 @@ export const TestList = () => {
                           <IoDocumentTextOutline />
                         </div>
                         <Input
-                          value={newTestName}
+                          value={newScriptName}
                           onChange={handleNameChange}
                           onBlur={() => {
                             setShowErrorTooltip(false)
-                            handleNewTestSave()
-                            setCreatingNewTest(false)
+                            handleNewScriptSave()
+                            setCreatingNewScript(false)
                           }}
                           onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleNewTestSave(true)
+                            if (e.key === 'Enter') handleNewScriptSave(true)
                           }}
                           autoFocus
                           className="flex-1 text-zinc-300 rounded-none placeholder:text-purple-50  placeholder:text-opacity-50 text-opacity-90 font-normal text-sm p-0 mx-2 h-full border-none focus:ring-0 focus:outline-none"
-                          placeholder="New Test Name"
+                          placeholder="New Script Name"
                           style={{ boxShadow: 'none' }} // Remove any default box shadow
                         />
                       </div>
@@ -133,29 +134,29 @@ export const TestList = () => {
                     align="end"
                     className="bg-[#1a1a1a80] text-[10px] text-white p-1 rounded-md"
                   >
-                    Test name cannot be empty.
+                    Script name cannot be empty.
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             )}
-            {tests.reverse().map((test: Test) => (
+            {scripts.reverse().map((script: Script) => (
               <div
-                key={test.id}
+                key={script.id}
                 className="bg-transparent flex justify-between items-center mx-2 mr-1 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition"
-                onMouseEnter={() => setHoveredTestId(test.id)}
-                onMouseLeave={() => setHoveredTestId(null)}
+                onMouseEnter={() => setHoveredScriptId(script.id)}
+                onMouseLeave={() => setHoveredScriptId(null)}
               >
-                {editableTestId === test.id ? (
+                {editableScriptId === script.id ? (
                   <div className="flex justify-start items-center gap-2.5 w-full shadow-none p-2 text-zinc-200 text-opacity-90 font-normal text-sm">
                     <div className="rounded-md bg-white bg-opacity-5 p-1.5">
                       <IoDocumentTextOutline />
                     </div>
                     <Input
-                      value={newTestName}
+                      value={newScriptName}
                       onChange={handleNameChange}
-                      onBlur={() => handleNameSave(test.id)}
+                      onBlur={() => handleNameSave(script.id)}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleNameSave(test.id)
+                        if (e.key === 'Enter') handleNameSave(script.id)
                       }}
                       autoFocus
                       className="flex-1 text-zinc-300 rounded-none placeholder:text-purple-50 placeholder:text-opacity-50 text-opacity-90 font-normal text-sm p-0 h-full border-none focus:ring-0 focus:outline-none"
@@ -164,26 +165,26 @@ export const TestList = () => {
                   </div>
                 ) : (
                   <Link
-                    to={'/tests/' + test.id}
+                    to={'/scripts/' + script.id}
                     className="flex justify-start items-center gap-2.5 w-full shadow-none p-2 text-zinc-200 text-opacity-90 font-normal text-sm text-clip overflow-hidden whitespace-nowrap"
                   >
                     <div className="rounded-md bg-white bg-opacity-5 p-1.5">
                       <IoDocumentTextOutline />
                     </div>
-                    {test.name}
+                    {script.name}
                   </Link>
                 )}
-                {hoveredTestId === test.id && (
+                {hoveredScriptId === script.id && (
                   <span
-                    onClick={() => handleEditClick(test.id, test.name)}
+                    onClick={() => handleEditClick(script.id, script.name)}
                     className="cursor-pointer hover:bg-purple-500 hover:bg-opacity-10 p-[6px] me-2 rounded"
                   >
                     <FiEdit3 className="text-sm" />
                   </span>
                 )}
-                {hoveredTestId === test.id && (
+                {hoveredScriptId === script.id && (
                   <span
-                    onClick={() => deleteTest(test.id)}
+                    onClick={() => deleteScript(script.id)}
                     className="cursor-pointer hover:bg-purple-500 hover:bg-opacity-10 p-[6px] rounded"
                   >
                     <FaRegTrashAlt className="text-xs" />
