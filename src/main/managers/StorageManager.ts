@@ -8,6 +8,7 @@ export class StorageManager {
 
   initialize(): void {
     const dbPath = path.join(app.getPath('userData'), 'database.sqlite')
+    console.log('Path', dbPath)
     this.db = new Database(dbPath)
     this.createTables()
   }
@@ -31,7 +32,7 @@ export class StorageManager {
         user_id INTEGER,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES Users(id)
+        FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS Scripts (
@@ -43,8 +44,8 @@ export class StorageManager {
         user_id INTEGER,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (script_suite_id) REFERENCES ScriptSuites(id),
-        FOREIGN KEY (user_id) REFERENCES Users(id)
+        FOREIGN KEY (script_suite_id) REFERENCES ScriptSuites(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS ScriptBlocks (
@@ -55,8 +56,8 @@ export class StorageManager {
         script_id INTEGER,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (script_id) REFERENCES Scripts(id),
-        FOREIGN KEY (user_id) REFERENCES Users(id)
+        FOREIGN KEY (script_id) REFERENCES Scripts(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS ScriptBlockResults (
@@ -67,7 +68,7 @@ export class StorageManager {
         error_message TEXT,
         screenshot_path TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (script_block_id) REFERENCES ScriptBlocks(id)
+        FOREIGN KEY (script_block_id) REFERENCES ScriptBlocks(id) ON DELETE CASCADE
       );
     `)
   }
