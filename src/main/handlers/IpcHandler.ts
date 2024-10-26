@@ -15,7 +15,11 @@ export class IpcHandler {
     })
 
     ipcMain.on('panel-resized', (_, sizes) => {
-      this.windowManager.updatePreviewWindowBounds(sizes[1])
+      if (Array.isArray(sizes)) {
+        this.windowManager.updatePreviewWindowBounds(sizes[1])
+      } else {
+        this.windowManager.updatePreviewWindowBounds(sizes)
+      }
     })
 
     ipcMain.on('resize-preview', () => {

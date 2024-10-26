@@ -8,8 +8,11 @@ export const TestBuilder = () => {
   return testId ? (
     <PanelLayout
       leftPanel={<ScriptBlocks testId={testId} />}
-      defaultLeftSize={40}
-      defaultRightSize={60}
+      leftPanelConfig={{
+        defaultWidth: 600,
+        minWidth: 400,
+        maxWidth: 800
+      }}
     />
   ) : null
 }

@@ -46,7 +46,7 @@ export const TestList = () => {
 
   return (
     <>
-      <div className="flex items-center px-4 pr-3 py-2">
+      <div className="flex items-center px-3 pr-2 py-1">
         <div className="flex justify-start items-center flex-1 bg-purple-50 bg-opacity-[0.1] rounded-lg focus-visible:ring-0 px-3 py-0.5">
           <span className="text-purple-50 text-opacity-20 text-sm">
             <RiSearch2Line />
@@ -106,7 +106,7 @@ export const TestList = () => {
                   <TooltipTrigger asChild>
                     <div className="bg-transparent flex justify-between items-center mx-2 mr-1 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition">
                       <div className="flex justify-start items-center gap-2 w-full shadow-none p-2 text-zinc-300 text-opacity-90 font-normal text-sm">
-                        <div className="rounded-md bg-purple-500 bg-opacity-10 p-1">
+                        <div className="rounded-md bg-white bg-opacity-5 p-1.5">
                           <IoDocumentTextOutline />
                         </div>
                         <Input
@@ -146,8 +146,8 @@ export const TestList = () => {
                 onMouseLeave={() => setHoveredTestId(null)}
               >
                 {editableTestId === test.id ? (
-                  <div className="flex justify-start items-center gap-2 w-full shadow-none p-2 text-zinc-300 text-opacity-90 font-normal text-sm">
-                    <div className="rounded-md bg-purple-500 bg-opacity-10 p-1">
+                  <div className="flex justify-start items-center gap-2.5 w-full shadow-none p-2 text-zinc-200 text-opacity-90 font-normal text-sm">
+                    <div className="rounded-md bg-white bg-opacity-5 p-1.5">
                       <IoDocumentTextOutline />
                     </div>
                     <Input
@@ -165,9 +165,9 @@ export const TestList = () => {
                 ) : (
                   <Link
                     to={'/tests/' + test.id}
-                    className="flex justify-start items-center gap-2 w-full shadow-none p-2 text-zinc-300 text-opacity-90 font-normal text-sm"
+                    className="flex justify-start items-center gap-2.5 w-full shadow-none p-2 text-zinc-200 text-opacity-90 font-normal text-sm text-clip overflow-hidden whitespace-nowrap"
                   >
-                    <div className="rounded-md bg-purple-500 bg-opacity-10 p-1">
+                    <div className="rounded-md bg-white bg-opacity-5 p-1.5">
                       <IoDocumentTextOutline />
                     </div>
                     {test.name}

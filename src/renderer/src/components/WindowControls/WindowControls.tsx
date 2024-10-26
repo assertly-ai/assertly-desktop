@@ -1,6 +1,7 @@
 import { Button } from '@components/ui/button'
 import React from 'react'
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go'
+import { RiSettingsLine } from 'react-icons/ri'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 export const WindowControls: React.FC = () => {
@@ -18,6 +19,13 @@ export const WindowControls: React.FC = () => {
   return (
     <div className="flex justify-between items-center rounded-lg">
       <div className="flex h-full w-full flex-1 window-drag-region"></div>
+      <Button
+        variant={'default'}
+        size={'icon'}
+        className="text-purple-50 text-opacity-40 text-xs [&_svg]:size-4"
+      >
+        <RiSettingsLine />
+      </Button>
       <div className="flex items-center justify-center px-1.5 pr-1 py-1 text-zinc-700">
         <Button
           variant="default"
