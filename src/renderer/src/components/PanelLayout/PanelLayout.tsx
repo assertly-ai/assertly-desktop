@@ -1,66 +1,113 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
 import { WindowControls } from '@renderer/components/WindowControls/WindowControls'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 
 type PanelLayoutProps = {
   leftPanel: React.ReactNode
   rightPanel?: React.ReactNode
-  defaultLeftSize?: number
-  defaultRightSize?: number
-  minLeftSize?: number
-  maxLeftSize?: number
+  leftPanelConfig?: {
+    defaultWidth: number
+    minWidth: number
+    maxWidth: number
+  }
 }
 
 export const PanelLayout = ({
   leftPanel,
   rightPanel,
-  defaultLeftSize = 20,
-  defaultRightSize = 80,
-  minLeftSize = 20,
-  maxLeftSize = 40
+  leftPanelConfig = {
+    defaultWidth: 300,
+    minWidth: 250,
+    maxWidth: 400
+  }
 }: PanelLayoutProps) => {
-  const panelRef = useRef<ImperativePanelHandle | null>(null)
-  const lastKnownSizes = useRef<number[]>([defaultLeftSize, defaultRightSize])
+  const leftPanelRef = useRef<ImperativePanelHandle>(null)
+  const rightPanelRef = useRef<ImperativePanelHandle>(null)
+  const [, setIsResizing] = useState(false)
 
-  const resizePreview = (sizes: number[]) => {
-    lastKnownSizes.current = sizes
-    window.electron.ipcRenderer.send('panel-resized', sizes)
+  const getPercentages = (pixelWidth: number) => {
+    const windowWidth = window.innerWidth
+    const constrainedWidth = Math.max(
+      leftPanelConfig.minWidth,
+      Math.min(leftPanelConfig.maxWidth, pixelWidth)
+    )
+    const availableWidth = Math.max(windowWidth, leftPanelConfig.minWidth + 100)
+    const leftPercent = Number(((constrainedWidth / availableWidth) * 100).toFixed(2))
+    const rightPercent = Number((100 - leftPercent).toFixed(2))
+    return { leftPercent, rightPercent }
   }
 
-  useEffect(() => {
-    const handleResize = () => {
-      window.electron.ipcRenderer.send('panel-resized', lastKnownSizes.current)
-    }
+  const { leftPercent: initialLeftPercent, rightPercent: initialRightPercent } = getPercentages(
+    leftPanelConfig.defaultWidth
+  )
 
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
+  const handlePanelResize = (sizes: number[]) => {
+    const windowWidth = window.innerWidth
+    const leftPanelWidth = (windowWidth * sizes[0]) / 100
+
+    if (leftPanelWidth >= leftPanelConfig.minWidth && leftPanelWidth <= leftPanelConfig.maxWidth) {
+      // Send both left and right panel percentages
+      window.electron.ipcRenderer.send('panel-resized', [sizes[0], sizes[1]])
+    } else {
+      const constrainedWidth = Math.max(
+        leftPanelConfig.minWidth,
+        Math.min(leftPanelConfig.maxWidth, leftPanelWidth)
+      )
+      const { leftPercent, rightPercent } = getPercentages(constrainedWidth)
+
+      if (leftPanelRef.current) leftPanelRef.current.resize(leftPercent)
+      if (rightPanelRef.current) rightPanelRef.current.resize(rightPercent)
+
+      window.electron.ipcRenderer.send('panel-resized', [leftPercent, rightPercent])
     }
+  }
+
+  // Initial setup
+  useEffect(() => {
+    window.electron.ipcRenderer.send('panel-resized', [initialLeftPercent, initialRightPercent])
   }, [])
 
   return (
     <ResizablePanelGroup
       direction="horizontal"
-      className="h-screen w-screen md:min-w-[450px]"
-      onLayout={resizePreview}
+      className="h-screen w-screen"
+      onLayout={handlePanelResize}
+      style={{ minWidth: `${leftPanelConfig.minWidth + 100}px` }}
     >
       <ResizablePanel
-        defaultSize={defaultLeftSize}
-        minSize={minLeftSize}
-        maxSize={maxLeftSize}
-        ref={panelRef}
+        ref={leftPanelRef}
+        defaultSize={initialLeftPercent}
+        minSize={getPercentages(leftPanelConfig.minWidth).leftPercent}
+        maxSize={getPercentages(leftPanelConfig.maxWidth).leftPercent}
+        className="min-h-0"
+        style={{ minWidth: `${leftPanelConfig.minWidth}px` }}
       >
-        <div className="flex flex-col h-[calc(100vh-1rem)] rounded-lg">
-          <WindowControls />
-          {leftPanel}
+        <div className="h-full w-full flex flex-col">
+          <div className="flex-shrink-0">
+            <WindowControls />
+          </div>
+          <div className="flex-1 overflow-hidden">{leftPanel}</div>
         </div>
       </ResizablePanel>
-      <ResizableHandle className="bg-transparent" withHandle />
-      <ResizablePanel defaultSize={defaultRightSize}>
-        <div className="flex justify-center items-center h-screen">
+
+      <ResizableHandle
+        withHandle
+        className="bg-transparent"
+        onDragging={(isDragging) => setIsResizing(isDragging)}
+      />
+
+      <ResizablePanel
+        ref={rightPanelRef}
+        defaultSize={initialRightPercent}
+        className="min-h-0"
+        style={{ minWidth: '100px' }}
+      >
+        <div className="h-full w-full">
           {rightPanel || (
-            <div className="flex h-[calc(100vh-1rem)] mr-2 flex-1 rounded-lg shadow-xl bg-purple-500 bg-opacity-10" />
+            <div className="h-screen w-full p-2">
+              <div className="h-full w-full rounded-xl shadow-xl bg-purple-500 bg-opacity-10" />
+            </div>
           )}
         </div>
       </ResizablePanel>

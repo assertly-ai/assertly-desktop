@@ -7,7 +7,7 @@ import { is } from '@electron-toolkit/utils'
 export class WindowManager {
   private mainWindow: BrowserWindow | null = null
   previewWindow: WebContentsView | null = null
-  private lastKnownPercentage: number = 70
+  private lastKnownPercentage: number = 80
 
   constructor(private electronAdapter: ElectronAdapter) {}
 
@@ -15,6 +15,8 @@ export class WindowManager {
     const window = new BrowserWindow({
       width: 1600,
       height: 1000,
+      minWidth: 600,
+      minHeight: 400,
       show: false,
       autoHideMenuBar: true,
       ...(process.platform === 'linux' ? { icon } : {}),
@@ -32,6 +34,7 @@ export class WindowManager {
           }
         : {
             // For Windows and other platforms
+            backgroundMaterial: 'acrylic',
             frame: true // This ensures the titlebar is visible
           })
     })
@@ -69,7 +72,7 @@ export class WindowManager {
       }
     })
 
-    this.previewWindow.setBorderRadius(8)
+    this.previewWindow.setBorderRadius(6)
 
     if (this.mainWindow) {
       this.mainWindow.contentView.addChildView(this.previewWindow)
@@ -116,27 +119,41 @@ export class WindowManager {
   updatePreviewWindowBounds(rightPanelPercentage?: number): void {
     if (!this.previewWindow || !this.mainWindow) return
 
-    // Update last known percentage if provided
-    if (rightPanelPercentage) {
+    // If we receive an array, use the second value (right panel percentage)
+    if (Array.isArray(rightPanelPercentage)) {
+      rightPanelPercentage = rightPanelPercentage[1]
+    }
+
+    if (rightPanelPercentage !== undefined) {
       this.lastKnownPercentage = rightPanelPercentage
     }
 
     const { width, height } = this.mainWindow.getBounds()
     const desiredWidth = 1512
     const desiredHeight = 982
+    const MIN_LEFT_PANEL_WIDTH = 250 // Match your leftPanelConfig.minWidth
 
-    // Always use lastKnownPercentage
-    const previewWidth = (width * this.lastKnownPercentage) / 100
-    const previewX = Math.floor(width - previewWidth)
+    // Ensure left panel width is at least the minimum
+    const actualLeftPanelWidth = Math.max(
+      MIN_LEFT_PANEL_WIDTH,
+      Math.floor((width * (100 - this.lastKnownPercentage)) / 100)
+    )
 
-    const scaleFactor = Math.min(previewWidth / desiredWidth, height / desiredHeight)
+    // Calculate right panel width as remaining space
+    const rightPanelWidth = width - actualLeftPanelWidth - 8 // 8px for resize handle
+
+    const scaleFactor = Math.min(
+      (rightPanelWidth - 16) / desiredWidth,
+      (height - 16) / desiredHeight
+    )
 
     this.previewWindow.setBounds({
-      x: previewX + 2,
+      x: actualLeftPanelWidth + 8, // Add offset for resize handle
       y: 8,
-      width: Math.ceil(previewWidth) - 10,
+      width: rightPanelWidth - 8,
       height: height - 16
     })
+
     this.previewWindow.webContents.setZoomFactor(scaleFactor)
   }
 

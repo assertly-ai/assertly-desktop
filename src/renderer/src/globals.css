@@ -73,9 +73,24 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: rgb(94 55 114 / 40%);
+  background-color: rgb(33 33 33 / 20%);
 }
 
 .window-drag-region {
   -webkit-app-region: drag;
+}
+
+.window-drag-region button,
+.window-drag-region input,
+.window-drag-region a,
+.window-drag-region [role='button'] {
+  -webkit-app-region: no-drag;
+}
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
