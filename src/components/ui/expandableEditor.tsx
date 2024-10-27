@@ -3,18 +3,24 @@ import { LoaderCircle, PlayCircle } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import * as monaco from 'monaco-editor'
 import { DEMO_CODE, PLAY_WRIGHT_DEFINITIONS } from '@renderer/lib/constants'
-import { Test, useTestStore } from '@renderer/store/testStore'
+import ScriptBlock from '@renderer/types/scriptBlock'
+import { useScriptBlockStore } from '@renderer/store/scriptBlockStore'
 
-export default function ExpandableEditor({ language, id }: { language: string; id: number }) {
-  const [value, setValue] = useState<string | undefined>(DEMO_CODE)
-  const { updateTest, getTest } = useTestStore()
+export default function ExpandableEditor({
+  language,
+  data
+}: {
+  language: string
+  data: ScriptBlock
+}) {
+  const { updateScriptBlock } = useScriptBlockStore()
   const monacoRef = useRef<Monaco | null>(null)
   const [running, setRunning] = useState<boolean>(false)
-
   const editorWrapperRef = useRef(null)
   const [editorHeight, setEditorHeight] = useState(200)
   const MIN_EDITOR_HEIGHT = 200
   const MAX_EDITOR_HEIGHT = window.innerHeight * 0.6
+
   useEffect(() => {
     const handleResize = () => {
       const maxHeight = window.innerHeight * 0.6
@@ -64,22 +70,16 @@ export default function ExpandableEditor({ language, id }: { language: string; i
     monacoRef.current = monaco
     if (language === 'javascript') {
       try {
-        const test: Test = await getTest(id)
-        if (test && test.code) {
-          editor.setValue(test.code)
+        if (data && data.code) {
+          editor.setValue(data.code)
         } else {
           editor.setValue(DEMO_CODE)
         }
       } catch (e) {
-        console.log('Error occurred while reading test with id: ', id)
+        console.log(e)
         editor.setValue(DEMO_CODE)
       }
     }
-  }
-
-  const handleChange = (value: string | undefined) => {
-    setValue(value)
-    updateTest(id, { code: value })
   }
 
   async function runPlaywrightCode(code: string) {
@@ -101,7 +101,7 @@ export default function ExpandableEditor({ language, id }: { language: string; i
   }
 
   const handleRunCode = () => {
-    if (value !== undefined) runPlaywrightCode(value)
+    if (data !== undefined) runPlaywrightCode(data.code)
   }
 
   return (
@@ -125,7 +125,6 @@ export default function ExpandableEditor({ language, id }: { language: string; i
           height: `${editorHeight}px`, // Dynamic height based on content
           minHeight: `${MIN_EDITOR_HEIGHT}px`, // Minimum height
           maxHeight: `${MAX_EDITOR_HEIGHT}px`, // Max height limit
-          // resize: 'vertical', // Make editor resizable
           overflow: 'hidden' // Prevent overflow
         }}
       >
@@ -133,11 +132,14 @@ export default function ExpandableEditor({ language, id }: { language: string; i
           height={editorHeight}
           theme="vs-dark"
           defaultLanguage={language}
-          onChange={handleChange}
+          onChange={(value) => {
+            if (language === 'javascript') updateScriptBlock(data.id, { code: value })
+            else updateScriptBlock(data.id, { instruction: value })
+          }}
           onMount={handleEditorDidMount}
           loading={<LoaderCircle />}
           className="rounded-r-md overflow-hidden"
-          value={value}
+          value={language === 'javascript' ? data?.code : data?.instruction}
           options={{
             padding: {
               top: 10,
