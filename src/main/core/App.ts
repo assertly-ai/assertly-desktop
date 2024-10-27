@@ -25,16 +25,12 @@ export class App {
 
   async start(): Promise<void> {
     await this.electronAdapter.initializeDebuggingPort()
-    await this.storageManager.initialize()
+    this.storageManager.initialize()
 
     this.electronAdapter.onReady(async () => {
       const mainWindow = this.windowManager.createMainWindow()
       this.windowManager.setMainWindow(mainWindow)
 
-      const previewWindow = this.windowManager.createPreviewWindow()
-      if (!previewWindow) {
-        throw new Error('Preview window not found')
-      }
       const port = this.electronAdapter.getDebuggingPort()
       if (!port) {
         throw new Error('Debugging port not set. Was initializeDebuggingPort called?')

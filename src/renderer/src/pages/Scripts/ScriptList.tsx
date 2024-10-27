@@ -106,7 +106,7 @@ export const ScriptList = () => {
                 <Tooltip open={showErrorTooltip}>
                   <TooltipTrigger asChild>
                     <div className="bg-transparent flex justify-between items-center mx-2 mr-1 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition">
-                      <div className="flex justify-start items-center gap-2 w-full shadow-none p-2 text-zinc-300 text-opacity-90 font-normal text-sm">
+                      <div className="flex justify-start items-center gap-2.5 w-full shadow-none p-2 text-zinc-300 text-opacity-90 font-normal text-sm">
                         <div className="rounded-md bg-white bg-opacity-5 p-1.5">
                           <IoDocumentTextOutline />
                         </div>
@@ -194,7 +194,6 @@ export const ScriptList = () => {
             ))}
           </nav>
         </ScrollArea>
-        <div className="flex flex-1 window-drag-region"></div>
       </div>
     </>
   )

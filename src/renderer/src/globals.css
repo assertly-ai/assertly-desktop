@@ -94,3 +94,15 @@ body {
 *::-webkit-scrollbar {
   display: none;
 }
+
+.monaco-editor-overlaymessage {
+  z-index: 1000;
+}
+
+.monaco-hover-content {
+  z-index: 1000;
+}
+
+.parameter-hints-widget {
+  z-index: 1000;
+}
