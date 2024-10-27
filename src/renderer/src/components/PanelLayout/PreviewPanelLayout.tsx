@@ -89,8 +89,8 @@ export const PreviewPanelLayout = ({
           <div className="w-full">
             <WindowControls />
           </div>
-          <div className="flex flex-col flex-1 overflow-y-scroll h-[calc(100vh-44px)]">
-            <div className="overflow-hidden">{leftPanel}</div>
+          <div className="flex flex-col overflow-y-scroll h-[calc(100vh-44px)]">
+            <div className="flex">{leftPanel}</div>
             <div className="flex flex-1 window-drag-region"></div>
           </div>
         </div>

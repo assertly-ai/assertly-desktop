@@ -47,7 +47,7 @@ export const ScriptList = () => {
 
   return (
     <>
-      <div className="flex items-center px-3 pr-2 py-1">
+      <div className="flex items-center px-3 pr-0 py-1">
         <div className="flex justify-start items-center flex-1 bg-purple-50 bg-opacity-[0.1] rounded-lg focus-visible:ring-0 px-3 py-0.5">
           <span className="text-purple-50 text-opacity-20 text-sm">
             <RiSearch2Line />
@@ -59,7 +59,7 @@ export const ScriptList = () => {
         </div>
       </div>
 
-      <div className="flex justify-start items-center px-5 pr-2 py-2 text-purple-50 text-opacity-40">
+      <div className="flex justify-start items-center px-4 pr-0 py-3 text-purple-50 text-opacity-40">
         <div className="flex flex-1 gap-2 justify-start items-center">
           <RiQuillPenLine />
           <span className="text-md font-semibold text-purple-50 text-opacity-40">Scripts</span>
