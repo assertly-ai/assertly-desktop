@@ -10,8 +10,12 @@ export class IpcHandler {
   ) {}
 
   setupHandlers(): void {
-    ipcMain.on('toggle-preview', (_, show: boolean) => {
-      this.windowManager.togglePreviewWindow(show)
+    ipcMain.on('toggle-preview', (_, show: boolean, sizes) => {
+      if (Array.isArray(sizes)) {
+        this.windowManager.togglePreviewWindow(show, sizes[1])
+      } else {
+        this.windowManager.togglePreviewWindow(show, sizes)
+      }
     })
 
     ipcMain.on('panel-resized', (_, sizes) => {

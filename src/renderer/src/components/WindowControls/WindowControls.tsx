@@ -18,7 +18,7 @@ export const WindowControls: React.FC = () => {
 
   return (
     <div className="flex justify-between items-center rounded-lg">
-      <div className="flex h-full w-full flex-1 window-drag-region"></div>
+      <div className="flex h-10 w-full flex-1 window-drag-region"></div>
       <Button
         variant={'default'}
         size={'icon'}

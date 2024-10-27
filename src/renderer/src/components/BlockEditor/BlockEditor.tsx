@@ -1,36 +1,18 @@
 import { Editor, Monaco } from '@monaco-editor/react'
-import { LoaderCircle, PlayCircle } from 'lucide-react'
+import { LoaderCircle } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import * as monaco from 'monaco-editor'
 import { DEMO_CODE, PLAY_WRIGHT_DEFINITIONS } from '@renderer/lib/constants'
 import ScriptBlock from '@renderer/types/scriptBlock'
 import { useScriptBlockStore } from '@renderer/store/scriptBlockStore'
 
-export default function ExpandableEditor({
-  language,
-  data
-}: {
-  language: string
-  data: ScriptBlock
-}) {
+export function BlockEditor({ language, data }: { language: string; data: ScriptBlock }) {
   const { updateScriptBlock } = useScriptBlockStore()
   const monacoRef = useRef<Monaco | null>(null)
-  const [running, setRunning] = useState<boolean>(false)
   const editorWrapperRef = useRef(null)
   const [editorHeight, setEditorHeight] = useState(200)
   const MIN_EDITOR_HEIGHT = 200
   const MAX_EDITOR_HEIGHT = window.innerHeight * 0.6
-
-  useEffect(() => {
-    const handleResize = () => {
-      const maxHeight = window.innerHeight * 0.6
-      setEditorHeight((prevHeight) => Math.min(prevHeight, maxHeight))
-    }
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
 
   useEffect(() => {
     if (monacoRef.current && language === 'javascript') {
@@ -82,42 +64,8 @@ export default function ExpandableEditor({
     }
   }
 
-  async function runPlaywrightCode(code: string) {
-    try {
-      setRunning(true)
-      const result = (await window.api.executePlaywrightCode(code)) as {
-        success: boolean
-        data?: unknown
-        error?: string
-      }
-      if (!result.success) {
-        console.error('Error executing Playwright code:', result.error)
-      }
-    } catch (error) {
-      console.error('Error calling executePlaywrightCode:', error)
-    } finally {
-      setRunning(false)
-    }
-  }
-
-  const handleRunCode = () => {
-    if (data !== undefined) runPlaywrightCode(data.code)
-  }
-
   return (
-    <div className="flex min-h-2 bg-transparent rounded-lg overflow-hidden">
-      <div className="max-w-16 flex p-1 rounded-l-sm bg-zinc-700 ">
-        <button
-          onClick={handleRunCode}
-          className="flex h-10 w-10 border-none shadow-none items-center justify-center group-hover:bg-emerald-500"
-        >
-          {running ? (
-            <LoaderCircle className="animate-spin transition-all text-emerald-400" size={30} />
-          ) : (
-            <PlayCircle className="hover:text-white transition-all text-emerald-500" size={30} />
-          )}
-        </button>
-      </div>
+    <div className="flex min-h-2 bg-transparent rounded-lg overflow-hidden mt-0">
       <div
         ref={editorWrapperRef}
         style={{

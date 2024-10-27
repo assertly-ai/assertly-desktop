@@ -62,7 +62,7 @@ export class WindowManager {
   }
 
   // When creating the preview window, use the last known percentage
-  createPreviewWindow(): WebContentsView {
+  createPreviewWindow(rightPanelPercentage?: number): WebContentsView {
     if (this.previewWindow) return this.previewWindow
 
     this.previewWindow = new WebContentsView({
@@ -81,12 +81,12 @@ export class WindowManager {
     this.setupContextMenu(this.previewWindow)
 
     // Use lastKnownPercentage when initializing
-    this.updatePreviewWindowBounds(this.lastKnownPercentage)
+    this.updatePreviewWindowBounds(rightPanelPercentage || this.lastKnownPercentage)
 
     if (this.mainWindow) {
       this.mainWindow.on('resize', () => {
         // Pass the lastKnownPercentage during resize
-        this.updatePreviewWindowBounds(this.lastKnownPercentage)
+        this.updatePreviewWindowBounds(rightPanelPercentage || this.lastKnownPercentage)
       })
     }
 
@@ -108,9 +108,9 @@ export class WindowManager {
     }
   }
 
-  togglePreviewWindow(show: boolean): void {
+  togglePreviewWindow(show: boolean, rightPanelPercentage?: number): void {
     if (show) {
-      this.createPreviewWindow()
+      this.createPreviewWindow(rightPanelPercentage)
     } else {
       this.removePreviewWindow()
     }
@@ -131,29 +131,34 @@ export class WindowManager {
     const { width, height } = this.mainWindow.getBounds()
     const desiredWidth = 1512
     const desiredHeight = 982
-    const MIN_LEFT_PANEL_WIDTH = 250 // Match your leftPanelConfig.minWidth
+    const MIN_LEFT_PANEL_WIDTH = 400 // Match your leftPanelConfig.minWidth
+    const MAX_LEFT_PANEL_WIDTH = 800 // Match your leftPanelConfig.maxWidth
+    const HANDLE_WIDTH = 8 // Width of the resize handle
 
-    // Ensure left panel width is at least the minimum
-    const actualLeftPanelWidth = Math.max(
-      MIN_LEFT_PANEL_WIDTH,
-      Math.floor((width * (100 - this.lastKnownPercentage)) / 100)
+    // Calculate left panel width based on percentage, constrained by min/max
+    const leftPanelWidth = Math.min(
+      MAX_LEFT_PANEL_WIDTH,
+      Math.max(MIN_LEFT_PANEL_WIDTH, Math.floor((width * (100 - this.lastKnownPercentage)) / 100))
     )
 
-    // Calculate right panel width as remaining space
-    const rightPanelWidth = width - actualLeftPanelWidth - 8 // 8px for resize handle
+    // Calculate available width for preview
+    const availablePreviewWidth = Math.max(0, width - leftPanelWidth - HANDLE_WIDTH)
 
+    // Calculate scale factor to fit preview within available space
     const scaleFactor = Math.min(
-      (rightPanelWidth - 16) / desiredWidth,
+      (availablePreviewWidth - 16) / desiredWidth,
       (height - 16) / desiredHeight
     )
 
+    // Set preview bounds
     this.previewWindow.setBounds({
-      x: actualLeftPanelWidth + 8, // Add offset for resize handle
+      x: leftPanelWidth + HANDLE_WIDTH,
       y: 8,
-      width: rightPanelWidth - 8,
+      width: Math.max(0, availablePreviewWidth - 8),
       height: height - 16
     })
 
+    // Apply zoom factor to maintain aspect ratio
     this.previewWindow.webContents.setZoomFactor(scaleFactor)
   }
 

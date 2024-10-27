@@ -14,13 +14,15 @@ export const ScriptBlocks = ({ scriptId }: { scriptId: number }) => {
     })
   }
   return (
-    <div>
+    <div className="w-full">
       <div className="flex">
         <Button onClick={handleAddNewCodeBlock}>
           <RiAddFill /> Code Block
         </Button>
       </div>
-      <div>{scriptBlocks?.map((block) => <Block key={block?.id} block={block} />)}</div>
+      <div className="w-full">
+        {scriptBlocks?.map((block) => <Block key={block?.id} block={block} />)}
+      </div>
     </div>
   )
 }
