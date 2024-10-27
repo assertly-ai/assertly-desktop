@@ -2,17 +2,24 @@ import { Button } from '@components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
 import { BlockEditor } from '@renderer/components/BlockEditor/BlockEditor'
 import { usePlaywright } from '@renderer/hooks/usePlaywright'
+import { useScriptBlockStore } from '@renderer/store/scriptBlockStore'
 import ScriptBlock from '@renderer/types/scriptBlock'
 import { RiArrowDownLine, RiArrowUpLine, RiDeleteBin5Line, RiPlayLargeLine } from 'react-icons/ri'
 
 export const Block = ({ block }: { block: ScriptBlock }) => {
   const { runPlaywrightCode } = usePlaywright()
+  const { deleteScriptBlock } = useScriptBlockStore()
 
   const handleRunCode = () => {
     if (block?.code) {
       runPlaywrightCode(block.code)
     }
   }
+
+  const handleDelete = () => {
+    deleteScriptBlock(block.id)
+  }
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex">
@@ -51,6 +58,7 @@ export const Block = ({ block }: { block: ScriptBlock }) => {
                 size={'icon'}
                 variant={'default'}
                 className="hover:bg-white hover:bg-opacity-5 text-white text-opacity-50"
+                onClick={handleDelete}
               >
                 <RiDeleteBin5Line />
               </Button>
