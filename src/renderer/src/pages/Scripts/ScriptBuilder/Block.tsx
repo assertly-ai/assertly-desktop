@@ -46,7 +46,7 @@ export const Block = ({ block }: { block: ScriptBlock }) => {
       <div className="flex">
         <Tabs defaultValue="code" className="w-full p-2 pr-0">
           <div className="flex justify-between items-center px-1">
-            <TabsList className="bg-white bg-opacity-5">
+            <TabsList className="bg-white bg-opacity-5 rounded-md">
               <TabsTrigger
                 value="code"
                 className="text-zinc-100 data-[state=active]:bg-white data-[state=active]:bg-opacity-20 data-[state=active]:text-zinc-100"

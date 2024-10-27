@@ -1,10 +1,10 @@
 import { useScriptBlockStore } from '@renderer/store/scriptBlockStore'
 import { Block } from './Block'
 import { Button } from '@components/ui/button'
-import { RiAddLine, RiCodeSSlashLine } from 'react-icons/ri'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
 import { useEffect, useState } from 'react'
 import { sortBy } from 'lodash'
+import { FiPlus } from 'react-icons/fi'
 
 export const ScriptBlocks = ({ scriptId }: { scriptId: number }) => {
   const { createScriptBlock, getScriptBlocksByScriptId } = useScriptBlockStore()
@@ -24,10 +24,9 @@ export const ScriptBlocks = ({ scriptId }: { scriptId: number }) => {
   }, [scriptBlocks])
   return (
     <div className="w-full">
-      <div className="flex justify-start items-center px-5 pr-2 py-2 text-purple-50 text-opacity-40">
+      <div className="flex justify-start items-center px-5 pr-2 py-2 text-white text-opacity-40">
         <div className="flex flex-1 gap-2 justify-start items-center">
-          <RiCodeSSlashLine />
-          <span className="text-md font-semibold text-purple-50 text-opacity-40">Blocks</span>
+          <span className="text-md font-medium text-white text-opacity-40">Script Blocks</span>
         </div>
         <div className="flex justify-start items-center">
           <TooltipProvider>
@@ -36,11 +35,11 @@ export const ScriptBlocks = ({ scriptId }: { scriptId: number }) => {
                 <Button
                   variant={'default'}
                   size={'icon'}
-                  className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md transition text-purple-50 text-opacity-30 hover:text-opacity-60 border-none"
+                  className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md transition text-white text-opacity-30 hover:text-opacity-60 border-none"
                   onClick={handleAddNewCodeBlock}
                 >
                   <span className="text-lg font-semibold">
-                    <RiAddLine />
+                    <FiPlus />
                   </span>
                 </Button>
               </TooltipTrigger>
