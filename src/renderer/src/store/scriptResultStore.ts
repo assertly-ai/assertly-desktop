@@ -15,14 +15,14 @@ export const useScriptResultStore = createSyncedStore<ScriptResult, ScriptResult
   (set, get) => ({
     data: [],
     setData: (data) => set({ data }),
-    createScriptResult: async (ScriptResultData) => {
+    createScriptResult: async (scriptResultData) => {
       await window.api.storage.create('ScriptResults', {
-        ...ScriptResultData,
+        ...scriptResultData,
         createdAt: new Date().toISOString()
       })
     },
-    updateScriptResult: async (id, ScriptResultData) => {
-      await window.api.storage.update('ScriptResults', id, ScriptResultData)
+    updateScriptResult: async (id, scriptResultData) => {
+      await window.api.storage.update('ScriptResults', id, scriptResultData)
     },
     deleteScriptResult: async (id) => {
       await window.api.storage.delete('ScriptResults', id)

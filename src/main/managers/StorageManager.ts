@@ -52,6 +52,7 @@ export class StorageManager {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         code TEXT,
         instruction TEXT,
+        block_order INTEGER,
         user_id INTEGER,
         script_id INTEGER,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

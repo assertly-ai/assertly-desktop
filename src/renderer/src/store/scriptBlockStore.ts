@@ -31,6 +31,7 @@ export const useScriptBlockStore = createSyncedStore<ScriptBlock, ScriptBlockSta
       return useScriptBlockStore
         .getState()
         .data.filter((block: ScriptBlock) => block?.scriptId === scriptId)
+        .sort((a, b) => a.blockOrder - b.blockOrder)
     }
   })
 )
