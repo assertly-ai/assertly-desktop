@@ -194,7 +194,6 @@ export const ScriptList = () => {
             ))}
           </nav>
         </ScrollArea>
-        <div className="flex flex-1 window-drag-region"></div>
       </div>
     </>
   )
