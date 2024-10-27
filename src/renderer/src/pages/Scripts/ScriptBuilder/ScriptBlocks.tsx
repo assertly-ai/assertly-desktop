@@ -3,17 +3,25 @@ import { Block } from './Block'
 import { Button } from '@components/ui/button'
 import { RiAddLine, RiCodeSSlashLine } from 'react-icons/ri'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
+import { useEffect, useState } from 'react'
+import { sortBy } from 'lodash'
 
 export const ScriptBlocks = ({ scriptId }: { scriptId: number }) => {
   const { createScriptBlock, getScriptBlocksByScriptId } = useScriptBlockStore()
   const scriptBlocks = getScriptBlocksByScriptId(scriptId)
+  const [blockOrder, setBlockOrder] = useState<number>(0)
   const handleAddNewCodeBlock = () => {
     createScriptBlock({
       code: '',
       scriptId: scriptId,
-      instruction: ''
+      instruction: '',
+      blockOrder: blockOrder
     })
   }
+  useEffect(() => {
+    setBlockOrder(scriptBlocks.length)
+    sortBy(scriptBlocks, [blockOrder])
+  }, [scriptBlocks])
   return (
     <div className="w-full">
       <div className="flex justify-start items-center px-5 pr-2 py-2 text-purple-50 text-opacity-40">
