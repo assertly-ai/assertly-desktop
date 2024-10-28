@@ -48,7 +48,7 @@ export const ScriptList = () => {
   return (
     <>
       <div className="flex items-center px-3 pr-0 py-1">
-        <div className="flex justify-start items-center flex-1 bg-white bg-opacity-[0.1] rounded-lg focus-visible:ring-0 px-3 py-0.5">
+        <div className="flex justify-start items-center flex-1 bg-white bg-opacity-[0.1] rounded-lg focus-visible:ring-0 focus-within:border-white border border-transparent focus-within:border-opacity-10  px-3 py-0.5">
           <span className="text-white text-opacity-20 text-sm">
             <RiSearch2Line />
           </span>
