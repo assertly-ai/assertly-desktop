@@ -13,7 +13,9 @@ type LogEntry = {
   message: unknown[]
 }
 
-export const Block = ({ block }: { block: ScriptBlock }) => {
+type PropType = { block: ScriptBlock }
+
+export const Block = ({ block }: PropType) => {
   const { runPlaywrightCode } = usePlaywright()
   const { deleteScriptBlock, getScriptBlocksByScriptId, updateScriptBlock } = useScriptBlockStore()
   const scriptBlocks = getScriptBlocksByScriptId(block.scriptId)

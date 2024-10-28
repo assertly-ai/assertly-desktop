@@ -4,13 +4,28 @@ import { useState, useRef, useEffect } from 'react'
 import * as monaco from 'monaco-editor'
 import ScriptBlock from '@renderer/types/scriptBlock'
 import { useScriptBlockStore } from '@renderer/store/scriptBlockStore'
-import { PLAY_WRIGHT_DEFINITIONS } from '@renderer/lib/constants'
 
 export function BlockEditor({ language, data }: { language: string; data: ScriptBlock }) {
   const { updateScriptBlock } = useScriptBlockStore()
   const monacoRef = useRef<Monaco | null>(null)
   const editorWrapperRef = useRef(null)
   const [editorHeight, setEditorHeight] = useState<number>(100)
+  const [maxHeight, setMaxHeight] = useState<number>(800)
+
+  useEffect(() => {
+    const calculateMaxHeight = () => {
+      const viewportHeight = window.innerHeight
+      const maxEditorHeight = viewportHeight
+      setMaxHeight(maxEditorHeight)
+    }
+
+    calculateMaxHeight()
+    window.addEventListener('resize', calculateMaxHeight)
+
+    return () => {
+      window.removeEventListener('resize', calculateMaxHeight)
+    }
+  }, [])
 
   const handleEditorDidMount = async (
     editor: monaco.editor.IStandaloneCodeEditor,
@@ -19,7 +34,9 @@ export function BlockEditor({ language, data }: { language: string; data: Script
     monacoRef.current = monaco
 
     editor.onDidContentSizeChange(() => {
-      const contentHeight = editor.getContentHeight()
+      const lineHeight = editor.getOption(monaco.editor.EditorOption.lineHeight)
+      const lineCount = editor.getModel()?.getLineCount() || 1
+      const contentHeight = Math.min(Math.max(lineHeight * lineCount + 30, 100), maxHeight)
       setEditorHeight(contentHeight)
     })
 
@@ -33,39 +50,18 @@ export function BlockEditor({ language, data }: { language: string; data: Script
       }
     }
 
-    const initialHeight = editor.getContentHeight()
+    const initialLineCount = editor.getModel()?.getLineCount() || 1
+    const lineHeight = editor.getOption(monaco.editor.EditorOption.lineHeight)
+    const initialHeight = Math.min(Math.max(initialLineCount * lineHeight + 30, 100), maxHeight)
     setEditorHeight(initialHeight)
   }
-
-  useEffect(() => {
-    if (monacoRef.current && language === 'javascript') {
-      const monaco = monacoRef.current
-
-      // Configure JavaScript defaults before adding types
-      monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-        target: monaco.languages.typescript.ScriptTarget.ESNext,
-        allowNonTsExtensions: true,
-        allowJs: true,
-        checkJs: true,
-        noEmit: true
-      })
-
-      // Enable built-in lib references
-      monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true)
-
-      // Add type definitions for Playwright
-      monaco.languages.typescript.javascriptDefaults.addExtraLib(
-        PLAY_WRIGHT_DEFINITIONS,
-        'playwright.d.ts'
-      )
-    }
-  }, [language, monacoRef.current])
 
   return (
     <div className="flex min-h-2 bg-transparent rounded-lg mt-0">
       <div
         ref={editorWrapperRef}
-        className="w-full overflow-visible rounded-lg border border-zinc-700"
+        className="w-full overflow-hidden rounded-lg border border-zinc-700"
+        style={{ maxHeight: `${maxHeight}px` }}
       >
         <Editor
           height={`${editorHeight}px`}
@@ -77,7 +73,7 @@ export function BlockEditor({ language, data }: { language: string; data: Script
           }}
           onMount={handleEditorDidMount}
           loading={<LoaderCircle />}
-          className="overflow-visible rounded-lg"
+          className="overflow-hidden rounded-lg"
           value={language === 'javascript' ? data?.code : data?.instruction}
           options={{
             padding: {
@@ -91,20 +87,13 @@ export function BlockEditor({ language, data }: { language: string; data: Script
             automaticLayout: true,
             wordWrap: 'on',
             lineNumbers: 'on',
-            fontSize: 12,
+            fontSize: 14,
             folding: true,
             renderLineHighlight: 'all',
             renderWhitespace: 'none',
             fixedOverflowWidgets: true,
             roundedSelection: true,
-            smoothScrolling: true,
-            scrollbar: {
-              vertical: 'hidden',
-              horizontal: 'hidden',
-              handleMouseWheel: false
-            },
-            overviewRulerLanes: 0,
-            overviewRulerBorder: false
+            smoothScrolling: true
           }}
         />
       </div>

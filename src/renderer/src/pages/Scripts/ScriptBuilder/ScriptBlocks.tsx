@@ -6,7 +6,9 @@ import { useEffect, useState } from 'react'
 import { sortBy } from 'lodash'
 import { FiPlus } from 'react-icons/fi'
 
-export const ScriptBlocks = ({ scriptId }: { scriptId: number }) => {
+type PropType = { scriptId: number }
+
+export const ScriptBlocks = ({ scriptId }: PropType) => {
   const { createScriptBlock, getScriptBlocksByScriptId } = useScriptBlockStore()
   const scriptBlocks = getScriptBlocksByScriptId(scriptId)
   const [blockOrder, setBlockOrder] = useState<number>(0)
