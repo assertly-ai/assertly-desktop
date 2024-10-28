@@ -108,7 +108,7 @@ export const PreviewPanelLayout = ({
 
       <ResizableHandle
         withHandle
-        className="bg-transparent"
+        className="bg-transparent opacity-100"
         onDragging={(isDragging) => setIsResizing(isDragging)}
       />
 
