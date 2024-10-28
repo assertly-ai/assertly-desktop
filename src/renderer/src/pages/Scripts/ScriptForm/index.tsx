@@ -42,7 +42,7 @@ const ScriptForm = ({ type, data }: PropType) => {
             <Button
               variant={'default'}
               size={'icon'}
-              className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md transition text-purple-50 text-opacity-30 hover:text-opacity-60 border-none"
+              className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md transition text-white text-opacity-30 hover:text-opacity-60 border-none"
             >
               <span className="text-lg font-semibold">
                 <FiPlus />

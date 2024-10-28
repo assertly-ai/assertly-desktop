@@ -2,7 +2,6 @@ import { Editor, Monaco } from '@monaco-editor/react'
 import { LoaderCircle } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import * as monaco from 'monaco-editor'
-import { DEMO_CODE } from '@renderer/lib/constants'
 import ScriptBlock from '@renderer/types/scriptBlock'
 import { useScriptBlockStore } from '@renderer/store/scriptBlockStore'
 
@@ -17,8 +16,6 @@ export function BlockEditor({ language, data }: { language: string; data: Script
     const calculateMaxHeight = () => {
       const viewportHeight = window.innerHeight
       const maxEditorHeight = viewportHeight
-      console.log('max height', maxEditorHeight)
-
       setMaxHeight(maxEditorHeight)
     }
 
@@ -36,17 +33,10 @@ export function BlockEditor({ language, data }: { language: string; data: Script
   ) => {
     monacoRef.current = monaco
 
-    // Add content height listener with dynamic resizing
     editor.onDidContentSizeChange(() => {
       const lineHeight = editor.getOption(monaco.editor.EditorOption.lineHeight)
       const lineCount = editor.getModel()?.getLineCount() || 1
-      const contentHeight = Math.min(
-        Math.max(
-          lineHeight * lineCount + 30, // Add some padding
-          100 // Minimum height
-        ),
-        maxHeight // Maximum height
-      )
+      const contentHeight = Math.min(Math.max(lineHeight * lineCount + 30, 100), maxHeight)
       setEditorHeight(contentHeight)
     })
 
@@ -54,16 +44,12 @@ export function BlockEditor({ language, data }: { language: string; data: Script
       try {
         if (data && data.code) {
           editor.setValue(data.code)
-        } else {
-          editor.setValue(DEMO_CODE)
         }
       } catch (e) {
         console.log(e)
-        editor.setValue(DEMO_CODE)
       }
     }
 
-    // Trigger initial height calculation
     const initialLineCount = editor.getModel()?.getLineCount() || 1
     const lineHeight = editor.getOption(monaco.editor.EditorOption.lineHeight)
     const initialHeight = Math.min(Math.max(initialLineCount * lineHeight + 30, 100), maxHeight)
@@ -75,7 +61,7 @@ export function BlockEditor({ language, data }: { language: string; data: Script
       <div
         ref={editorWrapperRef}
         className="w-full overflow-hidden rounded-lg border border-zinc-700"
-        style={{ maxHeight: `${maxHeight}px` }} // Add maxHeight to container
+        style={{ maxHeight: `${maxHeight}px` }}
       >
         <Editor
           height={`${editorHeight}px`}
@@ -101,6 +87,7 @@ export function BlockEditor({ language, data }: { language: string; data: Script
             automaticLayout: true,
             wordWrap: 'on',
             lineNumbers: 'on',
+            fontSize: 14,
             folding: true,
             renderLineHighlight: 'all',
             renderWhitespace: 'none',

@@ -1,6 +1,9 @@
+import { Button } from '@components/ui/button'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
 import { WindowControls } from '@renderer/components/WindowControls/WindowControls'
 import { useEffect, useRef, useState } from 'react'
+import { FiPlus } from 'react-icons/fi'
+import { IoClose } from 'react-icons/io5'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 
 type PreviewPanelLayoutProps = {
@@ -28,6 +31,19 @@ export const PreviewPanelLayout = ({
   const rightPanelRef = useRef<ImperativePanelHandle>(null)
   const [, setIsResizing] = useState(false)
 
+  // Store the initial percentages in state
+  const [initialSizes] = useState(() => {
+    const windowWidth = window.innerWidth
+    const constrainedWidth = Math.max(
+      leftPanelConfig.minWidth,
+      Math.min(leftPanelConfig.maxWidth, leftPanelConfig.defaultWidth)
+    )
+    return {
+      leftPercent: Number(((constrainedWidth / windowWidth) * 100).toFixed(1)),
+      rightPercent: Number((((windowWidth - constrainedWidth) / windowWidth) * 100).toFixed(1))
+    }
+  })
+
   const getPercentages = (pixelWidth: number) => {
     const windowWidth = window.innerWidth
     const constrainedWidth = Math.max(
@@ -40,10 +56,6 @@ export const PreviewPanelLayout = ({
     }
   }
 
-  const { leftPercent: initialLeftPercent, rightPercent: initialRightPercent } = getPercentages(
-    leftPanelConfig.defaultWidth
-  )
-
   const handlePanelResize = (sizes: number[]) => {
     if (!hasPreview) return
     window.electron.ipcRenderer.send('panel-resized', sizes)
@@ -52,7 +64,10 @@ export const PreviewPanelLayout = ({
   useEffect(() => {
     if (hasPreview) {
       window.electron.ipcRenderer.send('toggle-preview', true)
-      window.electron.ipcRenderer.send('panel-resized', [initialLeftPercent, initialRightPercent])
+      window.electron.ipcRenderer.send('panel-resized', [
+        initialSizes.leftPercent,
+        initialSizes.rightPercent
+      ])
     }
 
     return () => {
@@ -60,12 +75,7 @@ export const PreviewPanelLayout = ({
         window.electron.ipcRenderer.send('toggle-preview', false)
       }
     }
-  }, [hasPreview])
-
-  console.log('PreviewPaneLayout', {
-    initialLeftPercent,
-    initialRightPercent
-  })
+  }, [hasPreview, initialSizes])
 
   return (
     <ResizablePanelGroup
@@ -76,7 +86,7 @@ export const PreviewPanelLayout = ({
     >
       <ResizablePanel
         ref={leftPanelRef}
-        defaultSize={initialLeftPercent}
+        defaultSize={initialSizes.leftPercent}
         minSize={getPercentages(leftPanelConfig.minWidth).leftPercent}
         maxSize={getPercentages(leftPanelConfig.maxWidth).leftPercent}
         className="min-h-0 ResizablePanel"
@@ -104,12 +114,34 @@ export const PreviewPanelLayout = ({
 
       <ResizablePanel
         ref={rightPanelRef}
-        defaultSize={initialRightPercent}
+        defaultSize={initialSizes.rightPercent}
         className="min-h-0 ResizablePanel"
       >
         <div className="h-full w-full">
           {rightPanel || (
-            <div className="h-screen w-full p-2 pl-0">
+            <div className="flex flex-col h-screen w-full p-2 pl-0 pt-0">
+              <div className="flex items-center justify-start gap-2 h-12 py-1.5">
+                <div className="flex items-center justify-center gap-2 h-full rounded-md bg-white bg-opacity-15 px-4 pr-1 text-sm">
+                  {' '}
+                  <span className="text-white text-md text-opacity-80">Browser Tab</span>
+                  <Button
+                    variant={'default'}
+                    size={'icon'}
+                    className="text-white text-md text-opacity-30 hover:text-opacity-60"
+                  >
+                    <IoClose />
+                  </Button>
+                </div>
+
+                <Button
+                  variant={'default'}
+                  size={'icon'}
+                  className="text-white text-md text-opacity-30 hover:text-opacity-60"
+                >
+                  <FiPlus />
+                </Button>
+                <div className="flex flex-1 h-full window-drag-region"></div>
+              </div>
               <div className="h-full w-full rounded-lg shadow-xl bg-white bg-opacity-10" />
             </div>
           )}

@@ -22,7 +22,7 @@ export const WindowControls: React.FC = () => {
       <Button
         variant={'default'}
         size={'icon'}
-        className="text-purple-50 text-opacity-40 text-xs [&_svg]:size-4"
+        className="text-white text-opacity-40 text-xs [&_svg]:size-4"
       >
         <RiSettingsLine />
       </Button>
@@ -32,7 +32,7 @@ export const WindowControls: React.FC = () => {
           size="icon"
           onClick={() => navigate(-1)}
           disabled={!canGoBack}
-          className="rounded-lg hover:bg-purple-300 hover:bg-opacity-10 text-purple-50 hover:text-opacity-100 text-opacity-60 text-xl font-bold disabled:opacity-30"
+          className="rounded-lg hover:bg-white hover:bg-opacity-10 text-white hover:text-opacity-100 text-opacity-60 text-xl font-bold disabled:opacity-30"
         >
           <GoArrowLeft />
         </Button>
@@ -41,7 +41,7 @@ export const WindowControls: React.FC = () => {
           size="icon"
           onClick={() => navigate(1)}
           disabled={!canGoForward}
-          className="rounded-lg hover:bg-purple-300 hover:bg-opacity-10 text-purple-50 hover:text-opacity-100 text-opacity-60 text-xl font-bold disabled:opacity-30"
+          className="rounded-lg hover:bg-white hover:bg-opacity-10 text-white hover:text-opacity-100 text-opacity-60 text-xl font-bold disabled:opacity-30"
         >
           <GoArrowRight />
         </Button>

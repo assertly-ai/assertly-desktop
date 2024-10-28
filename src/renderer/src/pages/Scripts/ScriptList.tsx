@@ -48,21 +48,21 @@ export const ScriptList = () => {
   return (
     <>
       <div className="flex items-center px-3 pr-0 py-1">
-        <div className="flex justify-start items-center flex-1 bg-purple-50 bg-opacity-[0.1] rounded-lg focus-visible:ring-0 px-3 py-0.5">
-          <span className="text-purple-50 text-opacity-20 text-sm">
+        <div className="flex justify-start items-center flex-1 bg-white bg-opacity-[0.1] rounded-lg focus-visible:ring-0 px-3 py-0.5">
+          <span className="text-white text-opacity-20 text-sm">
             <RiSearch2Line />
           </span>
           <Input
             placeholder="Search"
-            className="text-white placeholder:text-md placeholder:text-purple-50 placeholder:text-opacity-20 placeholder:font-medium border-transparent rounded-lg focus-visible:ring-0 px-1.5"
+            className="text-white placeholder:text-md placeholder:text-white placeholder:text-opacity-20 placeholder:font-medium border-transparent rounded-lg focus-visible:ring-0 px-1.5"
           />
         </div>
       </div>
 
-      <div className="flex justify-start items-center px-4 pr-0 py-3 text-purple-50 text-opacity-40">
+      <div className="flex justify-start items-center px-4 pr-0 py-3 text-white text-opacity-40">
         <div className="flex flex-1 gap-2 justify-start items-center">
           <RiQuillPenLine />
-          <span className="text-md font-semibold text-purple-50 text-opacity-40">Scripts</span>
+          <span className="text-md font-medium text-white text-opacity-40">Scripts</span>
         </div>
         <div className="flex justify-start items-center">
           <TooltipProvider>
@@ -72,7 +72,7 @@ export const ScriptList = () => {
                   variant={'default'}
                   size={'icon'}
                   disabled={creatingNewScript}
-                  className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md transition text-purple-50 text-opacity-30 hover:text-opacity-60 border-none"
+                  className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md transition text-white text-opacity-30 hover:text-opacity-60 border-none"
                   onClick={() => {
                     if (!creatingNewScript) {
                       setCreatingNewScript(true)
@@ -122,7 +122,7 @@ export const ScriptList = () => {
                             if (e.key === 'Enter') handleNewScriptSave(true)
                           }}
                           autoFocus
-                          className="flex-1 text-zinc-300 rounded-none placeholder:text-purple-50  placeholder:text-opacity-50 text-opacity-90 font-normal text-sm p-0 mx-2 h-full border-none focus:ring-0 focus:outline-none"
+                          className="flex-1 text-zinc-300 rounded-none placeholder:text-white  placeholder:text-opacity-50 text-opacity-90 font-normal text-sm p-0 mx-2 h-full border-none focus:ring-0 focus:outline-none"
                           placeholder="New Script Name"
                           style={{ boxShadow: 'none' }} // Remove any default box shadow
                         />
@@ -159,7 +159,7 @@ export const ScriptList = () => {
                         if (e.key === 'Enter') handleNameSave(script.id)
                       }}
                       autoFocus
-                      className="flex-1 text-zinc-300 rounded-none placeholder:text-purple-50 placeholder:text-opacity-50 text-opacity-90 font-normal text-sm p-0 h-full border-none focus:ring-0 focus:outline-none"
+                      className="flex-1 text-zinc-300 rounded-none placeholder:text-white placeholder:text-opacity-50 text-opacity-90 font-normal text-sm p-0 h-full border-none focus:ring-0 focus:outline-none"
                       style={{ boxShadow: 'none' }} // Remove any default box shadow
                     />
                   </div>
@@ -177,7 +177,7 @@ export const ScriptList = () => {
                 {hoveredScriptId === script.id && (
                   <span
                     onClick={() => handleEditClick(script.id, script.name)}
-                    className="cursor-pointer hover:bg-purple-500 hover:bg-opacity-10 p-[6px] me-2 rounded"
+                    className="cursor-pointer hover:bg-white hover:bg-opacity-10 p-[6px] me-2 rounded"
                   >
                     <FiEdit3 className="text-sm" />
                   </span>
@@ -185,7 +185,7 @@ export const ScriptList = () => {
                 {hoveredScriptId === script.id && (
                   <span
                     onClick={() => deleteScript(script.id)}
-                    className="cursor-pointer hover:bg-purple-500 hover:bg-opacity-10 p-[6px] rounded"
+                    className="cursor-pointer hover:bg-white hover:bg-opacity-10 p-[6px] rounded"
                   >
                     <FaRegTrashAlt className="text-xs" />
                   </span>

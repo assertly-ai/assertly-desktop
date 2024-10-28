@@ -153,9 +153,9 @@ export class WindowManager {
     // Set preview bounds
     this.previewWindow.setBounds({
       x: leftPanelWidth + HANDLE_WIDTH,
-      y: 8,
+      y: 8 + 40,
       width: Math.max(0, availablePreviewWidth - 8),
-      height: height - 16
+      height: height - 16 - 40
     })
 
     // Apply zoom factor to maintain aspect ratio

@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom'
 const AppLayout = () => {
   return (
     <>
-      <svg className="fixed -z-10 opacity-10 hidden">
+      <svg className="fixed -z-10 opacity-80 hidden">
         <filter id="noise">
           <feTurbulence
             type="fractalNoise"
@@ -15,10 +15,10 @@ const AppLayout = () => {
         </filter>
       </svg>
 
-      <div className="w-screen h-screen  backdrop-blur-xs">
+      <div className="w-screen h-screen backdrop-blur-lg">
         <div className="absolute inset-0 -z-5">
           <div
-            className="absolute inset-0 bg-white/80"
+            className="absolute inset-0 bg-white"
             style={{ filter: 'url(#noise)', opacity: '0.15' }}
           />
         </div>

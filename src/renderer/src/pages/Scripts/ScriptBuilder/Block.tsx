@@ -100,7 +100,7 @@ export const Block = ({ block }: { block: ScriptBlock }) => {
           <TabsContent value="code" className="mt-1">
             <BlockEditor language="javascript" data={block} />
           </TabsContent>
-          <TabsContent value="text">
+          <TabsContent value="text" className="mt-1">
             <BlockEditor language="markdown" data={block} />
           </TabsContent>
         </Tabs>
