@@ -19,8 +19,10 @@ export const Block = ({ block }: PropType) => {
   const { runPlaywrightCode } = usePlaywright()
   const { deleteScriptBlock, getScriptBlocksByScriptId, updateScriptBlock } = useScriptBlockStore()
   const scriptBlocks = getScriptBlocksByScriptId(block.scriptId)
-  const [moveUp, setMoveUp] = useState(block.blockOrder === 0)
-  const [moveDown, setMoveDown] = useState(block.blockOrder === scriptBlocks.length - 1)
+  const [moveUpDisabled, setMoveUpDisabled] = useState(block.blockOrder === 0)
+  const [moveDownDisabled, setMoveDownDisabled] = useState(
+    block.blockOrder === scriptBlocks.length - 1
+  )
   const [logs, setLogs] = useState<LogEntry[]>([])
 
   const handleRunCode = () => {
@@ -47,8 +49,8 @@ export const Block = ({ block }: PropType) => {
   }
 
   useEffect(() => {
-    setMoveUp(block.blockOrder === 0 || scriptBlocks.length === 1)
-    setMoveDown(block.blockOrder === scriptBlocks.length - 1 || scriptBlocks.length === 1)
+    setMoveUpDisabled(block.blockOrder === 0 || scriptBlocks.length === 1)
+    setMoveDownDisabled(block.blockOrder === scriptBlocks.length - 1 || scriptBlocks.length === 1)
   }, [scriptBlocks])
 
   useEffect(() => {
@@ -91,7 +93,7 @@ export const Block = ({ block }: PropType) => {
             </TabsList>
             <div className="flex justify-end items-center rounded bg-white bg-opacity-5">
               <Button
-                disabled={moveUp}
+                disabled={moveUpDisabled}
                 onClick={handleMoveUp}
                 size={'icon'}
                 variant={'default'}
@@ -100,7 +102,7 @@ export const Block = ({ block }: PropType) => {
                 <RiArrowUpLine />
               </Button>
               <Button
-                disabled={moveDown}
+                disabled={moveDownDisabled}
                 onClick={handleMoveDown}
                 size={'icon'}
                 variant={'default'}
