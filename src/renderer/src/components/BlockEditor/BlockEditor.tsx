@@ -5,7 +5,9 @@ import * as monaco from 'monaco-editor'
 import ScriptBlock from '@renderer/types/scriptBlock'
 import { useScriptBlockStore } from '@renderer/store/scriptBlockStore'
 
-export function BlockEditor({ language, data }: { language: string; data: ScriptBlock }) {
+type PropType = { language: string; data: ScriptBlock }
+
+export function BlockEditor({ language, data }: PropType) {
   const { updateScriptBlock } = useScriptBlockStore()
   const monacoRef = useRef<Monaco | null>(null)
   const editorWrapperRef = useRef(null)
