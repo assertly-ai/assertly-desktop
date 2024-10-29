@@ -64,12 +64,15 @@ export class StorageManager {
       CREATE TABLE IF NOT EXISTS ScriptBlockResults (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         script_block_id INTEGER,
+        script_id INTEGER
         status TEXT NOT NULL,
+        message TEXT,
         duration INTEGER,
         error_message TEXT,
         screenshot_path TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (script_block_id) REFERENCES ScriptBlocks(id) ON DELETE CASCADE
+        FOREIGN KEY (script_id) REFERENCES Scripts(id) ON DELETE CASCADE
       );
     `)
   }

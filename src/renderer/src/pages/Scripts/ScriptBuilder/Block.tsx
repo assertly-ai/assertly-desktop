@@ -1,8 +1,10 @@
 import { Button } from '@components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
 import { BlockEditor } from '@renderer/components/BlockEditor/BlockEditor'
+import { BlockOutput } from '@renderer/components/BlockOutput/BlockOutput'
 import { usePlaywright } from '@renderer/hooks/usePlaywright'
 import { useScriptBlockStore } from '@renderer/store/scriptBlockStore'
+import { useScriptBlockResultStore } from '@renderer/store/scriptResultStore'
 import ScriptBlock from '@renderer/types/scriptBlock'
 import { useEffect, useState } from 'react'
 import { RiArrowDownLine, RiArrowUpLine, RiDeleteBin5Line, RiPlayLargeLine } from 'react-icons/ri'
@@ -17,6 +19,7 @@ type PropType = { block: ScriptBlock }
 
 export const Block = ({ block }: PropType) => {
   const { runPlaywrightCode } = usePlaywright()
+  const { getScriptBlockResultsByScriptBlockId } = useScriptBlockResultStore()
   const { deleteScriptBlock, getScriptBlocksByScriptId, updateScriptBlock } = useScriptBlockStore()
   const scriptBlocks = getScriptBlocksByScriptId(block.scriptId)
   const [moveUpDisabled, setMoveUpDisabled] = useState(block.blockOrder === 0)
@@ -24,6 +27,8 @@ export const Block = ({ block }: PropType) => {
     block.blockOrder === scriptBlocks.length - 1
   )
   const [logs, setLogs] = useState<LogEntry[]>([])
+
+  const results = getScriptBlockResultsByScriptBlockId(block.id)
 
   const handleRunCode = () => {
     if (block?.code) {
@@ -128,8 +133,9 @@ export const Block = ({ block }: PropType) => {
               </Button>
             </div>
           </div>
-          <TabsContent value="code" className="mt-1">
+          <TabsContent value="code" className="mt-1 flex flex-col gap-1">
             <BlockEditor language="javascript" data={block} />
+            {results.length > 0 && <BlockOutput data={results} />}
           </TabsContent>
           <TabsContent value="text" className="mt-1">
             <BlockEditor language="markdown" data={block} />

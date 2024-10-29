@@ -1,34 +1,43 @@
 import { createSyncedStore } from '@renderer/lib/createSyncedStore'
-import ScriptResult from '@renderer/types/scriptResult'
+import ScriptBlockResult from '@renderer/types/scriptBlockResult'
 
-interface ScriptResultState {
-  data: ScriptResult[]
-  setData: (data: ScriptResult[]) => void
-  createScriptResult: (ScriptResultData: Omit<ScriptResult, 'id' | 'createdAt'>) => Promise<void>
-  updateScriptResult: (id: number, ScriptResultData: Partial<ScriptResult>) => Promise<void>
-  deleteScriptResult: (id: number) => Promise<void>
-  getScriptResultsByScriptId: (ScriptId: number) => ScriptResult[]
+interface ScriptBlockResultState {
+  data: ScriptBlockResult[]
+  setData: (data: ScriptBlockResult[]) => void
+  createScriptBlockResult: (
+    scriptResultData: Omit<ScriptBlockResult, 'id' | 'createdAt'>
+  ) => Promise<void>
+  updateScriptBlockResult: (
+    id: number,
+    scriptBlockResultData: Partial<ScriptBlockResult>
+  ) => Promise<void>
+  deleteScriptBlockResult: (id: number) => Promise<void>
+  getScriptBlockResultsByScriptId: (scriptId: number) => ScriptBlockResult[]
+  getScriptBlockResultsByScriptBlockId: (scriptBlockId: number) => ScriptBlockResult[]
 }
 
-export const useScriptResultStore = createSyncedStore<ScriptResult, ScriptResultState>(
-  'ScriptResults',
-  (set, get) => ({
-    data: [],
-    setData: (data) => set({ data }),
-    createScriptResult: async (scriptResultData) => {
-      await window.api.storage.create('ScriptResults', {
-        ...scriptResultData,
-        createdAt: new Date().toISOString()
-      })
-    },
-    updateScriptResult: async (id, scriptResultData) => {
-      await window.api.storage.update('ScriptResults', id, scriptResultData)
-    },
-    deleteScriptResult: async (id) => {
-      await window.api.storage.delete('ScriptResults', id)
-    },
-    getScriptResultsByScriptId: (scriptId) => {
-      return get().data.filter((result) => result.scriptId === scriptId)
-    }
-  })
-)
+export const useScriptBlockResultStore = createSyncedStore<
+  ScriptBlockResult,
+  ScriptBlockResultState
+>('ScriptBlockResults', (set, get) => ({
+  data: [],
+  setData: (data) => set({ data }),
+  createScriptBlockResult: async (scriptResultData) => {
+    await window.api.storage.create('ScriptBlockResults', {
+      ...scriptResultData,
+      createdAt: new Date().toISOString()
+    })
+  },
+  updateScriptBlockResult: async (id, scriptResultData) => {
+    await window.api.storage.update('ScriptBlockResults', id, scriptResultData)
+  },
+  deleteScriptBlockResult: async (id) => {
+    await window.api.storage.delete('ScriptBlockResults', id)
+  },
+  getScriptBlockResultsByScriptId: (scriptId) => {
+    return get().data.filter((result) => result.scriptId === scriptId)
+  },
+  getScriptBlockResultsByScriptBlockId: (scriptBlockId) => {
+    return get().data.filter((result) => result.scriptBlockId === scriptBlockId)
+  }
+}))

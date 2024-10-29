@@ -12,7 +12,7 @@ interface ScriptBlockState {
 
 export const useScriptBlockStore = createSyncedStore<ScriptBlock, ScriptBlockState>(
   'ScriptBlocks',
-  (set) => ({
+  (set, get) => ({
     data: [],
     setData: (data) => set({ data }),
     createScriptBlock: async (scriptBlockData) => {
@@ -37,8 +37,7 @@ export const useScriptBlockStore = createSyncedStore<ScriptBlock, ScriptBlockSta
       return (await window.api.storage.read('ScriptBlocks', id)) as ScriptBlock
     },
     getScriptBlocksByScriptId: (scriptId) => {
-      return useScriptBlockStore
-        .getState()
+      return get()
         .data.filter((block: ScriptBlock) => block?.scriptId === scriptId)
         .sort((a, b) => a.blockOrder - b.blockOrder)
     }
