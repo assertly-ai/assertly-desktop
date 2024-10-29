@@ -11,6 +11,8 @@ const api = {
     read: (table: string, id: number) => ipcRenderer.invoke('db-read', table, id),
     update: (table: string, id: number, data: Record<string, unknown>) =>
       ipcRenderer.invoke('db-update', table, id, data),
+    updateMany: (table: string, ids: number[], data: Record<string, unknown>[]) =>
+      ipcRenderer.invoke('db-update-many', table, ids, data),
     delete: (table: string, id: number) => ipcRenderer.invoke('db-delete', table, id),
     list: (table: string, conditions?: Record<string, unknown>) =>
       ipcRenderer.invoke('db-list', table, conditions)

@@ -58,6 +58,15 @@ export class IpcHandler {
       }
     )
 
+    ipcMain.handle(
+      'db-update-many',
+      async (event, table: string, ids: number[], data: Record<string, unknown>[]) => {
+        const result = await this.storageManager.updateMany(table, ids, data)
+        event.sender.send('sync-data', table)
+        return result
+      }
+    )
+
     ipcMain.handle('db-delete', async (event, table: string, id: number) => {
       const result = await this.storageManager.delete(table, id)
       event.sender.send('sync-data', table)

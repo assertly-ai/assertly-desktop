@@ -112,6 +112,30 @@ export class StorageManager {
     stmt.run(values)
   }
 
+  updateMany(table: string, ids: number[], data: Record<string, unknown>[]): void {
+    if (!this.db) throw new Error('Database not initialized')
+    if (ids.length !== data.length) throw new Error('IDs and data length must match')
+
+    const queries = ids.map((id, index) => {
+      const record = data[index]
+      const setClause = Object.keys(record)
+        .map((key) => `${_.snakeCase(key)} = ?`)
+        .join(', ')
+      const values = [...Object.values(record), id]
+      const query = `UPDATE ${table} SET ${setClause} WHERE id = ?`
+      return { query, values }
+    })
+
+    const transaction = this.db.transaction(() => {
+      queries.forEach(({ query, values }) => {
+        const stmt = this.db?.prepare(query)
+        stmt?.run(values)
+      })
+    })
+
+    transaction()
+  }
+
   delete(table: string, id: number): void {
     if (!this.db) throw new Error('Database not initialized')
 
