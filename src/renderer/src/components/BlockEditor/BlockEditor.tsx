@@ -42,16 +42,6 @@ export function BlockEditor({ language, data }: PropType) {
       setEditorHeight(contentHeight)
     })
 
-    if (language === 'javascript') {
-      try {
-        if (data && data.code) {
-          editor.setValue(data.code)
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
-
     const initialLineCount = editor.getModel()?.getLineCount() || 1
     const lineHeight = editor.getOption(monaco.editor.EditorOption.lineHeight)
     const initialHeight = Math.min(Math.max(initialLineCount * lineHeight + 30, 100), maxHeight)
