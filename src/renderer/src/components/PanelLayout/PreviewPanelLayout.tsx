@@ -117,13 +117,13 @@ export const PreviewPanelLayout = ({
         defaultSize={initialSizes.rightPercent}
         className="min-h-0 ResizablePanel"
       >
-        <div className="h-full w-full">
+        <div className="h-screen w-full">
           {rightPanel || (
-            <div className="flex flex-col h-screen w-full p-2 pl-0 pt-0">
+            <div className="flex flex-col h-screen w-full p-1 pl-0 pt-0">
               <div className="flex items-center justify-start gap-2 h-12 py-1.5">
-                <div className="flex items-center justify-center gap-2 h-full rounded-md bg-white bg-opacity-15 px-4 pr-1 text-sm">
+                <div className="flex items-center justify-center gap-2 rounded-md bg-white bg-opacity-20 px-4 pr-1 text-sm">
                   {' '}
-                  <span className="text-white text-md text-opacity-80">Browser Tab</span>
+                  <span className="text-white text-md text-opacity-80">Browser</span>
                   <Button
                     variant={'default'}
                     size={'icon'}
@@ -133,13 +133,25 @@ export const PreviewPanelLayout = ({
                   </Button>
                 </div>
 
-                <Button
+                <div className="flex items-center justify-center gap-2 h-full rounded-md bg-white bg-opacity-5 px-4 text-sm">
+                  {' '}
+                  <span className="text-white text-md text-opacity-80">Console</span>
+                  {/* <Button
+                    variant={'default'}
+                    size={'icon'}
+                    className="text-white text-md text-opacity-30 hover:text-opacity-60"
+                  >
+                    <IoClose />
+                  </Button> */}
+                </div>
+
+                {/* <Button
                   variant={'default'}
                   size={'icon'}
                   className="text-white text-md text-opacity-30 hover:text-opacity-60"
                 >
                   <FiPlus />
-                </Button>
+                </Button> */}
                 <div className="flex flex-1 h-full window-drag-region"></div>
               </div>
               <div className="h-full w-full rounded-lg shadow-xl bg-white bg-opacity-10" />

@@ -106,3 +106,8 @@ body {
 .parameter-hints-widget {
   z-index: 1000;
 }
+
+.monaco-editor,
+.monaco-editor .overflow-guard {
+  border-radius: 0.5rem;
+}

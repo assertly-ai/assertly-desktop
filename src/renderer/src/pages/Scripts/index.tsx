@@ -6,7 +6,7 @@ export const Scripts = () => {
     <PanelLayout
       leftPanel={<ScriptList />}
       leftPanelConfig={{
-        defaultWidth: 300,
+        defaultWidth: 400,
         minWidth: 250,
         maxWidth: 400
       }}

@@ -9,7 +9,7 @@ export const ScriptBuilder = () => {
     <PreviewPanelLayout
       leftPanel={<ScriptBlocks scriptId={Number(scriptId)} />}
       leftPanelConfig={{
-        defaultWidth: 600,
+        defaultWidth: 700,
         minWidth: 400,
         maxWidth: 800
       }}
