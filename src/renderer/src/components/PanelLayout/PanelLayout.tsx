@@ -2,6 +2,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@component
 import { WindowControls } from '@renderer/components/WindowControls/WindowControls'
 import { useRef, useState } from 'react'
 import { ImperativePanelHandle } from 'react-resizable-panels'
+import { PanelSwitcher } from './PanelSwitcher'
 
 type PanelLayoutProps = {
   leftPanel: React.ReactNode
@@ -77,9 +78,10 @@ export const PanelLayout = ({
           <div className="">
             <WindowControls />
           </div>
-          <div className="flex flex-col overflow-y-scroll h-[calc(100vh-44px)]">
+          <div className="flex flex-col h-[calc(100vh-44px)] pb-2">
             <div className="overflow-hidden">{leftPanel}</div>
             <div className="flex flex-1 window-drag-region"></div>
+            <PanelSwitcher />
           </div>
         </div>
       </ResizablePanel>
