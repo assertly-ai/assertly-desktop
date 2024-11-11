@@ -99,7 +99,7 @@ export const ScriptList = () => {
       </div>
 
       <div className="flex flex-col h-full pr-0 py-1">
-        <ScrollArea className="relative">
+        <ScrollArea>
           <nav className="flex flex-col space-y-0.5 text-zinc-300 font-normal">
             {creatingNewScript && (
               <TooltipProvider>
