@@ -1,43 +1,51 @@
-import { useState } from 'react'
-import { usePanelStore } from '../../store/panelStore'
-import { RiDropdownList, RiListCheck2, RiTestTubeFill } from 'react-icons/ri'
+import { useEffect } from 'react'
+import { RiBox2Fill, RiQuillPenLine, RiSearchEyeLine } from 'react-icons/ri'
+import { useLocation, useNavigate } from 'react-router-dom'
+
+const PANELS = [
+  { id: 'explore', Icon: RiSearchEyeLine, path: '/explore' },
+  { id: 'scripts', Icon: RiQuillPenLine, path: '/scripts' },
+  { id: 'modules', Icon: RiBox2Fill, path: '/modules' }
+]
 
 export const PanelSwitcher = () => {
-  const { currentPanel, setCurrentPanel } = usePanelStore()
-  const [isHovered, setIsHovered] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const currentPath = location.pathname
 
-  const handlePanelSwitchClick = (panel: string) => {
-    setCurrentPanel(panel)
-  }
+  useEffect(() => {
+    const handlePanelScroll = (e: CustomEvent<{ direction: 'next' | 'prev' }>) => {
+      const currentIndex = PANELS.findIndex((panel) => panel.path === currentPath)
+
+      if (e.detail.direction === 'next' && currentIndex < PANELS.length - 1) {
+        navigate(PANELS[currentIndex + 1].path)
+      } else if (e.detail.direction === 'prev' && currentIndex > 0) {
+        navigate(PANELS[currentIndex - 1].path)
+      }
+    }
+
+    window.addEventListener('panel-scroll', handlePanelScroll as EventListener)
+
+    return () => {
+      window.removeEventListener('panel-scroll', handlePanelScroll as EventListener)
+    }
+  }, [navigate, currentPath])
 
   return (
-    <div
-      className="flex flex-row gap-10 justify-center p-4"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {['scripts', 'modules', 'exploratory'].map((panel, index) => {
-        const Icon = [RiDropdownList, RiListCheck2, RiTestTubeFill][index]
-        return (
-          <div
-            key={panel}
-            className={`p-1 rounded-sm transition-all duration-300 ${isHovered ? 'hover:bg-gray-700' : ''}`}
-          >
-            <Icon
-              className={`cursor-pointer transition-all duration-300 transform ${
-                isHovered
-                  ? currentPanel === panel
-                    ? 'text-white text-opacity-100 scale-110'
-                    : 'text-white text-opacity-40 scale-100'
-                  : currentPanel === panel
-                    ? 'text-white text-opacity-100 scale-80'
-                    : 'text-gray-500 scale-75'
-              }`}
-              onClick={() => handlePanelSwitchClick(panel)}
-            />
-          </div>
-        )
-      })}
+    <div className="flex gap-4 justify-center p-2.5">
+      {PANELS.map(({ id, Icon, path }) => (
+        <button
+          key={id}
+          onClick={() => navigate(path)}
+          className="p-2.5 rounded-md hover:bg-white/10"
+        >
+          <Icon
+            className={`transition-all duration-300 ${
+              currentPath === path ? 'text-white scale-125' : 'text-white/50 hover:text-white/40'
+            }`}
+          />
+        </button>
+      ))}
     </div>
   )
 }

@@ -2,7 +2,6 @@ import { Button } from '@components/ui/button'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
 import { WindowControls } from '@renderer/components/WindowControls/WindowControls'
 import { useEffect, useRef, useState } from 'react'
-import { FiPlus } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 

@@ -1,21 +1,20 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
 import { WindowControls } from '@renderer/components/WindowControls/WindowControls'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 import { PanelSwitcher } from './PanelSwitcher'
+import { Outlet } from 'react-router-dom'
 
 type PanelLayoutProps = {
-  leftPanel: React.ReactNode
-  rightPanel?: React.ReactNode
   leftPanelConfig?: {
     defaultWidth: number
     minWidth: number
     maxWidth: number
   }
+  rightPanel?: React.ReactNode
 }
 
 export const PanelLayout = ({
-  leftPanel,
   rightPanel,
   leftPanelConfig = {
     defaultWidth: 300,
@@ -25,6 +24,8 @@ export const PanelLayout = ({
 }: PanelLayoutProps) => {
   const leftPanelRef = useRef<ImperativePanelHandle>(null)
   const rightPanelRef = useRef<ImperativePanelHandle>(null)
+  const leftPanelContentRef = useRef<HTMLDivElement>(null)
+
   const [, setIsResizing] = useState(false)
 
   const getPercentages = (pixelWidth: number) => {
@@ -39,9 +40,7 @@ export const PanelLayout = ({
     return { leftPercent, rightPercent }
   }
 
-  const { leftPercent: initialLeftPercent, rightPercent: initialRightPercent } = getPercentages(
-    leftPanelConfig.defaultWidth
-  )
+  const { rightPercent: initialRightPercent } = getPercentages(leftPanelConfig.defaultWidth)
 
   const handlePanelResize = (sizes: number[]) => {
     const windowWidth = window.innerWidth
@@ -59,6 +58,62 @@ export const PanelLayout = ({
     }
   }
 
+  useEffect(() => {
+    const leftPanel = leftPanelContentRef.current
+    if (!leftPanel) return
+
+    let touchStartX = 0
+    let isScrolling = false
+    let scrollTimeout: NodeJS.Timeout
+
+    const handleWheel = (e: WheelEvent) => {
+      // Only handle horizontal scroll or when shift key is pressed
+      if (!e.shiftKey && Math.abs(e.deltaX) < Math.abs(e.deltaY)) return
+
+      e.preventDefault()
+
+      if (isScrolling) return
+
+      isScrolling = true
+      clearTimeout(scrollTimeout)
+
+      const direction = e.deltaX > 0 || e.deltaY > 0 ? 'next' : 'prev'
+      window.dispatchEvent(new CustomEvent('panel-scroll', { detail: { direction } }))
+
+      scrollTimeout = setTimeout(() => {
+        isScrolling = false
+      }, 500) // Debounce scroll events
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX = e.touches[0].clientX
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touchEndX = e.touches[0].clientX
+      const deltaX = touchStartX - touchEndX
+
+      if (Math.abs(deltaX) > 50) {
+        // Threshold for swipe
+        e.preventDefault()
+        const direction = deltaX > 0 ? 'next' : 'prev'
+        window.dispatchEvent(new CustomEvent('panel-scroll', { detail: { direction } }))
+        touchStartX = touchEndX
+      }
+    }
+
+    leftPanel.addEventListener('wheel', handleWheel, { passive: false })
+    leftPanel.addEventListener('touchstart', handleTouchStart)
+    leftPanel.addEventListener('touchmove', handleTouchMove)
+
+    return () => {
+      leftPanel.removeEventListener('wheel', handleWheel)
+      leftPanel.removeEventListener('touchstart', handleTouchStart)
+      leftPanel.removeEventListener('touchmove', handleTouchMove)
+      clearTimeout(scrollTimeout)
+    }
+  }, [])
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -66,20 +121,15 @@ export const PanelLayout = ({
       onLayout={handlePanelResize}
       style={{ minWidth: `${leftPanelConfig.minWidth + 100}px` }}
     >
-      <ResizablePanel
-        ref={leftPanelRef}
-        defaultSize={initialLeftPercent}
-        minSize={getPercentages(leftPanelConfig.minWidth).leftPercent}
-        maxSize={getPercentages(leftPanelConfig.maxWidth).leftPercent}
-        className="min-h-0 overflow-hidden"
-        style={{ minWidth: `${leftPanelConfig.minWidth}px` }}
-      >
+      <ResizablePanel>
         <div className="h-full w-full flex flex-col overflow-hidden">
           <div className="">
             <WindowControls />
           </div>
-          <div className="flex flex-col h-[calc(100vh-44px)] pb-2">
-            <div className="overflow-hidden">{leftPanel}</div>
+          <div ref={leftPanelContentRef} className="flex flex-col h-[calc(100vh-44px)] pb-2">
+            <div className="overflow-hidden">
+              <Outlet />
+            </div>
             <div className="flex flex-1 window-drag-region"></div>
             <PanelSwitcher />
           </div>
