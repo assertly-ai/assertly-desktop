@@ -5,7 +5,7 @@ import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 
 export class WindowManager {
-  private mainWindow: BrowserWindow | null = null
+  mainWindow: BrowserWindow | null = null
   previewWindow: WebContentsView | null = null
   private lastKnownPercentage: number = 80
 

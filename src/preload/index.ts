@@ -3,7 +3,8 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
-  executePlaywrightCode: (code: string) => ipcRenderer.invoke('execute-playwright-code', code),
+  executePlaywrightCode: (code: string, blockId: number) =>
+    ipcRenderer.invoke('execute-playwright-code', code, blockId),
   storage: {
     create: (table: string, data: Record<string, unknown>) =>
       ipcRenderer.invoke('db-create', table, data),

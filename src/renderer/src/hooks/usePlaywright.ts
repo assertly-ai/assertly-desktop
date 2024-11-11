@@ -3,10 +3,10 @@ import { useState } from 'react'
 export const usePlaywright = () => {
   const [isRunning, setIsRunning] = useState<boolean>(false)
 
-  const runPlaywrightCode = async (code: string) => {
+  const runPlaywrightCode = async (code: string, blockId: number) => {
     try {
       setIsRunning(true)
-      const result = (await window.api.executePlaywrightCode(code)) as {
+      const result = (await window.api.executePlaywrightCode(code, blockId)) as {
         success: boolean
         data?: unknown
         error?: string

@@ -4,7 +4,7 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: {
-      executePlaywrightCode: (code: string) => Promise<unknown>
+      executePlaywrightCode: (code: string, blockId: number) => Promise<unknown>
       storage: {
         create: (table: string, data: Record<string, unknown>) => Promise<number>
         read: (table: string, id: number) => Promise<unknown>

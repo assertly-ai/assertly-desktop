@@ -30,9 +30,9 @@ export class IpcHandler {
       this.windowManager.updatePreviewWindowBounds()
     })
 
-    ipcMain.handle('execute-playwright-code', async (_, code: string) => {
+    ipcMain.handle('execute-playwright-code', async (_, code: string, blockId: number) => {
       try {
-        const result = await this.browserManager.executePlaywrightCode(code)
+        const result = await this.browserManager.executePlaywrightCode(code, blockId)
         return { success: true, data: result }
       } catch (error: unknown) {
         return { success: false, error: error }
