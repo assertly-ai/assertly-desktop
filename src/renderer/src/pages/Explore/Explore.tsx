@@ -2,7 +2,7 @@ import { Button } from '@components/ui/button'
 import { ScrollArea } from '@components/ui/scroll-area'
 import { Textarea } from '@components/ui/textarea'
 import { useEffect, useRef, useState } from 'react'
-import { RiSendPlane2Line, RiSendPlaneFill } from 'react-icons/ri'
+import { RiSendPlane2Line } from 'react-icons/ri'
 
 type Message = {
   id: string
