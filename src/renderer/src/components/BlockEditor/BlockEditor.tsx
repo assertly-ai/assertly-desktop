@@ -6,7 +6,9 @@ import ScriptBlock from '@renderer/types/scriptBlock'
 import { useScriptBlockStore } from '@renderer/store/scriptBlockStore'
 import { PLAY_WRIGHT_DEFINITIONS } from '@renderer/lib/constants'
 
-export function BlockEditor({ language, data }: { language: string; data: ScriptBlock }) {
+type PropType = { language: string; data: ScriptBlock }
+
+export function BlockEditor({ language, data }: PropType) {
   const { updateScriptBlock } = useScriptBlockStore()
   const monacoRef = useRef<Monaco | null>(null)
   const editorWrapperRef = useRef(null)
@@ -22,16 +24,6 @@ export function BlockEditor({ language, data }: { language: string; data: Script
       const contentHeight = editor.getContentHeight()
       setEditorHeight(contentHeight)
     })
-
-    if (language === 'javascript') {
-      try {
-        if (data && data.code) {
-          editor.setValue(data.code)
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
 
     const initialHeight = editor.getContentHeight()
     setEditorHeight(initialHeight)

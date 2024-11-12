@@ -23,6 +23,15 @@ export const useScriptBlockStore = createSyncedStore<ScriptBlock, ScriptBlockSta
     },
     deleteScriptBlock: async (id) => {
       await window.api.storage.delete('ScriptBlocks', id)
+      const updatedBlocks = useScriptBlockStore
+        .getState()
+        .data.filter((block: ScriptBlock) => block?.id !== id)
+        .map((block: ScriptBlock, index: number) => ({
+          ...block,
+          blockOrder: index
+        }))
+      const ids = updatedBlocks.map((_) => _.id)
+      await window.api.storage.updateMany('ScriptBlocks', ids, updatedBlocks)
     },
     getScriptBlock: async (id) => {
       return (await window.api.storage.read('ScriptBlocks', id)) as ScriptBlock
