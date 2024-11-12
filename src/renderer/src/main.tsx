@@ -14,7 +14,7 @@ import { Explore } from './pages/Explore/Explore'
 const DEFAULT_PANEL_CONFIG = {
   defaultWidth: 400,
   minWidth: 250,
-  maxWidth: 400
+  maxWidth: 600
 }
 
 export const router = createBrowserRouter([

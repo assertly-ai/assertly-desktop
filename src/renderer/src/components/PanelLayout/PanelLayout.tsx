@@ -22,7 +22,7 @@ export const PanelLayout = ({
   leftPanelConfig = {
     defaultWidth: 300,
     minWidth: 250,
-    maxWidth: 400
+    maxWidth: 600
   },
   hasPreview = false
 }: PanelLayoutProps) => {
@@ -99,10 +99,9 @@ export const PanelLayout = ({
             <WindowControls />
           </div>
           <div className="flex flex-col overflow-y-scroll h-[calc(100vh-44px)]">
-            <div className="overflow-hidden">
+            <div className="overflow-hidden flex-1">
               <Outlet />
             </div>
-            <div className="flex flex-1 window-drag-region"></div>
             <PanelSwitcher />
           </div>
         </div>

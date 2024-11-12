@@ -1,3 +1,4 @@
+import { cn } from '@renderer/lib/utils'
 import { useEffect } from 'react'
 import { RiBox2Fill, RiQuillPenLine, RiSearchEyeLine } from 'react-icons/ri'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -32,12 +33,15 @@ export const PanelSwitcher = () => {
   }, [navigate, currentPath])
 
   return (
-    <div className="flex gap-4 justify-center p-2.5">
+    <div className="flex gap-4 justify-center p-2 m-2 rounded-md">
       {PANELS.map(({ id, Icon, path }) => (
         <button
           key={id}
           onClick={() => navigate(path)}
-          className="p-2.5 rounded-md hover:bg-white/10"
+          className={cn(
+            'p-2.5 rounded-md hover:bg-white/20',
+            currentPath === path && 'bg-white/10'
+          )}
         >
           <Icon
             className={`transition-all duration-300 ${
