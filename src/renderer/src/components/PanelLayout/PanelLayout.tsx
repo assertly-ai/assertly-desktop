@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 import { PanelSwitcher } from './PanelSwitcher'
 import { Outlet } from 'react-router-dom'
+import { Button } from '@components/ui/button'
+import { RiFileCopy2Line, RiShiningLine } from 'react-icons/ri'
 
 type PanelLayoutProps = {
   leftPanelConfig?: {
@@ -12,6 +14,7 @@ type PanelLayoutProps = {
     maxWidth: number
   }
   rightPanel?: React.ReactNode
+  hasPreview?: boolean
 }
 
 export const PanelLayout = ({
@@ -20,13 +23,25 @@ export const PanelLayout = ({
     defaultWidth: 300,
     minWidth: 250,
     maxWidth: 400
-  }
+  },
+  hasPreview = false
 }: PanelLayoutProps) => {
   const leftPanelRef = useRef<ImperativePanelHandle>(null)
   const rightPanelRef = useRef<ImperativePanelHandle>(null)
-  const leftPanelContentRef = useRef<HTMLDivElement>(null)
-
   const [, setIsResizing] = useState(false)
+
+  // Store the initial percentages in state
+  const [initialSizes] = useState(() => {
+    const windowWidth = window.innerWidth
+    const constrainedWidth = Math.max(
+      leftPanelConfig.minWidth,
+      Math.min(leftPanelConfig.maxWidth, leftPanelConfig.defaultWidth)
+    )
+    return {
+      leftPercent: Number(((constrainedWidth / windowWidth) * 100).toFixed(1)),
+      rightPercent: Number((((windowWidth - constrainedWidth) / windowWidth) * 100).toFixed(1))
+    }
+  })
 
   const getPercentages = (pixelWidth: number) => {
     const windowWidth = window.innerWidth
@@ -34,99 +49,56 @@ export const PanelLayout = ({
       leftPanelConfig.minWidth,
       Math.min(leftPanelConfig.maxWidth, pixelWidth)
     )
-    const availableWidth = Math.max(windowWidth, leftPanelConfig.minWidth + 100)
-    const leftPercent = Number(((constrainedWidth / availableWidth) * 100).toFixed(2))
-    const rightPercent = Number((100 - leftPercent).toFixed(2))
-    return { leftPercent, rightPercent }
+    return {
+      leftPercent: Number(((constrainedWidth / windowWidth) * 100).toFixed(1)),
+      rightPercent: Number((((windowWidth - constrainedWidth) / windowWidth) * 100).toFixed(1))
+    }
   }
 
-  const { rightPercent: initialRightPercent } = getPercentages(leftPanelConfig.defaultWidth)
-
   const handlePanelResize = (sizes: number[]) => {
-    const windowWidth = window.innerWidth
-    const leftPanelWidth = (windowWidth * sizes[0]) / 100
-
-    if (leftPanelWidth < leftPanelConfig.minWidth || leftPanelWidth > leftPanelConfig.maxWidth) {
-      const constrainedWidth = Math.max(
-        leftPanelConfig.minWidth,
-        Math.min(leftPanelConfig.maxWidth, leftPanelWidth)
-      )
-      const { leftPercent, rightPercent } = getPercentages(constrainedWidth)
-
-      if (leftPanelRef.current) leftPanelRef.current.resize(leftPercent)
-      if (rightPanelRef.current) rightPanelRef.current.resize(rightPercent)
-    }
+    if (!hasPreview) return
+    window.electron.ipcRenderer.send('panel-resized', sizes)
   }
 
   useEffect(() => {
-    const leftPanel = leftPanelContentRef.current
-    if (!leftPanel) return
-
-    let touchStartX = 0
-    let isScrolling = false
-    let scrollTimeout: NodeJS.Timeout
-
-    const handleWheel = (e: WheelEvent) => {
-      // Only handle horizontal scroll or when shift key is pressed
-      if (!e.shiftKey && Math.abs(e.deltaX) < Math.abs(e.deltaY)) return
-
-      e.preventDefault()
-
-      if (isScrolling) return
-
-      isScrolling = true
-      clearTimeout(scrollTimeout)
-
-      const direction = e.deltaX > 0 || e.deltaY > 0 ? 'next' : 'prev'
-      window.dispatchEvent(new CustomEvent('panel-scroll', { detail: { direction } }))
-
-      scrollTimeout = setTimeout(() => {
-        isScrolling = false
-      }, 500) // Debounce scroll events
+    if (hasPreview) {
+      window.electron.ipcRenderer.send('toggle-preview', true)
+      window.electron.ipcRenderer.send('panel-resized', [
+        initialSizes.leftPercent,
+        initialSizes.rightPercent
+      ])
     }
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartX = e.touches[0].clientX
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
-      const touchEndX = e.touches[0].clientX
-      const deltaX = touchStartX - touchEndX
-
-      if (Math.abs(deltaX) > 50) {
-        // Threshold for swipe
-        e.preventDefault()
-        const direction = deltaX > 0 ? 'next' : 'prev'
-        window.dispatchEvent(new CustomEvent('panel-scroll', { detail: { direction } }))
-        touchStartX = touchEndX
-      }
-    }
-
-    leftPanel.addEventListener('wheel', handleWheel, { passive: false })
-    leftPanel.addEventListener('touchstart', handleTouchStart)
-    leftPanel.addEventListener('touchmove', handleTouchMove)
 
     return () => {
-      leftPanel.removeEventListener('wheel', handleWheel)
-      leftPanel.removeEventListener('touchstart', handleTouchStart)
-      leftPanel.removeEventListener('touchmove', handleTouchMove)
-      clearTimeout(scrollTimeout)
+      if (hasPreview) {
+        window.electron.ipcRenderer.send('toggle-preview', false)
+      }
     }
-  }, [])
+  }, [hasPreview, initialSizes])
 
   return (
     <ResizablePanelGroup
       direction="horizontal"
       className="h-screen w-screen"
       onLayout={handlePanelResize}
-      style={{ minWidth: `${leftPanelConfig.minWidth + 100}px` }}
+      style={{ minWidth: `${leftPanelConfig.minWidth + 400}px` }}
     >
-      <ResizablePanel>
-        <div className="h-full w-full flex flex-col overflow-hidden">
-          <div className="">
+      <ResizablePanel
+        ref={leftPanelRef}
+        defaultSize={initialSizes.leftPercent}
+        minSize={getPercentages(leftPanelConfig.minWidth).leftPercent}
+        maxSize={getPercentages(leftPanelConfig.maxWidth).leftPercent}
+        className="min-h-0 ResizablePanel"
+        style={{
+          minWidth: `${leftPanelConfig.minWidth}px`,
+          maxWidth: `${leftPanelConfig.maxWidth}px`
+        }}
+      >
+        <div className="h-full w-full flex flex-col">
+          <div className="w-full">
             <WindowControls />
           </div>
-          <div ref={leftPanelContentRef} className="flex flex-col h-[calc(100vh-44px)] pb-2">
+          <div className="flex flex-col overflow-y-scroll h-[calc(100vh-44px)]">
             <div className="overflow-hidden">
               <Outlet />
             </div>
@@ -138,19 +110,43 @@ export const PanelLayout = ({
 
       <ResizableHandle
         withHandle
-        className="bg-transparent"
+        className="bg-transparent opacity-100"
         onDragging={(isDragging) => setIsResizing(isDragging)}
       />
 
       <ResizablePanel
         ref={rightPanelRef}
-        defaultSize={initialRightPercent}
-        className="min-h-0"
-        style={{ minWidth: '100px' }}
+        defaultSize={initialSizes.rightPercent}
+        className="min-h-0 ResizablePanel"
       >
-        <div className="h-full w-full">
+        <div className="h-screen w-full">
           {rightPanel || (
-            <div className="h-screen w-full p-2 pl-0">
+            <div className="flex flex-col h-screen w-full p-2 gap-1">
+              <div className="flex items-center justify-center mt-1">
+                <div className="flex flex-1 h-full items-center justify-between gap-2 rounded-md bg-white bg-opacity-10 text-sm mb-2">
+                  <div className="flex flex-1 items-center justify-start px-4">
+                    <span className="text-xs text-white/90 tracking-wide">about:blank</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1 pr-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 [&_svg]:size-3 text-white/90 hover:bg-white/20 hover:text-white"
+                      onClick={() => {}}
+                    >
+                      <RiFileCopy2Line />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 [&_svg]:size-3 text-white/90 hover:bg-white/20 hover:text-white"
+                      onClick={() => {}}
+                    >
+                      <RiShiningLine />
+                    </Button>
+                  </div>
+                </div>
+              </div>
               <div className="h-full w-full rounded-lg shadow-xl bg-white bg-opacity-10" />
             </div>
           )}

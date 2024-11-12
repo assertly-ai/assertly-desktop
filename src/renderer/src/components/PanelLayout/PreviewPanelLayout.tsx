@@ -2,7 +2,6 @@ import { Button } from '@components/ui/button'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
 import { WindowControls } from '@renderer/components/WindowControls/WindowControls'
 import { useEffect, useRef, useState } from 'react'
-import { IoClose } from 'react-icons/io5'
 import { RiFileCopy2Line, RiShiningLine } from 'react-icons/ri'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 
@@ -120,10 +119,10 @@ export const PreviewPanelLayout = ({
         <div className="h-screen w-full">
           {rightPanel || (
             <div className="flex flex-col h-screen w-full p-2 gap-1">
-              <div className="flex items-center justify-center h-9 pt-1">
-                <div className="flex flex-1 h-full items-center justify-between gap-2 rounded-md bg-white bg-opacity-10 text-sm -ml-2 mr-1 mb-2">
+              <div className="flex items-center justify-center mt-1">
+                <div className="flex flex-1 h-full items-center justify-between gap-2 rounded-md bg-white bg-opacity-10 text-sm mb-2">
                   <div className="flex flex-1 items-center justify-start px-4">
-                    <span className="text-xs text-white/90 tracking-wide">https://assertly.ai</span>
+                    <span className="text-xs text-white/90 tracking-wide">about:blank</span>
                   </div>
                   <div className="flex items-center justify-center gap-1 pr-2">
                     <Button

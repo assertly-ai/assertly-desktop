@@ -131,9 +131,9 @@ export class WindowManager {
     const { width, height } = this.mainWindow.getBounds()
     const desiredWidth = 1512
     const desiredHeight = 982
-    const MIN_LEFT_PANEL_WIDTH = 400 // Match your leftPanelConfig.minWidth
+    const MIN_LEFT_PANEL_WIDTH = 250 // Match your leftPanelConfig.minWidth
     const MAX_LEFT_PANEL_WIDTH = 800 // Match your leftPanelConfig.maxWidth
-    const HANDLE_WIDTH = 8 // Width of the resize handle
+    const HANDLE_WIDTH = 10 // Width of the resize handle
 
     // Calculate left panel width based on percentage, constrained by min/max
     const leftPanelWidth = Math.min(

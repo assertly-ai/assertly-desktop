@@ -24,7 +24,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <PanelLayout leftPanelConfig={DEFAULT_PANEL_CONFIG} />,
+        element: <PanelLayout leftPanelConfig={DEFAULT_PANEL_CONFIG} hasPreview={true} />,
         children: [
           {
             path: '',
