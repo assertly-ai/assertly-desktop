@@ -26,7 +26,7 @@ export const WindowControls: React.FC = () => {
       >
         <RiSettingsLine />
       </Button>
-      <div className="flex items-center justify-center px-1.5 pr-1 py-1 text-zinc-700">
+      <div className="flex items-center justify-center px-1.5 py-1 text-zinc-700">
         <Button
           variant="default"
           size="icon"

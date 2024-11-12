@@ -29,7 +29,7 @@ const ResizableHandle = ({
     {...props}
   >
     {withHandle && (
-      <div className="z-10 flex h-screen w-[1px] items-end justify-end rounded-sm hover:bg-white hover:bg-opacity-5"></div>
+      <div className="z-10 flex h-screen w-[1px] items-end justify-end rounded-sm bg-white bg-opacity-5"></div>
     )}
   </ResizablePrimitive.PanelResizeHandle>
 )

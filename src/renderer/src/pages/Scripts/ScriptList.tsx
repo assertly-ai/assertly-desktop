@@ -47,8 +47,8 @@ export const ScriptList = () => {
 
   return (
     <>
-      <div className="flex items-center px-3 pr-0 py-1">
-        <div className="flex justify-start items-center gap-1 flex-1 bg-white bg-opacity-[0.1] rounded-xl focus-visible:ring-0 focus-within:border-white border border-transparent border-opacity-5 focus-within:border-opacity-10  px-3 py-0.5">
+      <div className="flex items-center px-3 py-1">
+        <div className="flex justify-start items-center gap-1 flex-1 bg-white bg-opacity-[0.1] rounded-xl focus-visible:ring-0 focus-within:border-white border border-transparent focus-within:border-opacity-10  px-3 py-0.5">
           <span className="text-white text-opacity-20 text-sm">
             <RiSearch2Line />
           </span>
@@ -59,7 +59,7 @@ export const ScriptList = () => {
         </div>
       </div>
 
-      <div className="flex justify-start items-center px-4 pr-0 py-3 text-white text-opacity-40">
+      <div className="flex justify-start items-center px-4 py-4 text-white text-opacity-40">
         <div className="flex flex-1 gap-2 justify-start items-center">
           <RiQuillPenLine />
           <span className="text-md font-medium text-white text-opacity-40">Scripts</span>
@@ -72,7 +72,7 @@ export const ScriptList = () => {
                   variant={'default'}
                   size={'icon'}
                   disabled={creatingNewScript}
-                  className="w-8 h-8 flex items-center shadow-none justify-center p-0 rounded-md transition text-white text-opacity-30 hover:text-opacity-60 border-none"
+                  className="w-6 h-6 flex items-center shadow-none justify-center p-0 rounded-md transition text-white text-opacity-30 hover:text-opacity-60 border-none"
                   onClick={() => {
                     if (!creatingNewScript) {
                       setCreatingNewScript(true)
@@ -88,7 +88,6 @@ export const ScriptList = () => {
               <TooltipContent
                 side="left"
                 align="center"
-                sideOffset={-4}
                 className="bg-[#1a1a1a] text-[10px] rounded-md p-2"
               >
                 <p className="text-white">Start a new Script</p>
@@ -98,14 +97,14 @@ export const ScriptList = () => {
         </div>
       </div>
 
-      <div className="flex flex-col h-full pr-0 py-1">
+      <div className="flex flex-col h-full py-1">
         <ScrollArea>
           <nav className="flex flex-col space-y-0.5 text-zinc-300 font-normal">
             {creatingNewScript && (
               <TooltipProvider>
                 <Tooltip open={showErrorTooltip}>
                   <TooltipTrigger asChild>
-                    <div className="bg-transparent flex justify-between items-center mx-2 mr-1 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition">
+                    <div className="bg-transparent flex justify-between items-center mx-2 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition">
                       <div className="flex justify-start items-center gap-2.5 w-full shadow-none p-2 text-zinc-300 text-opacity-90 font-normal text-sm">
                         <div className="rounded-md bg-white bg-opacity-5 p-1.5">
                           <IoDocumentTextOutline />
@@ -142,7 +141,7 @@ export const ScriptList = () => {
             {scripts.reverse().map((script: Script) => (
               <div
                 key={script.id}
-                className="bg-transparent flex justify-between items-center mx-2 mr-1 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition"
+                className="bg-transparent flex justify-between items-center mx-2 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition"
                 onMouseEnter={() => setHoveredScriptId(script.id)}
                 onMouseLeave={() => setHoveredScriptId(null)}
               >
