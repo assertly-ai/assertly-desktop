@@ -2,9 +2,9 @@ import { Input } from '@components/ui/input'
 
 export const APIKeys = () => {
   return (
-    <div className="p-10 rounded-lg shadow-lg">
+    <div className="p-10">
       <div className="w-full flex justify-start mb-6">
-        <span className="text-2xl font-bold text-neutral-200">API Keys</span>
+        <span className="text-xl font-bold text-neutral-300">API Keys</span>
       </div>
       <div className="space-y-4">
         <div>

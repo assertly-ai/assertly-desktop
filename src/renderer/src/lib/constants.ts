@@ -1,4 +1,4 @@
-import { RiAiGenerate, RiFileCodeLine, RiKey2Fill, RiSettings3Line } from 'react-icons/ri'
+import { RiAiGenerate, RiEdit2Fill, RiKey2Fill, RiSettings3Line } from 'react-icons/ri'
 
 export const DEMO_CODE = `// Playwright test code
 // The 'page' object is available with autocomplete
@@ -143,7 +143,7 @@ export const settingsSectionsList = [
   },
   {
     title: 'Editor',
-    icon: RiFileCodeLine,
+    icon: RiEdit2Fill,
     settings: [
       {
         title: 'Theme',

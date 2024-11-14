@@ -63,13 +63,13 @@ export const router = createBrowserRouter([
         element: <Settings />,
         children: [
           {
+            path: '',
+            element: <Navigate to={'/settings/ai/api-keys'} />
+          },
+          {
             path: 'ai',
             element: <AISettings />,
             children: [
-              {
-                path: '',
-                element: <Navigate to={'/api-keys'} />
-              },
               {
                 path: 'api-keys',
                 element: <APIKeys />
@@ -80,10 +80,6 @@ export const router = createBrowserRouter([
             path: 'editor',
             element: <EditorSettings />,
             children: [
-              {
-                path: '',
-                element: <Navigate to={'/theme'} />
-              },
               {
                 path: 'theme',
                 element: <Theme />
