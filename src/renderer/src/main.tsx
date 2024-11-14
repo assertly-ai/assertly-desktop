@@ -11,7 +11,11 @@ import { ScriptList } from './pages/Scripts/ScriptList'
 import { ScriptModules } from './pages/ScriptModules/ScriptModules'
 import { Explore } from './pages/Explore/Explore'
 import { ScriptModuleBuilder } from './pages/ScriptModules/ScriptModuleBuilder'
-import { Settings } from './pages/Settings/Settings'
+import { Settings } from './pages/Settings'
+import { AISettings } from './pages/Settings/AISettings'
+import { APIKeys } from './pages/Settings/AISettings/APIKeys'
+import { EditorSettings } from './pages/Settings/EditorSettings'
+import { Theme } from './pages/Settings/EditorSettings/Theme'
 
 const DEFAULT_PANEL_CONFIG = {
   defaultWidth: 600,
@@ -56,7 +60,37 @@ export const router = createBrowserRouter([
       },
       {
         path: 'settings',
-        element: <Settings />
+        element: <Settings />,
+        children: [
+          {
+            path: 'ai',
+            element: <AISettings />,
+            children: [
+              {
+                path: '',
+                element: <Navigate to={'/api-keys'} />
+              },
+              {
+                path: 'api-keys',
+                element: <APIKeys />
+              }
+            ]
+          },
+          {
+            path: 'editor',
+            element: <EditorSettings />,
+            children: [
+              {
+                path: '',
+                element: <Navigate to={'/theme'} />
+              },
+              {
+                path: 'theme',
+                element: <Theme />
+              }
+            ]
+          }
+        ]
       }
     ]
   }

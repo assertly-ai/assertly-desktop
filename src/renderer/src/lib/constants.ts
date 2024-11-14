@@ -1,9 +1,10 @@
+import { RiAiGenerate, RiFileCodeLine, RiKey2Fill, RiSettings3Line } from 'react-icons/ri'
+
 export const DEMO_CODE = `// Playwright test code
 // The 'page' object is available with autocomplete
 await page.goto('https://example.com');
 // Try typing 'page.' to see autocomplete suggestions
 `
-
 export const PLAY_WRIGHT_DEFINITIONS: string = `type Unboxed<T> = T extends Promise<infer U> ? U : T;
 
 declare namespace playwright {
@@ -128,3 +129,27 @@ declare namespace playwright {
 
 declare const page: playwright.Page;
 `
+export const settingsSectionsList = [
+  {
+    title: 'AI Setting',
+    icon: RiAiGenerate,
+    settings: [
+      {
+        title: 'API Keys',
+        icon: RiKey2Fill,
+        url: '/settings/ai/api-keys'
+      }
+    ]
+  },
+  {
+    title: 'Editor',
+    icon: RiFileCodeLine,
+    settings: [
+      {
+        title: 'Theme',
+        icon: RiSettings3Line,
+        url: '/settings/editor/theme'
+      }
+    ]
+  }
+]
