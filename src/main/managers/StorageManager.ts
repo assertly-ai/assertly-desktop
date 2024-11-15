@@ -95,6 +95,16 @@ export class StorageManager {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (script_block_id) REFERENCES ScriptBlocks(id) ON DELETE CASCADE
       );
+
+      CREATE TABLE IF NOT EXISTS APIKeys (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        api_key TEXT,
+        user_id INTEGER,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+      );
+
     `)
   }
 
