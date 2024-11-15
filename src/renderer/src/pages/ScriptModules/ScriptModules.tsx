@@ -9,7 +9,7 @@ import { useState } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import { FiEdit3, FiPlus } from 'react-icons/fi'
 import { IoDocumentTextOutline } from 'react-icons/io5'
-import { RiBox2Fill, RiQuillPenLine } from 'react-icons/ri'
+import { RiBox2Fill } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 
 export const ScriptModules = () => {
