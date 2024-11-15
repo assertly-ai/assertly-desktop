@@ -1,9 +1,10 @@
 import { Outlet } from 'react-router-dom'
+import { Sidebar } from './components/Sidebar'
 
 const AppLayout = () => {
   return (
     <>
-      <svg className="fixed -z-10 opacity-80 hidden">
+      <svg className="fixed opacity-80 hidden -z-10">
         <filter id="noise">
           <feTurbulence
             type="fractalNoise"
@@ -16,14 +17,17 @@ const AppLayout = () => {
       </svg>
 
       <div className="w-screen h-screen backdrop-blur-lg">
-        <div className="absolute inset-0 -z-5">
+        <div className="absolute inset-0 -z-10">
           <div
             className="absolute inset-0 bg-white"
             style={{ filter: 'url(#noise)', opacity: '0.15' }}
           />
         </div>
-        <div className="relative z-10">
-          <Outlet />
+        <div className="flex z-10">
+          <Sidebar />
+          <div className="flex flex-1 w-full">
+            <Outlet />
+          </div>
         </div>
       </div>
     </>
