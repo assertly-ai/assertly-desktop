@@ -12,10 +12,10 @@ import { ScriptModules } from './pages/ScriptModules/ScriptModules'
 import { Explore } from './pages/Explore/Explore'
 import { ScriptModuleBuilder } from './pages/ScriptModules/ScriptModuleBuilder'
 import { Settings } from './pages/Settings'
-import { AISettings } from './pages/Settings/AISettings'
-import { APIKeys } from './pages/Settings/AISettings/APIKeys'
-import { EditorSettings } from './pages/Settings/EditorSettings'
-import { Theme } from './pages/Settings/EditorSettings/Theme'
+import { APIKeys } from './pages/Settings/SettingsContent/AISettings/APIKeys'
+import { Theme } from './pages/Settings/SettingsContent/EditorSettings/Theme'
+import { SettingsContent } from './pages/Settings/SettingsContent'
+import { RiAiGenerate, RiEdit2Fill } from 'react-icons/ri'
 
 const DEFAULT_PANEL_CONFIG = {
   defaultWidth: 600,
@@ -64,11 +64,11 @@ export const router = createBrowserRouter([
         children: [
           {
             path: '',
-            element: <Navigate to={'/settings/ai/api-keys'} />
+            element: <h1>Settings Home</h1>
           },
           {
             path: 'ai',
-            element: <AISettings />,
+            element: <SettingsContent title={'AI Settings'} icon={RiAiGenerate} />,
             children: [
               {
                 path: 'api-keys',
@@ -78,7 +78,7 @@ export const router = createBrowserRouter([
           },
           {
             path: 'editor',
-            element: <EditorSettings />,
+            element: <SettingsContent title={'Editor Settings'} icon={RiEdit2Fill} />,
             children: [
               {
                 path: 'theme',

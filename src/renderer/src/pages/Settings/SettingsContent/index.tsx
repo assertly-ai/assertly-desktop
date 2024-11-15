@@ -1,12 +1,16 @@
 import { Separator } from '@components/ui/separator'
 import { SettingsHeader } from '@renderer/components/SettingsHeader'
-import { RiEdit2Fill } from 'react-icons/ri'
+import { IconType } from 'react-icons'
 import { Outlet } from 'react-router-dom'
 
-export const EditorSettings = () => {
+interface PropType {
+  title: string
+  icon: IconType
+}
+export const SettingsContent = ({ title, icon }: PropType) => {
   return (
     <div className="bg-opacity-30 overflow-y-scroll w-full">
-      <SettingsHeader title="Editor Settings" icon={RiEdit2Fill} />
+      <SettingsHeader title={title} icon={icon} />
       <Separator className="opacity-5" />
       <Outlet />
     </div>

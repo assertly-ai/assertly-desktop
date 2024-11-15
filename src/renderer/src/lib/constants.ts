@@ -142,7 +142,7 @@ export const settingsSectionsList = [
     ]
   },
   {
-    title: 'Editor',
+    title: 'Editor Settings',
     icon: RiEdit2Fill,
     settings: [
       {

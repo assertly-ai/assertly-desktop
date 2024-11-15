@@ -2,7 +2,7 @@ import { WindowControls } from '@renderer/components/WindowControls/WindowContro
 import { SettingSection } from './SettingSection'
 import { settingsSectionsList } from '@renderer/lib/constants'
 
-export const SettingsLeftPanel = () => {
+export const SettingsSidebar = () => {
   return (
     <div className="bg-opacity-100 text-white w-64 h-full flex flex-col pt-20 pb-2 overflow-y-scroll">
       <WindowControls />
