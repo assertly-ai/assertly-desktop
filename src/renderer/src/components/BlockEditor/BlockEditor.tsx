@@ -5,14 +5,23 @@ import * as monaco from 'monaco-editor'
 import ScriptBlock from '@renderer/types/scriptBlock'
 import { useScriptBlockStore } from '@renderer/store/scriptBlockStore'
 import { PLAY_WRIGHT_DEFINITIONS } from '@renderer/lib/constants'
+import ScriptModuleBlock from '@renderer/types/scriptModuleBlock'
+import { useScriptModuleBlockStore } from '@renderer/store/scriptModuleBlockStore'
 
-type PropType = { language: string; data: ScriptBlock }
+type PropType = { language: string; data: ScriptBlock | ScriptModuleBlock }
 
 export function BlockEditor({ language, data }: PropType) {
   const { updateScriptBlock } = useScriptBlockStore()
+  const { updateScriptModuleBlock } = useScriptModuleBlockStore()
   const monacoRef = useRef<Monaco | null>(null)
   const editorWrapperRef = useRef(null)
   const [editorHeight, setEditorHeight] = useState<number>(100)
+
+  const handleChange = (value: string | undefined) => {
+    const updateBlock = 'scriptId' in data ? updateScriptBlock : updateScriptModuleBlock
+    const key = language === 'javascript' ? 'code' : 'instruction'
+    updateBlock(data.id, { [key]: value })
+  }
 
   const handleEditorDidMount = async (
     editor: monaco.editor.IStandaloneCodeEditor,
@@ -63,10 +72,7 @@ export function BlockEditor({ language, data }: PropType) {
           height={`${editorHeight}px`}
           theme="vs-dark"
           defaultLanguage={language}
-          onChange={(value) => {
-            if (language === 'javascript') updateScriptBlock(data.id, { code: value })
-            else updateScriptBlock(data.id, { instruction: value })
-          }}
+          onChange={handleChange}
           onMount={handleEditorDidMount}
           loading={<LoaderCircle />}
           className="overflow-visible rounded-lg"

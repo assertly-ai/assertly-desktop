@@ -48,6 +48,30 @@ export class StorageManager {
         FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
       );
 
+      CREATE TABLE IF NOT EXISTS ScriptModules (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        description TEXT,
+        summary TEXT,
+        user_id INTEGER,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+      );
+
+      CREATE TABLE IF NOT EXISTS ScriptModuleBlocks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        code TEXT,
+        instruction TEXT,
+        block_order INTEGER,
+        user_id INTEGER,
+        script_module_id INTEGER,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (script_module_id) REFERENCES ScriptModules(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+      );
+
       CREATE TABLE IF NOT EXISTS ScriptBlocks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         code TEXT,

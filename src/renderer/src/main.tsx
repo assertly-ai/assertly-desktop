@@ -10,6 +10,7 @@ import { PanelLayout } from './components/PanelLayout/PanelLayout'
 import { ScriptList } from './pages/Scripts/ScriptList'
 import { ScriptModules } from './pages/ScriptModules/ScriptModules'
 import { Explore } from './pages/Explore/Explore'
+import { ScriptModuleBuilder } from './pages/ScriptModules/ScriptModuleBuilder'
 
 const DEFAULT_PANEL_CONFIG = {
   defaultWidth: 400,
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
       {
         path: 'scripts/:scriptId',
         element: <ScriptBuilder />
+      },
+      {
+        path: 'modules/:scriptModuleId',
+        element: <ScriptModuleBuilder />
       }
     ]
   }
