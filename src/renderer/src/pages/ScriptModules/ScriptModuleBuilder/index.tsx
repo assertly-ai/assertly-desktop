@@ -1,15 +1,15 @@
 import { PreviewPanelLayout } from '@renderer/components/PanelLayout/PreviewPanelLayout'
 import { useParams } from 'react-router-dom'
-import { ScriptModuleBlock } from './ScriptModuleBlocks'
+import { ModuleBlocks } from './ModuleBlocks'
 
 export const ScriptModuleBuilder = () => {
   const { scriptModuleId } = useParams<{ scriptModuleId: string }>()
 
   return scriptModuleId ? (
     <PreviewPanelLayout
-      leftPanel={<ScriptModuleBlock scriptModuleId={Number(scriptModuleId)} />}
+      leftPanel={<ModuleBlocks scriptModuleId={Number(scriptModuleId)} />}
       leftPanelConfig={{
-        defaultWidth: 700,
+        defaultWidth: 600,
         minWidth: 400,
         maxWidth: 800
       }}

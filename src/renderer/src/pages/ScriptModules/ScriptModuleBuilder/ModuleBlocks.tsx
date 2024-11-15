@@ -8,10 +8,11 @@ import { ModuleBlock } from './ModuleBlock'
 
 type PropType = { scriptModuleId: number }
 
-export const ScriptModuleBlock = ({ scriptModuleId }: PropType) => {
+export const ModuleBlocks = ({ scriptModuleId }: PropType) => {
   const { createScriptModuleBlock, getScriptModuleBlocksByModuleId } = useScriptModuleBlockStore()
-  const scriptModuleBlocks = getScriptModuleBlocksByModuleId(scriptModuleId)
+  const moduleBlocks = getScriptModuleBlocksByModuleId(scriptModuleId)
   const [blockOrder, setBlockOrder] = useState<number>(0)
+
   const handleAddNewCodeBlock = () => {
     createScriptModuleBlock({
       code: '',
@@ -20,10 +21,12 @@ export const ScriptModuleBlock = ({ scriptModuleId }: PropType) => {
       blockOrder
     })
   }
+
   useEffect(() => {
-    setBlockOrder(scriptModuleBlocks.length)
-    sortBy(scriptModuleBlocks, [blockOrder])
-  }, [scriptModuleBlocks])
+    setBlockOrder(moduleBlocks.length)
+    sortBy(moduleBlocks, [blockOrder])
+  }, [moduleBlocks])
+
   return (
     <div className="w-full">
       <div className="flex justify-start items-center px-5 pr-2 py-2 text-white text-opacity-40">
@@ -58,7 +61,7 @@ export const ScriptModuleBlock = ({ scriptModuleId }: PropType) => {
         </div>
       </div>
       <div className="w-full">
-        {scriptModuleBlocks?.map((block) => <ModuleBlock key={block?.id} block={block} />)}
+        {moduleBlocks?.map((block) => <ModuleBlock key={block?.id} block={block} />)}
       </div>
     </div>
   )

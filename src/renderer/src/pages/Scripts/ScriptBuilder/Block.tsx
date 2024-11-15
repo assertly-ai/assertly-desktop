@@ -162,7 +162,7 @@ export const Block = ({ block }: PropType) => {
         </div>
       )}
 
-      <div className="flex flex-1 window-drag-region"></div>
+      <div className="flex flex-1"></div>
     </div>
   )
 }

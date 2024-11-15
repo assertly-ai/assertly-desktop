@@ -80,12 +80,6 @@ body {
   -webkit-app-region: drag;
 }
 
-.window-drag-region button,
-.window-drag-region input,
-.window-drag-region a,
-.window-drag-region [role='button'] {
-  -webkit-app-region: no-drag;
-}
 * {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -110,4 +104,22 @@ body {
 .monaco-editor,
 .monaco-editor .overflow-guard {
   border-radius: 0.5rem;
+}
+
+button,
+[role='button'],
+input,
+select,
+a {
+  -webkit-app-region: no-drag !important;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

@@ -29,7 +29,7 @@ export class WindowManager {
       ...(process.platform === 'darwin'
         ? {
             titleBarStyle: 'hidden',
-            trafficLightPosition: { x: 14, y: 14 },
+            trafficLightPosition: { x: 16, y: 16 },
             vibrancy: 'fullscreen-ui'
           }
         : {
@@ -119,7 +119,6 @@ export class WindowManager {
   updatePreviewWindowBounds(rightPanelPercentage?: number): void {
     if (!this.previewWindow || !this.mainWindow) return
 
-    // If we receive an array, use the second value (right panel percentage)
     if (Array.isArray(rightPanelPercentage)) {
       rightPanelPercentage = rightPanelPercentage[1]
     }
@@ -131,34 +130,33 @@ export class WindowManager {
     const { width, height } = this.mainWindow.getBounds()
     const desiredWidth = 1512
     const desiredHeight = 982
-    const MIN_LEFT_PANEL_WIDTH = 250 // Match your leftPanelConfig.minWidth
-    const MAX_LEFT_PANEL_WIDTH = 800 // Match your leftPanelConfig.maxWidth
-    const HANDLE_WIDTH = 10 // Width of the resize handle
+    const MIN_LEFT_PANEL_WIDTH = 400
+    const MAX_LEFT_PANEL_WIDTH = 800
+    const HANDLE_WIDTH = 10
+    const SIDE_NAV_WIDTH = 86
 
-    // Calculate left panel width based on percentage, constrained by min/max
+    const adjustedTotalWidth = width - SIDE_NAV_WIDTH
+
     const leftPanelWidth = Math.min(
       MAX_LEFT_PANEL_WIDTH,
-      Math.max(MIN_LEFT_PANEL_WIDTH, Math.floor((width * (100 - this.lastKnownPercentage)) / 100))
+      Math.max(
+        MIN_LEFT_PANEL_WIDTH,
+        Math.floor((adjustedTotalWidth * (100 - this.lastKnownPercentage)) / 100)
+      )
     )
 
-    // Calculate available width for preview
-    const availablePreviewWidth = Math.max(0, width - leftPanelWidth - HANDLE_WIDTH)
-
-    // Calculate scale factor to fit preview within available space
+    const availablePreviewWidth = adjustedTotalWidth - leftPanelWidth - HANDLE_WIDTH
     const scaleFactor = Math.min(
       (availablePreviewWidth - 16) / desiredWidth,
       (height - 16) / desiredHeight
     )
-
-    // Set preview bounds
     this.previewWindow.setBounds({
-      x: leftPanelWidth + HANDLE_WIDTH,
+      x: SIDE_NAV_WIDTH + leftPanelWidth + HANDLE_WIDTH,
       y: 8 + 40,
       width: Math.max(0, availablePreviewWidth - 8),
       height: height - 16 - 40
     })
 
-    // Apply zoom factor to maintain aspect ratio
     this.previewWindow.webContents.setZoomFactor(scaleFactor)
   }
 
@@ -170,7 +168,6 @@ export class WindowManager {
     view.webContents.on('context-menu', (_event, params) => {
       const menu = new Menu()
 
-      // Add items only if there's text selected
       if (params.selectionText) {
         menu.append(
           new MenuItem({

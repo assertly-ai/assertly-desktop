@@ -1,19 +1,20 @@
 import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
-import { ScrollArea } from '@components/ui/scroll-area'
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
+import { Table, TableBody, TableCell, TableRow } from '@components/ui/table'
 import { useScriptStore } from '@renderer/store/scriptStore'
 import Script from '@renderer/types/script'
 import { useState } from 'react'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import { FiEdit3, FiPlus } from 'react-icons/fi'
 import { IoDocumentTextOutline } from 'react-icons/io5'
-import { RiQuillPenLine, RiSearch2Line } from 'react-icons/ri'
+import { RiQuillPenLine } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 
 export const ScriptList = () => {
   const { data: scripts, createScript, deleteScript, updateScript } = useScriptStore()
-  const [hoveredScriptId, setHoveredScriptId] = useState<number | null>(null)
+  const [, setHoveredScriptId] = useState<number | null>(null)
   const [editableScriptId, setEditableScriptId] = useState<number | null>(null)
   const [newScriptName, setNewScriptName] = useState<string>('')
   const [creatingNewScript, setCreatingNewScript] = useState<boolean>(false)
@@ -46,154 +47,155 @@ export const ScriptList = () => {
   }
 
   return (
-    <>
-      <div className="flex items-center px-3 py-1">
-        <div className="flex justify-start items-center gap-1 flex-1 bg-white bg-opacity-[0.1] rounded-lg focus-visible:ring-0 focus-within:border-white border border-transparent focus-within:border-opacity-10  px-3 py-0.5">
-          <span className="text-white text-opacity-20 text-sm">
-            <RiSearch2Line />
-          </span>
-          <Input
-            placeholder="Search scripts"
-            className="text-white placeholder:text-md placeholder:text-white placeholder:text-opacity-20 placeholder:font-medium border-transparent rounded-lg focus-visible:ring-0 px-1.5"
-          />
-        </div>
-      </div>
-
-      <div className="flex justify-start items-center px-4 py-4 text-white text-opacity-40">
-        <div className="flex flex-1 gap-2 justify-start items-center">
-          <RiQuillPenLine />
-          <span className="text-md font-medium text-white text-opacity-40">Scripts</span>
-        </div>
-        <div className="flex justify-start items-center">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant={'default'}
-                  size={'icon'}
-                  disabled={creatingNewScript}
-                  className="w-6 h-6 flex items-center shadow-none justify-center p-0 rounded-md transition text-white text-opacity-30 hover:text-opacity-60 border-none"
-                  onClick={() => {
-                    if (!creatingNewScript) {
-                      setCreatingNewScript(true)
-                      setNewScriptName('')
-                    }
-                  }}
-                >
-                  <span className="text-lg font-semibold">
-                    <FiPlus />
-                  </span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="left"
-                align="center"
-                className="bg-[#1a1a1a] text-[10px] rounded-md p-2"
-              >
-                <p className="text-white">Start a new Script</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
-
-      <div className="flex flex-col h-full py-1">
-        <ScrollArea>
-          <nav className="flex flex-col space-y-0.5 text-zinc-300 font-normal">
-            {creatingNewScript && (
-              <TooltipProvider>
-                <Tooltip open={showErrorTooltip}>
-                  <TooltipTrigger asChild>
-                    <div className="bg-transparent flex justify-between items-center mx-2 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition">
-                      <div className="flex justify-start items-center gap-2.5 w-full shadow-none p-2 text-zinc-300 text-opacity-90 font-normal text-sm">
-                        <div className="rounded-md bg-white bg-opacity-5 p-1.5">
-                          <IoDocumentTextOutline />
-                        </div>
-                        <Input
-                          value={newScriptName}
-                          onChange={handleNameChange}
-                          onBlur={() => {
-                            setShowErrorTooltip(false)
-                            handleNewScriptSave()
-                            setCreatingNewScript(false)
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleNewScriptSave(true)
-                          }}
-                          autoFocus
-                          className="flex-1 text-zinc-300 rounded-none placeholder:text-white  placeholder:text-opacity-50 text-opacity-90 font-normal text-sm p-0 mx-2 h-full border-none focus:ring-0 focus:outline-none"
-                          placeholder="New Script Name"
-                          style={{ boxShadow: 'none' }} // Remove any default box shadow
-                        />
-                      </div>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="bottom"
-                    align="end"
-                    className="bg-[#1a1a1a80] text-[10px] text-white p-1 rounded-md"
-                  >
-                    Script name cannot be empty.
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-            {scripts.reverse().map((script: Script) => (
-              <div
-                key={script.id}
-                className="bg-transparent flex justify-between items-center mx-2 px-1 py-[0.2px] rounded-lg hover:bg-white hover:bg-opacity-10 hover:shadow-sm transition"
-                onMouseEnter={() => setHoveredScriptId(script.id)}
-                onMouseLeave={() => setHoveredScriptId(null)}
-              >
-                {editableScriptId === script.id ? (
-                  <div className="flex justify-start items-center gap-2.5 w-full shadow-none p-2 text-zinc-200 text-opacity-90 font-normal text-sm">
-                    <div className="rounded-md bg-white bg-opacity-5 p-1.5">
-                      <IoDocumentTextOutline />
-                    </div>
-                    <Input
-                      value={newScriptName}
-                      onChange={handleNameChange}
-                      onBlur={() => handleNameSave(script.id)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleNameSave(script.id)
-                      }}
-                      autoFocus
-                      className="flex-1 text-zinc-300 rounded-none placeholder:text-white placeholder:text-opacity-50 text-opacity-90 font-normal text-sm p-0 h-full border-none focus:ring-0 focus:outline-none"
-                      style={{ boxShadow: 'none' }} // Remove any default box shadow
-                    />
-                  </div>
-                ) : (
-                  <Link
-                    to={'/scripts/' + script.id}
-                    className="flex justify-start items-center gap-2.5 w-full shadow-none p-2 text-zinc-200 text-opacity-90 font-normal text-sm text-clip overflow-hidden whitespace-nowrap"
-                  >
-                    <div className="rounded-md bg-white bg-opacity-5 p-1.5">
-                      <IoDocumentTextOutline />
-                    </div>
-                    {script.name}
-                  </Link>
-                )}
-                {hoveredScriptId === script.id && (
-                  <span
-                    onClick={() => handleEditClick(script.id, script.name)}
-                    className="cursor-pointer hover:bg-white hover:bg-opacity-10 p-[6px] me-2 rounded"
-                  >
-                    <FiEdit3 className="text-sm" />
-                  </span>
-                )}
-                {hoveredScriptId === script.id && (
-                  <span
-                    onClick={() => deleteScript(script.id)}
-                    className="cursor-pointer hover:bg-white hover:bg-opacity-10 p-[6px] rounded"
-                  >
-                    <FaRegTrashAlt className="text-xs" />
-                  </span>
-                )}
+    <div className="h-full w-full">
+      <ResizablePanelGroup direction="horizontal" className="min-h-[calc(100vh-2rem)] rounded-lg">
+        <ResizablePanel defaultSize={60} minSize={40} maxSize={60} className="min-h-full">
+          {/* Left Section - Scripts List */}
+          <div className="flex flex-col gap-2 h-full p-2">
+            {/* Header Section */}
+            <div className="py-2 px-2 border-b border-white/5">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <RiQuillPenLine className="text-xl text-white/40" />
+                  <h1 className="text-lg font-semibold text-white/40">Scripts</h1>
+                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 p-0 text-white/40 hover:text-white/90 hover:bg-white/10 rounded-full [&_svg]:size-6"
+                        onClick={() => {
+                          if (!creatingNewScript) {
+                            setCreatingNewScript(true)
+                            setNewScriptName('')
+                          }
+                        }}
+                      >
+                        <FiPlus className="text-2xl text-white/40" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="bg-[#1a1a1a] text-[11px] rounded-lg p-2">
+                      <p className="text-white">Start a new session</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-            ))}
-          </nav>
-        </ScrollArea>
-      </div>
-    </>
+            </div>
+
+            {/* Table Section */}
+            <div className="bg-white/5 rounded-lg border border-white/5 overflow-hidden">
+              <Table>
+                <TableBody>
+                  {creatingNewScript && (
+                    <TableRow className="border-b border-white/10 hover:bg-white/5">
+                      <TableCell className="px-4 py-2">
+                        <TooltipProvider>
+                          <Tooltip open={showErrorTooltip}>
+                            <TooltipTrigger asChild>
+                              <div className="flex items-center gap-3">
+                                <div className="rounded-md bg-white/10 p-2">
+                                  <IoDocumentTextOutline className="text-white/90 text-base" />
+                                </div>
+                                <Input
+                                  value={newScriptName}
+                                  onChange={handleNameChange}
+                                  onBlur={() => {
+                                    setShowErrorTooltip(false)
+                                    handleNewScriptSave()
+                                    setCreatingNewScript(false)
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleNewScriptSave(true)
+                                  }}
+                                  autoFocus
+                                  className="flex-1 bg-transparent border-none text-zinc-300 text-sm focus:ring-0 placeholder:text-white/50"
+                                  placeholder="New Script Name"
+                                />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="bottom"
+                              className="bg-[#1a1a1a] text-[11px] text-white/90 p-2 rounded-lg"
+                            >
+                              Script name cannot be empty
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </TableCell>
+                      <TableCell className="px-4 py-2" />
+                    </TableRow>
+                  )}
+                  {scripts.reverse().map((script: Script) => (
+                    <TableRow
+                      key={script.id}
+                      onMouseEnter={() => setHoveredScriptId(script.id)}
+                      onMouseLeave={() => setHoveredScriptId(null)}
+                      className="border-b border-white/5 hover:bg-white/5"
+                    >
+                      <TableCell className="px-4 py-2">
+                        {editableScriptId === script.id ? (
+                          <div className="flex items-center gap-3">
+                            <div className="rounded-md bg-white/10 p-2">
+                              <IoDocumentTextOutline className="text-white/90 text-base" />
+                            </div>
+                            <Input
+                              value={newScriptName}
+                              onChange={handleNameChange}
+                              onBlur={() => handleNameSave(script.id)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleNameSave(script.id)
+                              }}
+                              autoFocus
+                              className="flex-1 bg-transparent border-none text-zinc-300 text-sm focus:ring-0"
+                            />
+                          </div>
+                        ) : (
+                          <Link
+                            to={'/scripts/' + script.id}
+                            className="flex items-center gap-3 text-zinc-300/90 hover:text-zinc-100 text-sm"
+                          >
+                            <div className="rounded-md bg-white/10 p-2">
+                              <IoDocumentTextOutline className="text-base" />
+                            </div>
+                            {script.name}
+                          </Link>
+                        )}
+                      </TableCell>
+                      <TableCell className="px-4 py-2 text-right">
+                        <div className="flex justify-end gap-1">
+                          <button
+                            onClick={() => handleEditClick(script.id, script.name)}
+                            className="p-1.5 hover:bg-white/10 rounded-md text-white/60 hover:text-white/90 transition-colors"
+                          >
+                            <FiEdit3 className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => deleteScript(script.id)}
+                            className="p-1.5 hover:bg-white/10 rounded-md text-white/60 hover:text-white/90 transition-colors"
+                          >
+                            <FaRegTrashAlt className="h-3 w-3" />
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </ResizablePanel>
+
+        <ResizableHandle className="" />
+
+        <ResizablePanel defaultSize={40} minSize={30} className="min-h-full p-2">
+          {/* Right Section */}
+          <div className="h-full bg-white/5 rounded-lg border border-white/10 p-6">
+            <div className="text-white/50 text-center">Select a script to view or edit</div>
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </div>
   )
 }

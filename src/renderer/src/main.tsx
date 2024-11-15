@@ -11,11 +11,12 @@ import { ScriptList } from './pages/Scripts/ScriptList'
 import { ScriptModules } from './pages/ScriptModules/ScriptModules'
 import { Explore } from './pages/Explore/Explore'
 import { ScriptModuleBuilder } from './pages/ScriptModules/ScriptModuleBuilder'
+import { Settings } from './pages/Settings/Settings'
 
 const DEFAULT_PANEL_CONFIG = {
-  defaultWidth: 400,
-  minWidth: 250,
-  maxWidth: 600
+  defaultWidth: 600,
+  minWidth: 400,
+  maxWidth: 800
 }
 
 export const router = createBrowserRouter([
@@ -24,26 +25,22 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       {
-        path: '/',
-        element: <PanelLayout leftPanelConfig={DEFAULT_PANEL_CONFIG} hasPreview={true} />,
-        children: [
-          {
-            path: '',
-            element: <Navigate to={'/scripts'} />
-          },
-          {
-            path: 'scripts',
-            element: <ScriptList />
-          },
-          {
-            path: 'modules',
-            element: <ScriptModules />
-          },
-          {
-            path: 'explore',
-            element: <Explore />
-          }
-        ]
+        path: '',
+        element: <Navigate to={'/scripts'} />
+      },
+      // Explore page with panel layout
+      {
+        path: 'explore',
+        element: (
+          <PanelLayout leftPanelConfig={DEFAULT_PANEL_CONFIG} hasPreview={true}>
+            <Explore />
+          </PanelLayout>
+        )
+      },
+      // Other pages without panel layout
+      {
+        path: 'scripts',
+        element: <ScriptList />
       },
       {
         path: 'scripts/:scriptId',
@@ -52,6 +49,14 @@ export const router = createBrowserRouter([
       {
         path: 'modules/:scriptModuleId',
         element: <ScriptModuleBuilder />
+      },
+      {
+        path: 'modules',
+        element: <ScriptModules />
+      },
+      {
+        path: 'settings',
+        element: <Settings />
       }
     ]
   }
