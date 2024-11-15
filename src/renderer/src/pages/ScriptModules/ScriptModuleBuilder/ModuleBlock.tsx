@@ -19,10 +19,10 @@ export const ModuleBlock = ({ block }: PropType) => {
   const { runPlaywrightCode } = usePlaywright()
   const { deleteScriptModuleBlock, getScriptModuleBlocksByModuleId, updateScriptModuleBlock } =
     useScriptModuleBlockStore()
-  const scriptModuleBlocks = getScriptModuleBlocksByModuleId(block.scriptModuleId)
+  const moduleBlocks = getScriptModuleBlocksByModuleId(block.scriptModuleId)
   const [moveUpDisabled, setMoveUpDisabled] = useState(block.blockOrder === 0)
   const [moveDownDisabled, setMoveDownDisabled] = useState(
-    block.blockOrder === scriptModuleBlocks.length - 1
+    block.blockOrder === moduleBlocks.length - 1
   )
   const [logs, setLogs] = useState<LogEntry[]>([])
 
@@ -38,25 +38,21 @@ export const ModuleBlock = ({ block }: PropType) => {
   }
 
   const handleMoveUp = () => {
-    const [predecessorBlock] = scriptModuleBlocks.filter(
-      (b) => b.blockOrder == block.blockOrder - 1
-    )
+    const [predecessorBlock] = moduleBlocks.filter((b) => b.blockOrder == block.blockOrder - 1)
     updateScriptModuleBlock(predecessorBlock.id, { blockOrder: block.blockOrder })
     updateScriptModuleBlock(block.id, { blockOrder: predecessorBlock.blockOrder })
   }
 
   const handleMoveDown = () => {
-    const [successorBlock] = scriptModuleBlocks.filter((b) => b.blockOrder == block.blockOrder + 1)
+    const [successorBlock] = moduleBlocks.filter((b) => b.blockOrder == block.blockOrder + 1)
     updateScriptModuleBlock(successorBlock.id, { blockOrder: block.blockOrder })
     updateScriptModuleBlock(block.id, { blockOrder: successorBlock.blockOrder })
   }
 
   useEffect(() => {
-    setMoveUpDisabled(block.blockOrder === 0 || scriptModuleBlocks.length === 1)
-    setMoveDownDisabled(
-      block.blockOrder === scriptModuleBlocks.length - 1 || scriptModuleBlocks.length === 1
-    )
-  }, [scriptModuleBlocks])
+    setMoveUpDisabled(block.blockOrder === 0 || moduleBlocks.length === 1)
+    setMoveDownDisabled(block.blockOrder === moduleBlocks.length - 1 || moduleBlocks.length === 1)
+  }, [moduleBlocks])
 
   useEffect(() => {
     const handleLogs = (_: unknown, data: { blockId: number; log: LogEntry }) => {
@@ -101,7 +97,7 @@ export const ModuleBlock = ({ block }: PropType) => {
                 disabled={moveUpDisabled}
                 onClick={handleMoveUp}
                 size={'icon'}
-                variant={'default'}
+                variant={'ghost'}
                 className="hover:bg-white hover:bg-opacity-5 text-white text-opacity-50"
               >
                 <RiArrowUpLine />
@@ -110,14 +106,14 @@ export const ModuleBlock = ({ block }: PropType) => {
                 disabled={moveDownDisabled}
                 onClick={handleMoveDown}
                 size={'icon'}
-                variant={'default'}
+                variant={'ghost'}
                 className="hover:bg-white hover:bg-opacity-5 text-white text-opacity-50"
               >
                 <RiArrowDownLine />
               </Button>
               <Button
                 size={'icon'}
-                variant={'default'}
+                variant={'ghost'}
                 className="hover:bg-white hover:bg-opacity-5 text-white text-opacity-50"
                 onClick={handleDelete}
               >
@@ -125,7 +121,7 @@ export const ModuleBlock = ({ block }: PropType) => {
               </Button>
               <Button
                 size={'icon'}
-                variant={'default'}
+                variant={'ghost'}
                 className="hover:bg-white hover:bg-opacity-5 text-green-500 text-opacity-80"
                 onClick={handleRunCode}
               >
@@ -166,8 +162,6 @@ export const ModuleBlock = ({ block }: PropType) => {
           </div>
         </div>
       )}
-
-      <div className="flex flex-1 window-drag-region"></div>
     </div>
   )
 }
