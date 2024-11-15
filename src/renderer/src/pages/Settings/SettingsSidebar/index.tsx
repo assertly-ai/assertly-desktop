@@ -2,7 +2,7 @@ import { Button } from '@components/ui/button'
 import { SettingSection } from './SettingSection'
 import { settingsSectionsList } from '@renderer/lib/constants'
 import { FiSearch } from 'react-icons/fi'
-import { RiSettings2Fill } from 'react-icons/ri'
+import { RiSettingsLine } from 'react-icons/ri'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
 
 export const SettingsSidebar = () => {
@@ -11,7 +11,7 @@ export const SettingsSidebar = () => {
       <div className="mb-2 mx-1 py-2 px-2 border-b border-white/5">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <RiSettings2Fill className="text-xl text-white/40" />
+            <RiSettingsLine className="text-xl text-white/40" />
             <h1 className="text-lg font-semibold text-white/40">Settings</h1>
           </div>
           <TooltipProvider>

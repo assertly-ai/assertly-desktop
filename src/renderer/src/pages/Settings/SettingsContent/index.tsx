@@ -9,7 +9,7 @@ interface PropType {
 }
 export const SettingsContent = ({ title, icon }: PropType) => {
   return (
-    <div className="bg-opacity-30 flex-1 bg-white/5 rounded-lg border border-white/10 pt-6 overflow-clip">
+    <div className="bg-opacity-30 flex-1 bg-white/5 rounded-lg border border-white/10 pt-1 overflow-y-scroll">
       <SettingsHeader title={title} icon={icon} />
       <Separator className="opacity-5 ml-2" />
       <Outlet />

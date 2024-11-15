@@ -64,7 +64,7 @@ export const router = createBrowserRouter([
         children: [
           {
             path: '',
-            element: <h1>Settings Home</h1>
+            element: <Navigate to={'/settings/ai/api-keys'} />
           },
           {
             path: 'ai',

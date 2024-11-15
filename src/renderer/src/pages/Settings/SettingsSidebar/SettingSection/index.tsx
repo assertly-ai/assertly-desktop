@@ -28,14 +28,13 @@ export const SettingSection = ({ title, settings, icon }: PropType) => {
         <>
           <div
             key={setting.title}
-            className={`flex items-center gap-2 p-2 rounded-md cursor-pointer hover:backdrop-blur-sm ${
-              location.pathname === setting.url && 'backdrop-blur-lg'
-            }`}
+            className={`flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-white/10  hover:border hover:border-white/5 
+              ${location.pathname === setting.url ? 'bg-white/5 border border-white/5 ' : 'border border-transparent'}`}
             onClick={() => navigate(setting.url)}
           >
-            <div className="flex justify-center items-center gap-2">
-              <span className="text-white text-opacity-40 text-sm">{setting.title}</span>
-            </div>
+            <span className="text-white text-zinc-300/80 text-sm font-semibold">
+              {setting.title}
+            </span>
           </div>
           <Separator className="opacity-5" />
         </>
