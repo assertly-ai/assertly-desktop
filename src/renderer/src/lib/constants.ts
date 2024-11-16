@@ -1,4 +1,4 @@
-import { RiAiGenerate, RiEdit2Fill, RiKey2Fill, RiSettings3Line } from 'react-icons/ri'
+import { RiAiGenerate, RiEdit2Line, RiUser2Line } from 'react-icons/ri'
 
 export const DEMO_CODE = `// Playwright test code
 // The 'page' object is available with autocomplete
@@ -129,27 +129,23 @@ declare namespace playwright {
 
 declare const page: playwright.Page;
 `
-export const settingsSectionsList = [
+export const settingsList = [
   {
-    title: 'AI Setting',
+    title: 'User Settings',
+    icon: RiUser2Line,
+    url: '/settings/user'
+  },
+  {
+    title: 'AI Settings',
     icon: RiAiGenerate,
-    settings: [
-      {
-        title: 'API Keys',
-        icon: RiKey2Fill,
-        url: '/settings/ai/api-keys'
-      }
-    ]
+    url: '/settings/ai'
   },
   {
     title: 'Editor Settings',
-    icon: RiEdit2Fill,
-    settings: [
-      {
-        title: 'Theme',
-        icon: RiSettings3Line,
-        url: '/settings/editor/theme'
-      }
-    ]
+    icon: RiEdit2Line,
+    url: '/settings/editor'
   }
 ]
+
+export const modelList = ['Claude Sonnet 3.5', 'ChatGPT 4o']
+export const themeList = ['dark', 'light', 'dracula', 'monokai', 'github']

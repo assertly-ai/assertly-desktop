@@ -12,10 +12,10 @@ import { ScriptModules } from './pages/ScriptModules/ScriptModules'
 import { Explore } from './pages/Explore/Explore'
 import { ScriptModuleBuilder } from './pages/ScriptModules/ScriptModuleBuilder'
 import { Settings } from './pages/Settings'
-import { APIKeys } from './pages/Settings/SettingsContent/AISettings/APIKeys'
-import { Theme } from './pages/Settings/SettingsContent/EditorSettings/Theme'
-import { SettingsContent } from './pages/Settings/SettingsContent'
-import { RiAiGenerate, RiEdit2Fill } from 'react-icons/ri'
+import { RiAiGenerate, RiEdit2Line, RiUser2Line } from 'react-icons/ri'
+import { AISettings } from './pages/Settings/SettingsContent/AISettings'
+import { EditorSettings } from './pages/Settings/SettingsContent/EditorSettings'
+import { UserSettings } from './pages/Settings/SettingsContent/UserSettings'
 
 const DEFAULT_PANEL_CONFIG = {
   defaultWidth: 600,
@@ -64,27 +64,19 @@ export const router = createBrowserRouter([
         children: [
           {
             path: '',
-            element: <Navigate to={'/settings/ai/api-keys'} />
+            element: <Navigate to={'/settings/user'} />
+          },
+          {
+            path: 'user',
+            element: <UserSettings title={'User Settings'} icon={RiUser2Line} />
           },
           {
             path: 'ai',
-            element: <SettingsContent title={'AI Settings'} icon={RiAiGenerate} />,
-            children: [
-              {
-                path: 'api-keys',
-                element: <APIKeys />
-              }
-            ]
+            element: <AISettings title={'AI Settings'} icon={RiAiGenerate} />
           },
           {
             path: 'editor',
-            element: <SettingsContent title={'Editor Settings'} icon={RiEdit2Fill} />,
-            children: [
-              {
-                path: 'theme',
-                element: <Theme />
-              }
-            ]
+            element: <EditorSettings title={'Editor Settings'} icon={RiEdit2Line} />
           }
         ]
       }

@@ -2,6 +2,7 @@ import { createSyncedStore } from '@renderer/lib/createSyncedStore'
 
 interface User {
   id: number
+  name: string
   username: string
   email: string
 }
@@ -14,6 +15,7 @@ interface UserState {
   createUser: (userData: Omit<User, 'id'>) => Promise<void>
   updateUser: (id: number, userData: Partial<User>) => Promise<void>
   deleteUser: (id: number) => Promise<void>
+  getUserByEmail: (email: string) => User
 }
 
 export const useUserStore = createSyncedStore<User, UserState>('Users', (set) => ({
@@ -29,5 +31,8 @@ export const useUserStore = createSyncedStore<User, UserState>('Users', (set) =>
   },
   deleteUser: async (id) => {
     await window.api.storage.delete('Users', id)
+  },
+  getUserByEmail: async (email) => {
+    return useUserStore.getState().data.find((user) => user.email === email) as User
   }
 }))
