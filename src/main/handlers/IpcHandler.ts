@@ -2,14 +2,32 @@ import { ipcMain } from 'electron'
 import { WindowManager } from '../managers/WindowManager'
 import { BrowserManager } from '../managers/BrowserManager'
 import { StorageManager } from '../managers/StorageManager'
+import { AgentManager } from '../managers/AgentManager'
 export class IpcHandler {
   constructor(
     private windowManager: WindowManager,
     private browserManager: BrowserManager,
-    private storageManager: StorageManager
+    private storageManager: StorageManager,
+    private agentManager: AgentManager
   ) {}
 
   setupHandlers(): void {
+    ipcMain.handle('ai-agent:execute-agent', async (_, instruction: string) => {
+      await this.agentManager.startInstruction(instruction)
+    })
+
+    ipcMain.on('ai-agent:user-response', (_, response: string) => {
+      this.agentManager.provideUserResponse(response)
+    })
+
+    ipcMain.on('ai-agent:stop-agent', () => {
+      this.agentManager.stopExecution()
+    })
+
+    ipcMain.on('ai-agent:clear-context', () => {
+      this.agentManager.clearAgentContext()
+    })
+
     ipcMain.on('toggle-preview', (_, show: boolean, sizes) => {
       if (Array.isArray(sizes)) {
         this.windowManager.togglePreviewWindow(show, sizes[1])
@@ -40,7 +58,7 @@ export class IpcHandler {
     })
 
     ipcMain.handle('db-create', async (event, table: string, data: Record<string, unknown>) => {
-      const result = await this.storageManager.create(table, data)
+      const result = this.storageManager.create(table, data)
       event.sender.send('sync-data', table)
       return result
     })
@@ -52,7 +70,7 @@ export class IpcHandler {
     ipcMain.handle(
       'db-update',
       async (event, table: string, id: number, data: Record<string, unknown>) => {
-        const result = await this.storageManager.update(table, id, data)
+        const result = this.storageManager.update(table, id, data)
         event.sender.send('sync-data', table)
         return result
       }
@@ -61,14 +79,14 @@ export class IpcHandler {
     ipcMain.handle(
       'db-update-many',
       async (event, table: string, ids: number[], data: Record<string, unknown>[]) => {
-        const result = await this.storageManager.updateMany(table, ids, data)
+        const result = this.storageManager.updateMany(table, ids, data)
         event.sender.send('sync-data', table)
         return result
       }
     )
 
     ipcMain.handle('db-delete', async (event, table: string, id: number) => {
-      const result = await this.storageManager.delete(table, id)
+      const result = this.storageManager.delete(table, id)
       event.sender.send('sync-data', table)
       return result
     })

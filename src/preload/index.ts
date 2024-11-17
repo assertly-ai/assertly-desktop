@@ -3,8 +3,28 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
+  startAgentInstruction: (instruction: string) =>
+    ipcRenderer.invoke('ai-agent:execute-agent', instruction),
+
+  sendUserResponse: (response: string) => ipcRenderer.send('ai-agent:user-response', response),
+
+  stopAgent: () => ipcRenderer.send('ai-agent:stop-agent'),
+
+  clearAgentContext: () => ipcRenderer.send('ai-agent:clear-context'),
+
+  on: (channel: string, callback: (...args: unknown[]) => void) =>
+    ipcRenderer.on(channel, (_, ...args) => callback(...args)),
+
+  off: (channel: string, callback: (...args: unknown[]) => void) =>
+    ipcRenderer.removeListener(channel, callback),
+
   executePlaywrightCode: (code: string, blockId: number) =>
     ipcRenderer.invoke('execute-playwright-code', code, blockId),
+
+  // Add new agent-related methods
+  executeAgentInstruction: (instruction: string) =>
+    ipcRenderer.invoke('execute-agent-instruction', instruction),
+
   storage: {
     create: (table: string, data: Record<string, unknown>) =>
       ipcRenderer.invoke('db-create', table, data),

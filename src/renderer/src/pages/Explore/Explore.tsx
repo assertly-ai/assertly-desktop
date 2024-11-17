@@ -2,20 +2,23 @@ import { Button } from '@components/ui/button'
 import { ScrollArea } from '@components/ui/scroll-area'
 import { Textarea } from '@components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
+import { Message } from '@renderer/types/openai'
 import { useEffect, useRef, useState } from 'react'
 import { FiPlus } from 'react-icons/fi'
 import { RiPlanetLine, RiSendPlane2Line } from 'react-icons/ri'
-
-type Message = {
-  id: string
-  content: string
-  sender: 'user' | 'assistant'
-  timestamp: Date
+export enum AgentEvents {
+  MESSAGE = 'ai-agent:message',
+  QUESTION = 'ai-agent:question',
+  ERROR = 'ai-agent:error',
+  EXECUTING = 'ai-agent:executing',
+  COMPLETED = 'ai-agent:completed'
 }
 
 export const Explore = () => {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
@@ -38,34 +41,148 @@ export const Explore = () => {
     }
   }, [messages])
 
-  const handleSend = () => {
-    if (!input.trim()) return
+  // Setup event listeners
+  useEffect(() => {
+    // Handler for assistant/system messages
+    const messageHandler = (_, message: { type: 'assistant' | 'system'; content: string }) => {
+      console.log('messageHandler')
 
-    const newMessage: Message = {
-      id: crypto.randomUUID(),
-      content: input,
-      sender: 'user',
-      timestamp: new Date()
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          content: message.content,
+          sender: message.type,
+          timestamp: new Date()
+        }
+      ])
     }
 
-    setMessages((prev) => [...prev, newMessage])
-    setInput('')
+    // Handler for questions from the agent
+    const questionHandler = (_, question: string) => {
+      console.log('questionHandler')
 
-    // Reset textarea height
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '44px'
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          content: question,
+          sender: 'assistant',
+          timestamp: new Date()
+        }
+      ])
+      setIsWaitingForResponse(true)
     }
 
-    // Simulate assistant response
-    setTimeout(() => {
-      const assistantMessage: Message = {
+    // Handler for execution updates
+    const executingHandler = (_, message: string) => {
+      console.log('executingHandler')
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          content: `🔄 ${message}`,
+          sender: 'system',
+          timestamp: new Date()
+        }
+      ])
+    }
+
+    // Handler for errors
+    const errorHandler = (_, error: Error) => {
+      console.log('errorHandler')
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          content: `❌ Error: ${error.message}`,
+          sender: 'system',
+          timestamp: new Date()
+        }
+      ])
+      setIsProcessing(false)
+      setIsWaitingForResponse(false)
+    }
+
+    // Handler for completion
+    const completedHandler = () => {
+      console.log('completedHandler')
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          content: '✅ Task completed',
+          sender: 'system',
+          timestamp: new Date()
+        }
+      ])
+      setIsProcessing(false)
+      setIsWaitingForResponse(false)
+    }
+
+    // Register all event listeners
+    window.electron.ipcRenderer.on(AgentEvents.MESSAGE, messageHandler)
+    window.electron.ipcRenderer.on(AgentEvents.QUESTION, questionHandler)
+    window.electron.ipcRenderer.on(AgentEvents.EXECUTING, executingHandler)
+    window.electron.ipcRenderer.on(AgentEvents.ERROR, errorHandler)
+    window.electron.ipcRenderer.on(AgentEvents.COMPLETED, completedHandler)
+    return () => {
+      window.electron.ipcRenderer.removeListener(AgentEvents.MESSAGE, messageHandler)
+      window.electron.ipcRenderer.removeListener(AgentEvents.QUESTION, questionHandler)
+      window.electron.ipcRenderer.removeListener(AgentEvents.EXECUTING, executingHandler)
+      window.electron.ipcRenderer.removeListener(AgentEvents.ERROR, errorHandler)
+      window.electron.ipcRenderer.removeListener(AgentEvents.COMPLETED, completedHandler)
+    }
+  }, [])
+
+  const handleSend = async () => {
+    if (!input.trim() || isProcessing) return
+
+    const message = input.trim()
+
+    // Add user message to state immediately
+    setMessages((prev) => [
+      ...prev,
+      {
         id: crypto.randomUUID(),
-        content: 'This is a sample response from the assistant.',
-        sender: 'assistant',
+        content: message,
+        sender: 'user',
         timestamp: new Date()
       }
-      setMessages((prev) => [...prev, assistantMessage])
-    }, 1000)
+    ])
+
+    setInput('')
+
+    if (isWaitingForResponse) {
+      // Send as response to agent question
+      window.api.sendUserResponse(message)
+      setIsWaitingForResponse(false)
+    } else {
+      // Send as new instruction
+      setIsProcessing(true)
+      try {
+        await window.api.startAgentInstruction(message)
+      } catch (error) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: crypto.randomUUID(),
+            content: `Error: ${error}`,
+            sender: 'system',
+            timestamp: new Date()
+          }
+        ])
+        setIsProcessing(false)
+      }
+    }
+  }
+
+  const handleNewSession = () => {
+    setMessages([])
+    window.api.clearAgentContext()
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -81,7 +198,7 @@ export const Explore = () => {
       // Reset height to auto to get the correct scrollHeight
       textarea.style.height = 'auto'
       // Set new height based on scrollHeight
-      textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 400)}px`
     }
   }
 
@@ -109,7 +226,7 @@ export const Explore = () => {
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 p-0 text-white/40 hover:text-white/90 hover:bg-white/10 rounded-full [&_svg]:size-6"
-                  onClick={() => {}}
+                  onClick={handleNewSession}
                 >
                   <FiPlus className="text-2xl text-white/40" />
                 </Button>
@@ -138,12 +255,12 @@ export const Explore = () => {
               >
                 <div
                   className={`max-w-[80%] rounded-lg p-2 px-2
-                    transition-all duration-200 backdrop-blur-sm
-                    ${
-                      message.sender === 'user'
-                        ? 'bg-white/[0.07] text-white/90 shadow-white/5 border border-white/5'
-                        : ' text-white shadow-white/10 border border-white/10'
-                    }`}
+                        transition-all duration-200 backdrop-blur-sm
+                        ${
+                          message.sender === 'user'
+                            ? 'bg-white/[0.07] text-white/90 shadow-white/5 border border-white/5'
+                            : ' text-white shadow-white/10 border border-white/10'
+                        }`}
                 >
                   <p className="text-xs whitespace-pre-wrap leading-relaxed">{message.content}</p>
                   <div
@@ -170,14 +287,16 @@ export const Explore = () => {
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="Type your message..."
-              className="flex-1 min-h-[44px] max-h-[200px]
-                      bg-neutral-800/90
-                      border border-white/15
-                      text-white placeholder:text-white/40
-                      resize-none rounded-lg pr-14 pl-5 py-3.5 text-[15px]
-                      overflow-hidden
-                      "
+              placeholder="Type your instructions..."
+              disabled={isProcessing}
+              className="flex-1 min-h-[120px] max-h-[400px]
+                          bg-neutral-800/90
+                          border border-white/15
+                          text-white placeholder:text-white/40
+                          resize-none rounded-lg pr-14 pl-5 py-3.5 text-[15px]
+                          overflow-hidden
+                          disabled:opacity-50
+                          "
               style={{
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none'
@@ -185,20 +304,20 @@ export const Explore = () => {
             />
             <Button
               onClick={handleSend}
-              disabled={!input.trim()}
+              disabled={!input.trim() || isProcessing}
               className={`absolute right-2 bottom-2 h-[38px] w-[38px] p-0
-                      rounded-lg
-                      backdrop-blur-sm outline-none
-                      ${
-                        input.trim()
-                          ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                          : 'bg-white/5 text-white/30 border border-white/5'
-                      }`}
+                          rounded-lg
+                          backdrop-blur-sm outline-none
+                          ${
+                            input.trim() && !isProcessing
+                              ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                              : 'bg-white/5 text-white/30 border border-white/5'
+                          }`}
             >
               <RiSendPlane2Line
                 className={`h-4 w-4 transition-transform duration-200
-                        ${input.trim() ? 'scale-100' : 'scale-90'}
-                      `}
+                            ${input.trim() && !isProcessing ? 'scale-100' : 'scale-90'}
+                          `}
               />
             </Button>
           </div>

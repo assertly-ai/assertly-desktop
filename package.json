@@ -21,6 +21,7 @@
     "build:linux": "electron-vite build && electron-builder --linux"
   },
   "dependencies": {
+    "@axe-core/playwright": "^4.10.1",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
     "@monaco-editor/react": "^4.6.0",
@@ -40,6 +41,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.453.0",
     "monaco-editor": "^0.52.0",
+    "openai": "^4.72.0",
     "playwright": "^1.48.1",
     "playwright-core": "^1.48.1",
     "portfinder": "^1.0.32",
