@@ -1,7 +1,7 @@
 import { chromium, Browser, Page } from 'playwright-core'
 
 export class PlaywrightAdapter {
-  private browser: Browser | null = null
+  browser: Browser | null = null
 
   async connect(webSocketDebuggerUrl: string): Promise<void> {
     this.browser = await chromium.connectOverCDP(webSocketDebuggerUrl)

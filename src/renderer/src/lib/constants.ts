@@ -1,9 +1,10 @@
+import { RiAiGenerate, RiEdit2Line, RiUser2Line } from 'react-icons/ri'
+
 export const DEMO_CODE = `// Playwright test code
 // The 'page' object is available with autocomplete
 await page.goto('https://example.com');
 // Try typing 'page.' to see autocomplete suggestions
 `
-
 export const PLAY_WRIGHT_DEFINITIONS: string = `type Unboxed<T> = T extends Promise<infer U> ? U : T;
 
 declare namespace playwright {
@@ -128,3 +129,23 @@ declare namespace playwright {
 
 declare const page: playwright.Page;
 `
+export const settingsList = [
+  {
+    title: 'User Settings',
+    icon: RiUser2Line,
+    url: '/settings/user'
+  },
+  {
+    title: 'AI Settings',
+    icon: RiAiGenerate,
+    url: '/settings/ai'
+  },
+  {
+    title: 'Editor Settings',
+    icon: RiEdit2Line,
+    url: '/settings/editor'
+  }
+]
+
+export const modelList = ['Claude Sonnet 3.5', 'ChatGPT 4o']
+export const themeList = ['dark', 'light', 'dracula', 'monokai', 'github']
