@@ -1,13 +1,24 @@
 import { Outlet } from 'react-router-dom'
 import { SettingsSidebar } from './SettingsSidebar'
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
 
 export const Settings = () => {
   return (
-    <div className="flex pt-2 pr-2 pb-2 h-screen w-full">
-      <SettingsSidebar />
-      <div className="bg-opacity-30 flex-1 bg-white/5 rounded-md border border-white/10 pt-1 overflow-y-scroll">
-        <Outlet />
-      </div>
+    <div className="h-full w-full">
+      <ResizablePanelGroup direction="horizontal" className="min-h-[calc(100vh-2rem)] rounded-lg ">
+        <ResizablePanel defaultSize={15} minSize={15} maxSize={40} className="min-h-full">
+          <SettingsSidebar />
+        </ResizablePanel>
+
+        <ResizableHandle className="" />
+
+        <ResizablePanel defaultSize={90} minSize={40} className="min-h-full p-2">
+          {/* Right Section */}
+          <div className="h-full bg-white/5 rounded-lg border border-white/10 p-6 w-full">
+            <Outlet />
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   )
 }
