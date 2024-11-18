@@ -2,7 +2,8 @@ import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Separator } from '@components/ui/separator'
 import { SettingsHeader } from '@renderer/components/SettingsHeader'
-import { useState } from 'react'
+import { useSettingStore } from '@renderer/store/settingStore'
+import { useEffect, useState } from 'react'
 import { IconType } from 'react-icons'
 import { RiLoader2Line } from 'react-icons/ri'
 
@@ -12,15 +13,40 @@ interface PropType {
 }
 
 export const UserSettings = ({ title, icon }: PropType) => {
+  const { createSetting, getSettingByKey, updateSetting } = useSettingStore()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [saving, setSaving] = useState(false)
+  useEffect(() => {
+    const settings = [
+      { key: 'USER_NAME', setter: setName },
+      { key: 'USER_EMAIL', setter: setEmail }
+    ]
+    settings.forEach(({ key, setter }) => {
+      const foundSetting = getSettingByKey(key)
+      setter(foundSetting?.value ?? '')
+    })
+  }, [])
+
+  const saveSetting = (key, value, name, type) => {
+    const setting = getSettingByKey(key)
+    if (setting) {
+      updateSetting(setting.id, { value })
+    } else {
+      createSetting({ key, value, name, type })
+    }
+  }
 
   const handleSave = () => {
-    setSaving(true)
-    setTimeout(() => {
+    try {
+      setSaving(true)
+      saveSetting('USER_NAME', name, 'Name', 'User')
+      saveSetting('USER_EMAIL', email, 'Email', 'User')
+    } catch (error) {
+      console.error(error)
+    } finally {
       setSaving(false)
-    }, 1000)
+    }
   }
 
   return (

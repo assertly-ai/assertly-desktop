@@ -96,10 +96,12 @@ export class StorageManager {
         FOREIGN KEY (script_block_id) REFERENCES ScriptBlocks(id) ON DELETE CASCADE
       );
 
-      CREATE TABLE IF NOT EXISTS APIKeys (
+      CREATE TABLE IF NOT EXISTS Settings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        api_key TEXT,
+        type TEXT,
+        key TEXT,
+        value TEXT,
         user_id INTEGER,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE

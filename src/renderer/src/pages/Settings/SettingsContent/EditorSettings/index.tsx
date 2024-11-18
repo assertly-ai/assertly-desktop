@@ -10,8 +10,9 @@ import {
 import { Separator } from '@components/ui/separator'
 import { SettingsHeader } from '@renderer/components/SettingsHeader'
 import { themeList } from '@renderer/lib/constants'
+import { useSettingStore } from '@renderer/store/settingStore'
 import { range } from 'lodash'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IconType } from 'react-icons'
 import { RiLoader2Line } from 'react-icons/ri'
 
@@ -21,15 +22,42 @@ interface PropType {
 }
 
 export const EditorSettings = ({ title, icon }: PropType) => {
+  const { createSetting, getSettingByKey, updateSetting } = useSettingStore()
   const [saving, setSaving] = useState(false)
   const [theme, setTheme] = useState('')
   const [fontSize, setFontSize] = useState('')
-  const handleSave = () => {
-    setSaving(true)
-    setTimeout(() => {
-      setSaving(false)
-    }, 1000)
+  useEffect(() => {
+    const settings = [
+      { key: 'EDITOR_THEME', setter: setTheme },
+      { key: 'EDITOR_FONT_SIZE', setter: setFontSize }
+    ]
+    settings.forEach(({ key, setter }) => {
+      const foundSetting = getSettingByKey(key)
+      setter(foundSetting?.value ?? '')
+    })
+  }, [])
+
+  const saveSetting = (key, value, name, type) => {
+    const setting = getSettingByKey(key)
+    if (setting) {
+      updateSetting(setting.id, { value })
+    } else {
+      createSetting({ key, value, name, type })
+    }
   }
+
+  const handleSave = () => {
+    try {
+      setSaving(true)
+      saveSetting('EDITOR_THEME', theme, 'Theme', 'Editor')
+      saveSetting('EDITOR_FONT_SIZE', fontSize, 'Font Size', 'Editor')
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <>
       <SettingsHeader title={title} icon={icon} />
@@ -68,7 +96,7 @@ export const EditorSettings = ({ title, icon }: PropType) => {
           <span className="text-md text-gray-300">Font Size</span>
           <div className="mt-2 flex items-center">
             <div className="relative w-full">
-              <Select value={fontSize} onValueChange={(value) => setFontSize(value)}>
+              <Select value={fontSize.toString()} onValueChange={(value) => setFontSize(value)}>
                 <SelectTrigger
                   className={`bg-transparent text-white placeholder:text-md placeholder:text-white placeholder:text-opacity-20 placeholder:font-medium border border-zinc-500 border-opacity-90 rounded-lg px-3 py-2 w-full hover:border-zinc-400 hover:border-opacity-90 focus:border-zinc-400 focus:border-opacity-90`}
                 >
