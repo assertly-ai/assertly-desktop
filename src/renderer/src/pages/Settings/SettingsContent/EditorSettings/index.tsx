@@ -66,59 +66,51 @@ export const EditorSettings = ({ title, icon }: PropType) => {
         <div className="space-y-4">
           <span className="text-md text-gray-300">Theme</span>
           <div className="mt-2 flex items-center">
-            <div className="relative w-full">
-              <Select value={theme} onValueChange={(value) => setTheme(value)}>
-                <SelectTrigger
-                  className={`bg-transparent text-white placeholder:text-md placeholder:text-white placeholder:text-opacity-20 placeholder:font-medium border border-zinc-500 border-opacity-90 rounded-lg px-3 py-2 w-full hover:border-zinc-400 hover:border-opacity-90 focus:border-zinc-400 focus:border-opacity-90`}
-                >
-                  <SelectValue placeholder="Select a theme" />
-                </SelectTrigger>
-                <SelectContent
-                  className={`bg-white/5 backdrop-blur-3xl text-white border border-white/10`}
-                >
-                  <SelectGroup>
-                    {themeList.map((theme) => (
-                      <SelectItem
-                        key={theme}
-                        className="focus:bg-white/10 focus:text-white"
-                        value={theme}
-                      >
-                        {theme}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+            <Select value={theme} onValueChange={(value) => setTheme(value)}>
+              <SelectTrigger
+                className={`bg-transparent text-white placeholder:text-md placeholder:text-white placeholder:text-opacity-20 placeholder:font-medium border border-zinc-500 border-opacity-90 rounded-lg px-3 py-2 w-full hover:border-zinc-400 hover:border-opacity-90 focus:border-zinc-400 focus:border-opacity-90`}
+              >
+                <SelectValue placeholder="Select a theme" />
+              </SelectTrigger>
+              <SelectContent
+                className={`bg-white/5 backdrop-blur-3xl text-white border border-white/10`}
+              >
+                <SelectGroup>
+                  {themeList.map((theme) => (
+                    <SelectItem
+                      key={theme}
+                      className="focus:bg-white/10 focus:text-white"
+                      value={theme}
+                    >
+                      {theme}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="space-y-4">
           <span className="text-md text-gray-300">Font Size</span>
           <div className="mt-2 flex items-center">
-            <div className="relative w-full">
-              <Select value={fontSize.toString()} onValueChange={(value) => setFontSize(value)}>
-                <SelectTrigger
-                  className={`bg-transparent text-white placeholder:text-md placeholder:text-white placeholder:text-opacity-20 placeholder:font-medium border border-zinc-500 border-opacity-90 rounded-lg px-3 py-2 w-full hover:border-zinc-400 hover:border-opacity-90 focus:border-zinc-400 focus:border-opacity-90`}
-                >
-                  <SelectValue placeholder="Select size" />
-                </SelectTrigger>
-                <SelectContent
-                  className={`bg-white/5 backdrop-blur-3xl text-white border  border-white/10`}
-                >
-                  <SelectGroup>
-                    {range(1, 100).map((size) => (
-                      <SelectItem
-                        key={size}
-                        className="focus:bg-white/10 focus:text-white"
-                        value={size.toString()}
-                      >
-                        {size}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+            <Select value={fontSize.toString()} onValueChange={(value) => setFontSize(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select size" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {range(1, 100).map((size) => (
+                    <SelectItem
+                      key={size}
+                      className="focus:bg-white/10 focus:text-white"
+                      value={size.toString()}
+                    >
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="w-full flex justify-end mt-4">
