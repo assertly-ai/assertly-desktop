@@ -8,6 +8,7 @@ interface SettingState {
   deleteSetting: (id: number) => Promise<void>
   getSetting: (id: number) => Promise<Setting>
   getSettingByName: (name: string) => Setting
+  getSettingByType: (type: string) => Setting[]
   getSettingByKey: (key: string) => Setting
 }
 
@@ -30,7 +31,10 @@ export const useSettingStore = createSyncedStore<Setting, SettingState>('Setting
     return useSettingStore.getState().data.find((settingData) => settingData.name === name)
   },
   getSettingByType: (type) => {
-    return useSettingStore.getState().data.find((settingData) => settingData.type === type)
+    return useSettingStore
+      .getState()
+      .data.filter((settingData) => settingData.type === type)
+      .reverse()
   },
   getSettingByKey: (key) => {
     return useSettingStore.getState().data.find((settingData) => settingData.key === key)

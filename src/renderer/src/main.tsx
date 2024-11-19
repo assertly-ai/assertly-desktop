@@ -12,10 +12,11 @@ import { ScriptModules } from './pages/ScriptModules/ScriptModules'
 import { Explore } from './pages/Explore/Explore'
 import { ScriptModuleBuilder } from './pages/ScriptModules/ScriptModuleBuilder'
 import { Settings } from './pages/Settings'
-import { RiAiGenerate, RiEdit2Line, RiUser2Line } from 'react-icons/ri'
+import { RiAiGenerate, RiEdit2Line, RiSecurePaymentLine, RiUser2Line } from 'react-icons/ri'
 import { AISettings } from './pages/Settings/SettingsContent/AISettings'
 import { EditorSettings } from './pages/Settings/SettingsContent/EditorSettings'
 import { UserSettings } from './pages/Settings/SettingsContent/UserSettings'
+import { SecretsSettings } from './pages/Settings/SettingsContent/SecretsSettings'
 
 const DEFAULT_PANEL_CONFIG = {
   defaultWidth: 600,
@@ -77,6 +78,10 @@ export const router = createBrowserRouter([
           {
             path: 'editor',
             element: <EditorSettings title={'Editor Settings'} icon={RiEdit2Line} />
+          },
+          {
+            path: 'secrets',
+            element: <SecretsSettings title={'Secrets Settings'} icon={RiSecurePaymentLine} />
           }
         ]
       }
