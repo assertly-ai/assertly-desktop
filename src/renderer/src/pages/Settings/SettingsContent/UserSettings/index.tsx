@@ -58,23 +58,13 @@ export const UserSettings = ({ title, icon }: PropType) => {
           <div className="w-full">
             <span className="text-md text-gray-300">Name</span>
             <div className="mt-2 flex items-center">
-              <Input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-transparent text-white placeholder:text-md placeholder:text-white placeholder:text-opacity-20 placeholder:font-medium border border-zinc-500 border-opacity-90 rounded-lg px-3 py-2 w-full hover:border-zinc-400 hover:border-opacity-90 focus:border-zinc-400 focus:border-opacity-90"
-              />
+              <Input type="text" value={name} onChange={(e) => setName(e.target.value)} />
             </div>
           </div>
           <div className="w-full">
             <span className="text-md text-gray-300">Email</span>
             <div className="mt-2 flex items-center">
-              <Input
-                type="text"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-transparent text-white placeholder:text-md placeholder:text-white placeholder:text-opacity-20 placeholder:font-medium border border-zinc-500 border-opacity-90 rounded-lg px-3 py-2 w-full hover:border-zinc-400 hover:border-opacity-90 focus:border-zinc-400 focus:border-opacity-90"
-              />
+              <Input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
           </div>
         </div>

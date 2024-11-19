@@ -67,14 +67,10 @@ export const EditorSettings = ({ title, icon }: PropType) => {
           <span className="text-md text-gray-300">Theme</span>
           <div className="mt-2 flex items-center">
             <Select value={theme} onValueChange={(value) => setTheme(value)}>
-              <SelectTrigger
-                className={`bg-transparent text-white placeholder:text-md placeholder:text-white placeholder:text-opacity-20 placeholder:font-medium border border-zinc-500 border-opacity-90 rounded-lg px-3 py-2 w-full hover:border-zinc-400 hover:border-opacity-90 focus:border-zinc-400 focus:border-opacity-90`}
-              >
+              <SelectTrigger>
                 <SelectValue placeholder="Select a theme" />
               </SelectTrigger>
-              <SelectContent
-                className={`bg-white/5 backdrop-blur-3xl text-white border border-white/10`}
-              >
+              <SelectContent>
                 <SelectGroup>
                   {themeList.map((theme) => (
                     <SelectItem
