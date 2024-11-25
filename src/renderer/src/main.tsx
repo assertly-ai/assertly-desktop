@@ -23,14 +23,14 @@ const DEFAULT_PANEL_CONFIG = {
   maxWidth: 800
 }
 
-export const router = createBrowserRouter([
+export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />,
     children: [
       {
         path: '',
-        element: <Navigate to={'/scripts'} />
+        element: <Navigate to={'/explore'} />
       },
       // Explore page with panel layout
       {

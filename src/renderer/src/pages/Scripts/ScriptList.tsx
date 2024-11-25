@@ -53,11 +53,11 @@ export const ScriptList = () => {
           {/* Left Section - Scripts List */}
           <div className="flex flex-col gap-2 h-full p-2">
             {/* Header Section */}
-            <div className="py-2 px-2 border-b border-white/5">
+            <div className="py-1 px-2 border-b border-white/5">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <RiQuillPenLine className="text-xl text-white/40" />
-                  <h1 className="text-lg font-semibold text-white/40">Scripts</h1>
+                  <RiQuillPenLine className="text-lg text-white/40" />
+                  <h1 className="text-md font-medium text-white/40">Scripts</h1>
                 </div>
                 <TooltipProvider>
                   <Tooltip>
@@ -65,7 +65,7 @@ export const ScriptList = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 p-0 text-white/40 hover:text-white/90 hover:bg-white/10 rounded-full [&_svg]:size-6"
+                        className="h-8 w-8 p-0 text-white/40 hover:text-white/90 hover:bg-white/10 rounded-full [&_svg]:size-5"
                         onClick={() => {
                           if (!creatingNewScript) {
                             setCreatingNewScript(true)
@@ -73,7 +73,7 @@ export const ScriptList = () => {
                           }
                         }}
                       >
-                        <FiPlus className="text-2xl text-white/40" />
+                        <FiPlus className="text-lg text-white/40" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="left" className="bg-[#1a1a1a] text-[11px] rounded-lg p-2">
@@ -85,7 +85,7 @@ export const ScriptList = () => {
             </div>
 
             {/* Table Section */}
-            <div className="bg-white/5 rounded-lg border border-white/5 overflow-hidden">
+            <div className="bg-white/5 rounded-lg border border-white/5 overflow-hidden  my-1">
               <Table>
                 <TableBody>
                   {creatingNewScript && (

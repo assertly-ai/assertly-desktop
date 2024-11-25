@@ -3,6 +3,7 @@ import { OpenAIAdapter } from '../adapters/OpenAIAdapter'
 import { BrowserManager } from './BrowserManager'
 import { EventEmitter } from 'events'
 import { WindowManager } from './WindowManager'
+import { AgentMessage } from '../types/agent'
 
 export enum AgentEvents {
   MESSAGE = 'ai-agent:message',
@@ -10,12 +11,6 @@ export enum AgentEvents {
   ERROR = 'ai-agent:error',
   EXECUTING = 'ai-agent:executing',
   COMPLETED = 'ai-agent:completed'
-}
-
-export interface AgentMessage {
-  type: 'user' | 'assistant' | 'system'
-  content: string
-  metadata?: unknown
 }
 
 export class AgentManager extends EventEmitter {
@@ -31,24 +26,37 @@ export class AgentManager extends EventEmitter {
     super()
   }
 
+  private createMessage(type: AgentMessage['type'], content: string): AgentMessage {
+    return {
+      id: crypto.randomUUID(),
+      type,
+      content,
+      timestamp: new Date().toISOString()
+    }
+  }
+
+  private sendMessage(type: AgentMessage['type'], content: string, event = AgentEvents.MESSAGE) {
+    const message = this.createMessage(type, content)
+    this.windowManager.mainWindow?.webContents.send(event, message)
+  }
+
   async startInstruction(instruction: string): Promise<void> {
     if (this.isProcessing) {
       throw new Error('Agent is already processing an instruction')
     }
-    console.log('reached agent manager')
 
     this.isProcessing = true
     this.currentInstruction = instruction
 
     try {
-      this.openAIAdapter.addToContext({
-        role: 'user',
-        content: `User Instrution: ${this.currentInstruction}`
-      })
-
       await this.executeAgentLoop()
     } catch (error) {
-      this.windowManager.mainWindow?.webContents.send(AgentEvents.ERROR, error)
+      console.error('Error in agent execution:', error)
+      this.sendMessage(
+        'system',
+        `Error: ${error instanceof Error ? error.message : String(error)}`,
+        AgentEvents.ERROR
+      )
     } finally {
       this.isProcessing = false
     }
@@ -57,116 +65,105 @@ export class AgentManager extends EventEmitter {
   private async executeAgentLoop(): Promise<void> {
     while (this.isProcessing) {
       try {
-        // Get both screenshot and accessibility tree
-        const screenshot = await this.browserManager.getCurrentPageScreenshot()
-        const accessibilityTree = await this.browserManager.getAccessibilityTree()
+        let screenshot: string | undefined
 
-        if (!screenshot) {
-          throw new Error('Could not capture screenshot')
+        try {
+          screenshot = await this.browserManager.getActivePageScreenshot()
+        } catch (error) {
+          console.log('Error getting page context:', error)
         }
-        const base64Image = screenshot.replace(/^data:image\/\w+;base64,/, '')
 
-        const { actions } = await this.openAIAdapter.getNextAction([
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: `Current page state:
-                1. Screenshot provided below
-                2. Accessibility tree:
-                ${JSON.stringify(accessibilityTree, null, 2)}`
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: `data:image/jpeg;base64,${base64Image}`,
-                  detail: 'high'
-                }
-              }
-            ]
-          }
-        ])
+        const { actions } = await this.openAIAdapter.getNextAction(
+          this.currentInstruction!,
+          screenshot
+        )
 
         if (!actions?.length) {
-          this.windowManager.mainWindow?.webContents.send(AgentEvents.COMPLETED)
-          break
+          continue
         }
 
         for (const action of actions) {
           await this.handleAction(action)
         }
       } catch (error) {
-        this.windowManager.mainWindow?.webContents.send(AgentEvents.ERROR, error)
-        break
+        console.error('Error in agent loop:', error)
+        this.sendMessage(
+          'system',
+          `Error: ${error instanceof Error ? error.message : String(error)}`,
+          AgentEvents.ERROR
+        )
+        this.openAIAdapter.addAction(`${error instanceof Error ? error.message : String(error)}`)
       }
     }
   }
 
   private async handleAction(action: ChatCompletionMessageToolCall): Promise<void> {
-    const { name, arguments: args } = action.function // Add id to destructuring
+    const { name, arguments: args } = action.function
     const parsedArgs = JSON.parse(args)
-    let userResponse = ''
 
-    switch (name) {
-      case 'execute_playwright':
-        try {
+    try {
+      switch (name) {
+        case 'execute_playwright': {
+          console.log('executing playwright code: \n', parsedArgs.code)
           await this.browserManager.executePlaywrightCode(parsedArgs.code, Date.now())
-          this.windowManager.mainWindow?.webContents.send(AgentEvents.MESSAGE, {
-            type: 'assistant',
-            content: parsedArgs.userFeedback
-          })
-          // Add tool response
-          this.openAIAdapter.addToContext({
-            role: 'tool',
-            tool_call_id: action.id,
-            content: 'Playwright execution completed successfully'
-          })
-        } catch (err) {
-          this.openAIAdapter.addToContext({
-            role: 'tool',
-            tool_call_id: action.id,
-            content: `Error occurred while executing playwright: ${err}`
-          })
+          this.sendMessage('assistant', parsedArgs.userFeedback)
+          this.openAIAdapter.addAction(
+            `Executed Playwright: ${parsedArgs.userFeedback}\nCode: ${parsedArgs.code}`
+          )
+          break
         }
-        break
 
-      case 'ask_question_to_user':
-        this.pendingUserResponse = true
-        this.windowManager.mainWindow?.webContents.send(AgentEvents.QUESTION, parsedArgs.message)
-        userResponse = await this.waitForUserResponse()
-        this.openAIAdapter.addToContext({
-          role: 'tool',
-          tool_call_id: action.id,
-          content: userResponse
-        })
-        break
+        case 'ask_question_to_user': {
+          console.log('ask_question_to_user: ', parsedArgs.message)
+          this.pendingUserResponse = true
+          this.sendMessage('assistant', parsedArgs.message, AgentEvents.QUESTION)
+          const userResponse = await this.waitForUserResponse()
+          this.openAIAdapter.addAction(
+            `Asked user: ${parsedArgs.message}\nUser response: ${userResponse}`
+          )
+          break
+        }
 
-      case 'send_message_to_user':
-        this.windowManager.mainWindow?.webContents.send(AgentEvents.MESSAGE, {
-          type: 'assistant',
-          content: parsedArgs.message
-        })
-        this.openAIAdapter.addToContext({
-          role: 'tool',
-          tool_call_id: action.id,
-          content: 'Message sent to user successfully'
-        })
-        break
+        case 'send_message_to_user': {
+          console.log('send_message_to_user: ', parsedArgs.message)
+          this.sendMessage('assistant', parsedArgs.message)
+          this.openAIAdapter.addAction(`Sent message to user: ${parsedArgs.message}`)
+          break
+        }
 
-      case 'task_completed':
-        this.windowManager.mainWindow?.webContents.send(AgentEvents.MESSAGE, {
-          type: 'assistant',
-          content: parsedArgs.message
-        })
-        this.windowManager.mainWindow?.webContents.send(AgentEvents.COMPLETED)
-        this.openAIAdapter.addToContext({
-          role: 'tool',
-          tool_call_id: action.id,
-          content: 'Task completed successfully'
-        })
-        this.isProcessing = false
-        break
+        case 'task_completed': {
+          console.log('task_completed: ', parsedArgs.message)
+          this.sendMessage('assistant', parsedArgs.message)
+          this.openAIAdapter.addAction(`Task completed: ${parsedArgs.message}`)
+          this.isProcessing = false
+          break
+        }
+
+        case 'find_element': {
+          console.log('find_element: \n', parsedArgs)
+          const elements = await this.browserManager.findElement(parsedArgs)
+          this.openAIAdapter.addAction(
+            `Found ${elements.length} elements with locator. Populated the current DOM context`
+          )
+          this.openAIAdapter.setDOMContext(JSON.stringify(elements, null, 2))
+          break
+        }
+
+        case 'get_element_details': {
+          console.log('get_element_details: \n', parsedArgs)
+          const details = await this.browserManager.getElementDetails(parsedArgs.locator)
+          this.openAIAdapter.addAction(
+            `Element details for ${parsedArgs.locator}: ${JSON.stringify(details)}`
+          )
+          break
+        }
+      }
+    } catch (error: unknown) {
+      console.error(`Error executing action ${name}:`, error)
+      this.openAIAdapter.addAction(
+        `Error calling tool/function ${name}: ${error instanceof Error ? error.message : String(error)}`
+      )
+      throw error
     }
   }
 
@@ -183,7 +180,7 @@ export class AgentManager extends EventEmitter {
 
   provideUserResponse(response: string): void {
     if (this.pendingUserResponse) {
-      this.windowManager.mainWindow?.webContents.send('user:response', response)
+      this.emit('user:response', response)
     }
   }
 
