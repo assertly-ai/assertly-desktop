@@ -96,7 +96,7 @@ export class WindowManager {
       }
     })
 
-    this.previewWindow.webContents.loadURL('about:blank')
+    this.previewWindow.webContents.loadURL('https://google.com')
 
     return this.previewWindow
   }

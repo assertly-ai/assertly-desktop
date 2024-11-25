@@ -2,7 +2,7 @@ import { Button } from '@components/ui/button'
 import { ScrollArea } from '@components/ui/scroll-area'
 import { Textarea } from '@components/ui/textarea'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip'
-import { Message } from '@renderer/types/openai'
+import { AgentMessage } from '@renderer/types/agent'
 import { useEffect, useRef, useState } from 'react'
 import { FiPlus } from 'react-icons/fi'
 import { RiPlanetLine, RiSendPlane2Line } from 'react-icons/ri'
@@ -15,21 +15,28 @@ export enum AgentEvents {
 }
 
 export const Explore = () => {
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<AgentMessage[]>([])
   const [input, setInput] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
-  // Auto-scroll to bottom when new messages arrive
+  const addMessage = (message: AgentMessage) => {
+    setMessages((prev) => {
+      if (prev.some((m) => m.id === message.id)) {
+        return prev
+      }
+      return [...prev, message]
+    })
+  }
+
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
     }
   }, [messages])
 
-  // Auto-resize textarea
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector(
@@ -41,140 +48,72 @@ export const Explore = () => {
     }
   }, [messages])
 
-  // Setup event listeners
   useEffect(() => {
-    // Handler for assistant/system messages
-    const messageHandler = (_, message: { type: 'assistant' | 'system'; content: string }) => {
-      console.log('messageHandler')
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          content: message.content,
-          sender: message.type,
-          timestamp: new Date()
-        }
-      ])
+    const messageHandler = (_: unknown, message: AgentMessage) => {
+      console.log('messageHandler', message)
+      addMessage(message)
     }
 
-    // Handler for questions from the agent
-    const questionHandler = (_, question: string) => {
-      console.log('questionHandler')
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          content: question,
-          sender: 'assistant',
-          timestamp: new Date()
-        }
-      ])
+    const questionHandler = (_: unknown, message: AgentMessage) => {
+      console.log('questionHandler', message)
+      addMessage(message)
       setIsWaitingForResponse(true)
     }
 
-    // Handler for execution updates
-    const executingHandler = (_, message: string) => {
-      console.log('executingHandler')
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          content: `🔄 ${message}`,
-          sender: 'system',
-          timestamp: new Date()
-        }
-      ])
-    }
-
-    // Handler for errors
-    const errorHandler = (_, error: Error) => {
-      console.log('errorHandler')
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          content: `❌ Error: ${error.message}`,
-          sender: 'system',
-          timestamp: new Date()
-        }
-      ])
+    const errorHandler = (_: unknown, message: AgentMessage) => {
+      console.log('errorHandler', message)
+      addMessage(message)
       setIsProcessing(false)
       setIsWaitingForResponse(false)
     }
 
-    // Handler for completion
-    const completedHandler = () => {
-      console.log('completedHandler')
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          content: '✅ Task completed',
-          sender: 'system',
-          timestamp: new Date()
-        }
-      ])
+    const completedHandler = (_: unknown, message: AgentMessage) => {
+      console.log('completedHandler', message)
+      addMessage(message)
       setIsProcessing(false)
       setIsWaitingForResponse(false)
     }
 
-    // Register all event listeners
-    window.electron.ipcRenderer.on(AgentEvents.MESSAGE, messageHandler)
-    window.electron.ipcRenderer.on(AgentEvents.QUESTION, questionHandler)
-    window.electron.ipcRenderer.on(AgentEvents.EXECUTING, executingHandler)
-    window.electron.ipcRenderer.on(AgentEvents.ERROR, errorHandler)
-    window.electron.ipcRenderer.on(AgentEvents.COMPLETED, completedHandler)
+    const messageCleanup = window.electron.ipcRenderer.on(AgentEvents.MESSAGE, messageHandler)
+    const questionCleanup = window.electron.ipcRenderer.on(AgentEvents.QUESTION, questionHandler)
+    const errorCleanup = window.electron.ipcRenderer.on(AgentEvents.ERROR, errorHandler)
+    const completedCleanup = window.electron.ipcRenderer.on(AgentEvents.COMPLETED, completedHandler)
+
     return () => {
-      window.electron.ipcRenderer.removeListener(AgentEvents.MESSAGE, messageHandler)
-      window.electron.ipcRenderer.removeListener(AgentEvents.QUESTION, questionHandler)
-      window.electron.ipcRenderer.removeListener(AgentEvents.EXECUTING, executingHandler)
-      window.electron.ipcRenderer.removeListener(AgentEvents.ERROR, errorHandler)
-      window.electron.ipcRenderer.removeListener(AgentEvents.COMPLETED, completedHandler)
+      messageCleanup()
+      questionCleanup()
+      errorCleanup()
+      completedCleanup()
     }
   }, [])
 
   const handleSend = async () => {
     if (!input.trim() || isProcessing) return
 
-    const message = input.trim()
+    const message: AgentMessage = {
+      id: crypto.randomUUID(),
+      type: 'user',
+      content: input.trim(),
+      timestamp: new Date().toISOString()
+    }
 
-    // Add user message to state immediately
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        content: message,
-        sender: 'user',
-        timestamp: new Date()
-      }
-    ])
-
+    addMessage(message)
     setInput('')
 
     if (isWaitingForResponse) {
-      // Send as response to agent question
-      window.api.sendUserResponse(message)
+      window.api.sendUserResponse(message.content)
       setIsWaitingForResponse(false)
     } else {
-      // Send as new instruction
       setIsProcessing(true)
       try {
-        await window.api.startAgentInstruction(message)
+        await window.api.startAgentInstruction(message.content)
       } catch (error) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: crypto.randomUUID(),
-            content: `Error: ${error}`,
-            sender: 'system',
-            timestamp: new Date()
-          }
-        ])
+        addMessage({
+          id: crypto.randomUUID(),
+          type: 'system',
+          content: `Error: ${error}`,
+          timestamp: new Date().toISOString()
+        })
         setIsProcessing(false)
       }
     }
@@ -195,14 +134,11 @@ export const Explore = () => {
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current
     if (textarea) {
-      // Reset height to auto to get the correct scrollHeight
       textarea.style.height = 'auto'
-      // Set new height based on scrollHeight
       textarea.style.height = `${Math.min(textarea.scrollHeight, 400)}px`
     }
   }
 
-  // Update textarea height when input changes
   useEffect(() => {
     adjustTextareaHeight()
   }, [input])
@@ -212,12 +148,12 @@ export const Explore = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen p-2 px-0">
-      <div className="mb-2 mx-1 py-2 px-2 border-b border-white/5">
+    <div className="flex flex-col h-screen p-2">
+      <div className="py-1  px-2 border-b border-white/5">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <RiPlanetLine className="text-xl text-white/40" />
-            <h1 className="text-lg font-semibold text-white/40">Explore</h1>
+            <RiPlanetLine className="text-lg text-white/40" />
+            <h1 className="text-md font-medium text-white/40">Explore</h1>
           </div>
           <TooltipProvider>
             <Tooltip>
@@ -225,10 +161,10 @@ export const Explore = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 p-0 text-white/40 hover:text-white/90 hover:bg-white/10 rounded-full [&_svg]:size-6"
+                  className="h-8 w-8 p-0 text-white/40 hover:text-white/90 hover:bg-white/10 rounded-full [&_svg]:size-5"
                   onClick={handleNewSession}
                 >
-                  <FiPlus className="text-2xl text-white/40" />
+                  <FiPlus className="text-md text-white/40" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="left" className="bg-[#1a1a1a] text-[11px] rounded-lg p-2">
@@ -251,13 +187,13 @@ export const Explore = () => {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
                   className={`max-w-[80%] rounded-lg p-2 px-2
                         transition-all duration-200 backdrop-blur-sm
                         ${
-                          message.sender === 'user'
+                          message.type === 'user'
                             ? 'bg-white/[0.07] text-white/90 shadow-white/5 border border-white/5'
                             : ' text-white shadow-white/10 border border-white/10'
                         }`}
@@ -265,10 +201,10 @@ export const Explore = () => {
                   <p className="text-xs whitespace-pre-wrap leading-relaxed">{message.content}</p>
                   <div
                     className={`text-[10px] mt-1 ${
-                      message.sender === 'user' ? 'text-white/40' : 'text-white/40'
+                      message.type === 'user' ? 'text-white/40' : 'text-white/40'
                     }`}
                   >
-                    {message.timestamp.toLocaleTimeString('en-US', {
+                    {new Date(message.timestamp).toLocaleTimeString('en-US', {
                       hour: '2-digit',
                       minute: '2-digit'
                     })}
@@ -279,8 +215,7 @@ export const Explore = () => {
           </div>
         </ScrollArea>
 
-        {/* Input Area */}
-        <div className="">
+        <div className="py-2">
           <div className="flex max-w-5xl mx-auto relative group focus-visible:ring-0">
             <Textarea
               ref={textareaRef}
@@ -289,8 +224,9 @@ export const Explore = () => {
               onKeyDown={handleKeyDown}
               placeholder="Type your instructions..."
               disabled={isProcessing}
-              className="flex-1 min-h-[120px] max-h-[400px]
-                          bg-neutral-800/90
+              className="flex-1 min-h-[100px] max-h-[400px]
+                          bg-neutral-500/10
+                          shadow-lg
                           border border-white/15
                           text-white placeholder:text-white/40
                           resize-none rounded-lg pr-14 pl-5 py-3.5 text-[15px]

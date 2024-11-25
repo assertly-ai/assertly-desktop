@@ -36,7 +36,7 @@ export const Sidebar = () => {
               to={'/'}
               className={({ isActive }) =>
                 cn(
-                  'w-12 h-11 text-md rounded-md bg-white/10 group relative flex items-center justify-center mb-6',
+                  'w-8 h-8 mb-6 text-md rounded-md  group relative flex items-center justify-center mb-6v bg-cover',
                   isActive && 'bg-white/10'
                 )
               }
