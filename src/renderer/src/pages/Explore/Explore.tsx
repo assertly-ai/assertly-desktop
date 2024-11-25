@@ -184,34 +184,43 @@ export const Explore = () => {
           }}
         >
           <div className="flex flex-col gap-4 py-4 px-2">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+            {messages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-[calc(100vh-220px)]">
+                <div className="p-4 rounded-full bg-white/5 backdrop-blur-sm">
+                  <RiPlanetLine className="w-10 h-10 text-white/20" />
+                </div>
+                <p className="mt-4 text-sm text-white/30">Send a message to start exploring</p>
+              </div>
+            ) : (
+              messages.map((message) => (
                 <div
-                  className={`max-w-[80%] rounded-lg p-2 px-2
-                        transition-all duration-200 backdrop-blur-sm
-                        ${
-                          message.type === 'user'
-                            ? 'bg-white/[0.07] text-white/90 shadow-white/5 border border-white/5'
-                            : ' text-white shadow-white/10 border border-white/10'
-                        }`}
+                  key={message.id}
+                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <p className="text-xs whitespace-pre-wrap leading-relaxed">{message.content}</p>
                   <div
-                    className={`text-[10px] mt-1 ${
-                      message.type === 'user' ? 'text-white/40' : 'text-white/40'
-                    }`}
+                    className={`max-w-[80%] rounded-lg p-2 px-2
+                          transition-all duration-200 backdrop-blur-sm
+                          ${
+                            message.type === 'user'
+                              ? 'bg-white/[0.07] text-white/90 shadow-white/5 border border-white/5'
+                              : ' text-white shadow-white/10 border border-white/10'
+                          }`}
                   >
-                    {new Date(message.timestamp).toLocaleTimeString('en-US', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
+                    <p className="text-xs whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                    <div
+                      className={`text-[10px] mt-1 ${
+                        message.type === 'user' ? 'text-white/40' : 'text-white/40'
+                      }`}
+                    >
+                      {new Date(message.timestamp).toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </ScrollArea>
 

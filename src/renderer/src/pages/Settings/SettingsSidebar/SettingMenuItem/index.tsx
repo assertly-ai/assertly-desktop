@@ -14,7 +14,7 @@ export const SettingMenuItem = ({ title, url, icon }: PropType) => {
   return (
     <div
       key={title}
-      className={`flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-white/10  hover:border hover:border-white/5 
+      className={`flex items-center gap-2 p-3 px-4 rounded-md cursor-pointer hover:bg-white/10  hover:border hover:border-white/5
               ${location.pathname === url ? 'bg-white/5 border border-white/5 ' : 'border border-transparent'}`}
       onClick={() => navigate(url)}
     >

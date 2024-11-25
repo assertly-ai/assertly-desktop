@@ -6,13 +6,13 @@ export const Settings = () => {
   return (
     <div className="h-full w-full">
       <ResizablePanelGroup direction="horizontal" className="min-h-[calc(100vh-2rem)] rounded-lg ">
-        <ResizablePanel defaultSize={15} minSize={15} maxSize={40} className="min-h-full">
+        <ResizablePanel defaultSize={20} minSize={15} maxSize={40} className="min-h-full">
           <SettingsSidebar />
         </ResizablePanel>
 
         <ResizableHandle className="" />
 
-        <ResizablePanel defaultSize={90} minSize={40} className="min-h-full p-2">
+        <ResizablePanel defaultSize={70} minSize={40} className="min-h-full p-2">
           {/* Right Section */}
           <div className="h-full bg-white/5 rounded-lg border border-white/10 p-6 w-full">
             <Outlet />
