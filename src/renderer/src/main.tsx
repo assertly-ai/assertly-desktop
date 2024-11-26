@@ -12,16 +12,7 @@ import { ScriptModules } from './pages/ScriptModules/ScriptModules'
 import { Explore } from './pages/Explore/Explore'
 import { ScriptModuleBuilder } from './pages/ScriptModules/ScriptModuleBuilder'
 import { Settings } from './pages/Settings'
-import {
-  RiAiGenerate,
-  RiBardLine,
-  RiCodeBlock,
-  RiEdit2Line,
-  RiKey2Line,
-  RiSecurePaymentLine,
-  RiUser2Line,
-  RiUser3Line
-} from 'react-icons/ri'
+import { RiBardLine, RiCodeBlock, RiKey2Line, RiUser3Line } from 'react-icons/ri'
 import { AISettings } from './pages/Settings/SettingsContent/AISettings'
 import { EditorSettings } from './pages/Settings/SettingsContent/EditorSettings'
 import { UserSettings } from './pages/Settings/SettingsContent/UserSettings'
@@ -78,7 +69,7 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
           },
           {
             path: 'user',
-            element: <UserSettings title={'User Profile'} icon={RiUser3Line} />
+            element: <UserSettings title={'User Settings'} icon={RiUser3Line} />
           },
           {
             path: 'ai',

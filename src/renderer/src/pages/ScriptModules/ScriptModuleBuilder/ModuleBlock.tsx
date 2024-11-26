@@ -76,7 +76,7 @@ export const ModuleBlock = ({ block }: PropType) => {
   return (
     <div className="flex flex-col h-full">
       <div className="flex">
-        <Tabs defaultValue="code" className="w-full p-2 pr-0">
+        <Tabs defaultValue="code" className="w-full p-1">
           <div className="flex justify-between items-center px-1">
             <TabsList className="bg-white bg-opacity-5 rounded-md">
               <TabsTrigger
@@ -89,7 +89,7 @@ export const ModuleBlock = ({ block }: PropType) => {
                 value="text"
                 className="text-zinc-100 data-[state=active]:bg-white data-[state=active]:bg-opacity-20 data-[state=active]:text-zinc-100"
               >
-                Text
+                Instructions
               </TabsTrigger>
             </TabsList>
             <div className="flex justify-end items-center rounded bg-white bg-opacity-5">

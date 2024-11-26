@@ -26,7 +26,7 @@ export const ScriptBlocks = ({ scriptId }: PropType) => {
   }, [scriptBlocks])
   return (
     <div className="w-full">
-      <div className="flex justify-start items-center px-5 pr-2 py-2 text-white text-opacity-40">
+      <div className="flex justify-start items-center px-2 py-2 text-white text-opacity-40">
         <div className="flex flex-1 gap-2 justify-start items-center">
           <span className="text-md font-medium text-white text-opacity-40">Script Blocks</span>
         </div>
