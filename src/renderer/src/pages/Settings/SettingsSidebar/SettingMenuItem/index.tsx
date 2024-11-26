@@ -14,12 +14,12 @@ export const SettingMenuItem = ({ title, url, icon }: PropType) => {
   return (
     <div
       key={title}
-      className={`flex items-center gap-2 p-3 px-4 rounded-md cursor-pointer hover:bg-white/10  hover:border hover:border-white/5
+      className={`flex items-center gap-3 p-2.5 px-4 text-white/40 rounded-md cursor-pointer hover:bg-white/10  hover:border hover:border-white/5
               ${location.pathname === url ? 'bg-white/5 border border-white/5 ' : 'border border-transparent'}`}
       onClick={() => navigate(url)}
     >
       {React.createElement(icon)}
-      <span className="text-white text-zinc-300/80 text-sm font-semibold">{title}</span>
+      <span className="text-white text-white/60 text-sm font-medium">{title}</span>
     </div>
   )
 }

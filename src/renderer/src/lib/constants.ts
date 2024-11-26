@@ -1,4 +1,4 @@
-import { RiAiGenerate, RiEdit2Line, RiSecurePaymentLine, RiUser2Line } from 'react-icons/ri'
+import { RiBardLine, RiCodeBlock, RiKey2Line, RiUser3Line } from 'react-icons/ri'
 
 export const DEMO_CODE = `// Playwright test code
 // The 'page' object is available with autocomplete
@@ -132,22 +132,22 @@ declare const page: playwright.Page;
 export const settingsList = [
   {
     title: 'User Settings',
-    icon: RiUser2Line,
+    icon: RiUser3Line,
     url: '/settings/user'
   },
   {
-    title: 'AI Settings',
-    icon: RiAiGenerate,
+    title: 'Configure AI',
+    icon: RiBardLine,
     url: '/settings/ai'
   },
   {
-    title: 'Editor Settings',
-    icon: RiEdit2Line,
+    title: 'Configure Editor',
+    icon: RiCodeBlock,
     url: '/settings/editor'
   },
   {
-    title: 'Secrets Settings',
-    icon: RiSecurePaymentLine,
+    title: 'Secrets Variables',
+    icon: RiKey2Line,
     url: '/settings/secrets'
   }
 ]

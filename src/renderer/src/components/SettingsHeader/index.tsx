@@ -8,9 +8,9 @@ interface PropType {
 
 export const SettingsHeader = ({ title, icon }: PropType) => {
   return (
-    <div className="w-full flex justify-start p-10 pb-4 gap-3">
-      <span className="text-3xl opacity-80 text-neutral-100">{React.createElement(icon)}</span>
-      <span className="text-2xl font-bold text-neutral-100 text-opacity-80">{title}</span>
+    <div className="w-full flex justify-start items-center p-4 gap-4">
+      <span className="text-2xl text-white/40">{React.createElement(icon)}</span>
+      <span className="text-2xl font-semibold text-white/80">{title}</span>
     </div>
   )
 }
