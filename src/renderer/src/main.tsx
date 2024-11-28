@@ -33,7 +33,6 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
         path: '',
         element: <Navigate to={'/explore'} />
       },
-      // Explore page with panel layout
       {
         path: 'explore',
         element: (
@@ -42,7 +41,6 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
           </PanelLayout>
         )
       },
-      // Other pages without panel layout
       {
         path: 'scripts',
         element: <ScriptList />
