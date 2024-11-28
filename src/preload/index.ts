@@ -36,7 +36,9 @@ const api = {
     delete: (table: string, id: number) => ipcRenderer.invoke('db-delete', table, id),
     list: (table: string, conditions?: Record<string, unknown>) =>
       ipcRenderer.invoke('db-list', table, conditions)
-  }
+  },
+
+  getCurrentPreviewUrl: () => ipcRenderer.invoke('get-preview-url')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

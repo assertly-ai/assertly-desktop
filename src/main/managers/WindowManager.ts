@@ -61,6 +61,26 @@ export class WindowManager {
     this.mainWindow = window
   }
 
+  navigatePreview(direction: 'back' | 'forward'): void {
+    if (!this.previewWindow) return
+
+    if (direction === 'back') {
+      this.previewWindow.webContents.navigationHistory.goBack()
+    } else {
+      this.previewWindow.webContents.navigationHistory.goForward()
+    }
+  }
+
+  getCurrentUrl(): string {
+    if (!this.previewWindow) return 'about:blank'
+    return this.previewWindow.webContents.getURL()
+  }
+
+  navigateToUrl(url: string): void {
+    if (!this.previewWindow) return
+    this.previewWindow.webContents.loadURL(url)
+  }
+
   // When creating the preview window, use the last known percentage
   createPreviewWindow(rightPanelPercentage?: number): WebContentsView {
     if (this.previewWindow) return this.previewWindow
@@ -97,7 +117,23 @@ export class WindowManager {
     })
 
     this.previewWindow.webContents.loadURL('https://google.com')
+    this.previewWindow.webContents.on('did-navigate', () => {
+      if (this.mainWindow) {
+        this.mainWindow.webContents.send(
+          'preview-url-changed',
+          this.previewWindow?.webContents.getURL()
+        )
+      }
+    })
 
+    this.previewWindow.webContents.on('did-navigate-in-page', () => {
+      if (this.mainWindow) {
+        this.mainWindow.webContents.send(
+          'preview-url-changed',
+          this.previewWindow?.webContents.getURL()
+        )
+      }
+    })
     return this.previewWindow
   }
 

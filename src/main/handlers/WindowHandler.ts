@@ -26,5 +26,17 @@ export class WindowHandler extends BaseHandler {
     this.on('resize-preview', () => {
       this.windowManager.updatePreviewWindowBounds()
     })
+
+    this.on('preview-navigate', (_, direction: 'back' | 'forward') => {
+      this.windowManager.navigatePreview(direction)
+    })
+
+    this.on('preview-navigate-to-url', (_, url: string) => {
+      this.windowManager.navigateToUrl(url)
+    })
+
+    this.handle('get-preview-url', async () => {
+      return this.windowManager.getCurrentUrl()
+    })
   }
 }

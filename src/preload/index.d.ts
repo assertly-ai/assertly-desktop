@@ -50,6 +50,8 @@ declare global {
         delete: (table: string, id: number) => Promise<void>
         list: (table: string, conditions?: Record<string, unknown>) => Promise<unknown[]>
       }
+
+      getCurrentPreviewUrl: () => Promise<string>
     }
   }
 }

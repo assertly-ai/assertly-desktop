@@ -1,8 +1,8 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@components/ui/resizable'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, KeyboardEvent } from 'react'
 import { ImperativePanelHandle } from 'react-resizable-panels'
 import { Button } from '@components/ui/button'
-import { RiFileCopy2Line, RiPuzzleLine, RiShiningLine } from 'react-icons/ri'
+import { RiFileCopy2Line, RiPuzzleLine } from 'react-icons/ri'
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go'
 
 type PanelLayoutProps = {
@@ -28,9 +28,12 @@ export const PanelLayout = ({
 }: PanelLayoutProps) => {
   const leftPanelRef = useRef<ImperativePanelHandle>(null)
   const rightPanelRef = useRef<ImperativePanelHandle>(null)
+  const [isEditingUrl, setIsEditingUrl] = useState(false)
+  const [editableUrl, setEditableUrl] = useState('about:blank')
+  const [currentUrl, setCurrentUrl] = useState('about:blank')
   const [, setIsResizing] = useState(false)
+  const urlInputRef = useRef<HTMLInputElement>(null)
 
-  // Store the initial percentages in state
   const [initialSizes] = useState(() => {
     const windowWidth = window.innerWidth
     const constrainedWidth = Math.max(
@@ -42,6 +45,34 @@ export const PanelLayout = ({
       rightPercent: Number((((windowWidth - constrainedWidth) / windowWidth) * 100).toFixed(1))
     }
   })
+
+  useEffect(() => {
+    if (hasPreview) {
+      const urlChangeHandler = (_: unknown, url: string) => {
+        setCurrentUrl(url)
+      }
+      window.electron.ipcRenderer.on('preview-url-changed', urlChangeHandler)
+    }
+  }, [hasPreview])
+
+  const handleNavigation = (direction: 'back' | 'forward') => {
+    window.electron.ipcRenderer.send('preview-navigate', direction)
+  }
+  const handleUrlSubmit = () => {
+    if (editableUrl !== currentUrl) {
+      window.electron.ipcRenderer.send('preview-navigate-to-url', editableUrl)
+    }
+    setIsEditingUrl(false)
+  }
+
+  const handleUrlKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleUrlSubmit()
+    } else if (e.key === 'Escape') {
+      setEditableUrl(currentUrl)
+      setIsEditingUrl(false)
+    }
+  }
 
   const getPercentages = (pixelWidth: number) => {
     const windowWidth = window.innerWidth
@@ -124,25 +155,30 @@ export const PanelLayout = ({
                 </Button>
                 <div className="flex flex-1 h-full items-center justify-between gap-2 rounded-md bg-white bg-opacity-10 text-sm mb-2">
                   <div className="flex flex-1 items-center justify-start px-4">
-                    <span className="text-xs text-white/90 tracking-wide">about:blank</span>
+                    {isEditingUrl ? (
+                      <input
+                        ref={urlInputRef}
+                        type="text"
+                        value={editableUrl}
+                        onChange={(e) => setEditableUrl(e.target.value)}
+                        onKeyDown={handleUrlKeyDown}
+                        onBlur={handleUrlSubmit}
+                        className="w-full bg-transparent text-xs text-white/90 tracking-wide focus:outline-none"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        className="text-xs text-white/90 tracking-wide cursor-pointer"
+                        onClick={() => {
+                          setIsEditingUrl(true)
+                          setTimeout(() => urlInputRef.current?.focus(), 0)
+                        }}
+                      >
+                        {currentUrl}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center justify-center gap-1 pr-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 [&_svg]:size-3 text-white/90 hover:bg-white/20 hover:text-white"
-                      onClick={() => {}}
-                    >
-                      <GoArrowLeft />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 [&_svg]:size-3 text-white/90 hover:bg-white/20 hover:text-white"
-                      onClick={() => {}}
-                    >
-                      <GoArrowRight />
-                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -155,9 +191,17 @@ export const PanelLayout = ({
                       variant="ghost"
                       size="icon"
                       className="h-6 w-6 [&_svg]:size-3 text-white/90 hover:bg-white/20 hover:text-white"
-                      onClick={() => {}}
+                      onClick={() => handleNavigation('back')}
                     >
-                      <RiShiningLine />
+                      <GoArrowLeft />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 [&_svg]:size-3 text-white/90 hover:bg-white/20 hover:text-white"
+                      onClick={() => handleNavigation('forward')}
+                    >
+                      <GoArrowRight />
                     </Button>
                   </div>
                 </div>
