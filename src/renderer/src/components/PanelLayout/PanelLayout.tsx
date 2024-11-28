@@ -28,7 +28,6 @@ export const PanelLayout = ({
 }: PanelLayoutProps) => {
   const leftPanelRef = useRef<ImperativePanelHandle>(null)
   const rightPanelRef = useRef<ImperativePanelHandle>(null)
-  const [isEditingUrl, setIsEditingUrl] = useState(false)
   const [editableUrl, setEditableUrl] = useState('about:blank')
   const [currentUrl, setCurrentUrl] = useState('about:blank')
   const [, setIsResizing] = useState(false)
@@ -50,6 +49,7 @@ export const PanelLayout = ({
     if (hasPreview) {
       const urlChangeHandler = (_: unknown, url: string) => {
         setCurrentUrl(url)
+        setEditableUrl(url)
       }
       window.electron.ipcRenderer.on('preview-url-changed', urlChangeHandler)
     }
@@ -60,9 +60,23 @@ export const PanelLayout = ({
   }
   const handleUrlSubmit = () => {
     if (editableUrl !== currentUrl) {
-      window.electron.ipcRenderer.send('preview-navigate-to-url', editableUrl)
+      let finalUrl = editableUrl
+
+      // Simple URL validation
+      const isUrl =
+        /^(http|https):\/\/[^ "]+$/.test(editableUrl) || /^[^ "]+\.[^ "]+$/.test(editableUrl)
+
+      if (!isUrl) {
+        // If not a URL, create a Google search URL
+        const searchQuery = encodeURIComponent(editableUrl)
+        finalUrl = `https://www.google.com/search?q=${searchQuery}`
+      } else if (!editableUrl.startsWith('http://') && !editableUrl.startsWith('https://')) {
+        // If it's a URL but missing protocol, add https://
+        finalUrl = `https://${editableUrl}`
+      }
+
+      window.electron.ipcRenderer.send('preview-navigate-to-url', finalUrl)
     }
-    setIsEditingUrl(false)
   }
 
   const handleUrlKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -70,7 +84,6 @@ export const PanelLayout = ({
       handleUrlSubmit()
     } else if (e.key === 'Escape') {
       setEditableUrl(currentUrl)
-      setIsEditingUrl(false)
     }
   }
 
@@ -154,36 +167,32 @@ export const PanelLayout = ({
                   Page #1
                 </Button>
                 <div className="flex flex-1 h-full items-center justify-between gap-2 rounded-md bg-white bg-opacity-10 text-sm mb-2">
-                  <div className="flex flex-1 items-center justify-start px-4">
-                    {isEditingUrl ? (
-                      <input
-                        ref={urlInputRef}
-                        type="text"
-                        value={editableUrl}
-                        onChange={(e) => setEditableUrl(e.target.value)}
-                        onKeyDown={handleUrlKeyDown}
-                        onBlur={handleUrlSubmit}
-                        className="w-full bg-transparent text-xs text-white/90 tracking-wide focus:outline-none"
-                        autoFocus
-                      />
-                    ) : (
-                      <span
-                        className="text-xs text-white/90 tracking-wide cursor-pointer"
-                        onClick={() => {
-                          setIsEditingUrl(true)
-                          setTimeout(() => urlInputRef.current?.focus(), 0)
-                        }}
-                      >
-                        {currentUrl}
-                      </span>
-                    )}
+                  <div className="flex flex-1 items-center justify-start px-4 min-w-0">
+                    <input
+                      ref={urlInputRef}
+                      type="text"
+                      value={editableUrl}
+                      onChange={(e) => setEditableUrl(e.target.value)}
+                      onKeyDown={handleUrlKeyDown}
+                      onBlur={handleUrlSubmit}
+                      className="w-full bg-transparent text-xs text-white/90 tracking-wide focus:outline-none"
+                      autoFocus
+                    />
                   </div>
                   <div className="flex items-center justify-center gap-1 pr-2">
                     <Button
                       variant="ghost"
                       size="icon"
                       className="h-6 w-6 [&_svg]:size-3 text-white/90 hover:bg-white/20 hover:text-white"
-                      onClick={() => {}}
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(currentUrl)
+                          // Optionally show a success notification
+                        } catch (err) {
+                          console.error('Failed to copy URL:', err)
+                          // Optionally show an error notification
+                        }
+                      }}
                     >
                       <RiFileCopy2Line />
                     </Button>
