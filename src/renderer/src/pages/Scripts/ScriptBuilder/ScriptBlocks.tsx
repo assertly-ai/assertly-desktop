@@ -58,7 +58,7 @@ export const ScriptBlocks = ({ scriptId }: PropType) => {
         </div>
       </div>
       <div className="w-full">
-        {scriptBlocks?.map((block) => <Block key={block?.id} block={block} />)}
+        {scriptBlocks?.map((block, index) => <Block key={block?.id} index={index} block={block} />)}
       </div>
     </div>
   )

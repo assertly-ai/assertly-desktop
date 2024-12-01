@@ -3,7 +3,7 @@ import './globals.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import { createMemoryRouter, Navigate, RouterProvider } from 'react-router-dom'
 import AppLayout from './AppLayout'
 import { ScriptBuilder } from './pages/Scripts/ScriptBuilder'
 import { PanelLayout } from './components/PanelLayout/PanelLayout'
@@ -24,7 +24,7 @@ const DEFAULT_PANEL_CONFIG = {
   maxWidth: 800
 }
 
-export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
+export const router: ReturnType<typeof createMemoryRouter> = createMemoryRouter([
   {
     path: '/',
     element: <AppLayout />,

@@ -4,7 +4,7 @@ import { ElectronAPI } from '@electron-toolkit/preload'
 interface AgentMessage {
   type: 'user' | 'assistant' | 'system'
   content: string
-  metadata?: any
+  metadata?: unknown
 }
 
 // Define event channels

@@ -1,16 +1,22 @@
-appId: com.electron.app
-productName: assertly-desktop
+appId: com.assertly.ai
+productName: Assertly Desktop
 directories:
+  output: dist
   buildResources: build
 files:
+  - 'out/**/*'
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+asar: true
 asarUnpack:
   - resources/**
+  - build/**
+  - renderer/**
+  - out/**
 win:
   executableName: assertly-desktop
 nsis:
@@ -26,6 +32,7 @@ mac:
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
+  icon: build/icon.icns
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:
@@ -33,7 +40,7 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: electronjs.org
+  maintainer: assertly.ai
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}

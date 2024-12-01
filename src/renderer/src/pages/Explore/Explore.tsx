@@ -229,6 +229,7 @@ export const Explore = () => {
             <Textarea
               ref={textareaRef}
               value={input}
+              autoFocus
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               placeholder="Type your instructions..."

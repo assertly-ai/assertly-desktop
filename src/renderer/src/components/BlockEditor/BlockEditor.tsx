@@ -8,7 +8,7 @@ import { PLAY_WRIGHT_DEFINITIONS } from '@renderer/lib/constants'
 import ScriptModuleBlock from '@renderer/types/scriptModuleBlock'
 import { useScriptModuleBlockStore } from '@renderer/store/scriptModuleBlockStore'
 
-type PropType = { language: string; data: ScriptBlock | ScriptModuleBlock }
+type PropType = { index: number; language: string; data: ScriptBlock | ScriptModuleBlock }
 
 export function BlockEditor({ language, data }: PropType) {
   const { updateScriptBlock } = useScriptBlockStore()
@@ -59,6 +59,8 @@ export function BlockEditor({ language, data }: PropType) {
         PLAY_WRIGHT_DEFINITIONS,
         'playwright.d.ts'
       )
+
+      // console.log(data.id, monaco.editor.getEditors().at(index)?.addGlyphMarginWidget(''))
     }
   }, [language, monacoRef.current])
 
@@ -70,8 +72,10 @@ export function BlockEditor({ language, data }: PropType) {
       >
         <Editor
           height={`${editorHeight}px`}
+          key={data.id}
           theme="vs-dark"
           defaultLanguage={language}
+          language={language}
           onChange={handleChange}
           onMount={handleEditorDidMount}
           loading={<LoaderCircle />}
@@ -96,6 +100,7 @@ export function BlockEditor({ language, data }: PropType) {
             fixedOverflowWidgets: true,
             roundedSelection: true,
             smoothScrolling: true,
+            glyphMargin: true,
             scrollbar: {
               vertical: 'hidden',
               horizontal: 'hidden',

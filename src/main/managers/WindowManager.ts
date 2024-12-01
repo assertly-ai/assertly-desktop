@@ -1,6 +1,5 @@
 import { BrowserWindow, WebContentsView, Menu, MenuItem, clipboard, shell } from 'electron'
 import { ElectronAdapter } from '../adapters/ElectronAdapter'
-import icon from '../../../resources/icon.png?asset'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 
@@ -19,9 +18,12 @@ export class WindowManager {
       minHeight: 400,
       show: false,
       autoHideMenuBar: true,
-      ...(process.platform === 'linux' ? { icon } : {}),
+      icon: join(__dirname, '../../build/icon'),
       webPreferences: {
         preload: join(__dirname, '../preload/index.js'),
+        nodeIntegration: true,
+        contextIsolation: true,
+        webSecurity: false,
         sandbox: false,
         zoomFactor: 1
       },
@@ -51,7 +53,7 @@ export class WindowManager {
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
       window.loadURL(process.env['ELECTRON_RENDERER_URL'])
     } else {
-      window.loadFile(join(__dirname, '../../renderer/index.html'))
+      window.loadFile(join(__dirname, '../../out/renderer/index.html'))
     }
     this.electronAdapter.watchWindowShortcuts(window)
     return window

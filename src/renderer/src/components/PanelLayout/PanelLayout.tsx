@@ -176,7 +176,7 @@ export const PanelLayout = ({
                       onKeyDown={handleUrlKeyDown}
                       onBlur={handleUrlSubmit}
                       className="w-full bg-transparent text-xs text-white/90 tracking-wide focus:outline-none"
-                      autoFocus
+                      autoFocus={false}
                     />
                   </div>
                   <div className="flex items-center justify-center gap-1 pr-2">

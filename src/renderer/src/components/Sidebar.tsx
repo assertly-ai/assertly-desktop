@@ -1,6 +1,7 @@
 import { cn } from '@renderer/lib/utils'
 import { RiBox2Fill, RiPlanetLine, RiQuillPenLine, RiSettingsLine } from 'react-icons/ri'
 import { NavLink } from 'react-router-dom'
+import logoImage from '../assets/logo.png'
 
 const NAV_ITEMS = [
   {
@@ -36,13 +37,13 @@ export const Sidebar = () => {
               to={'/'}
               className={({ isActive }) =>
                 cn(
-                  'w-10 mb-6 text-md rounded-md  group relative flex items-center justify-center mb-6v bg-cover',
+                  'w-8 mb-6 text-md rounded-md  group relative flex items-center justify-center mb-6v bg-cover',
                   isActive && 'bg-white/10'
                 )
               }
             >
               <span className="sr-only">A</span>
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover rounded-md" />
+              <img src={logoImage} alt="Logo" className="w-full h-full object-cover rounded-md" />
             </NavLink>
             {NAV_ITEMS.map(({ path, icon: Icon, label }) => (
               <NavLink

@@ -13,9 +13,9 @@ type LogEntry = {
   message: unknown[]
 }
 
-type PropType = { block: ScriptBlock }
+type PropType = { block: ScriptBlock; index: number }
 
-export const Block = ({ block }: PropType) => {
+export const Block = ({ index, block }: PropType) => {
   const { runPlaywrightCode } = usePlaywright()
   const { deleteScriptBlock, getScriptBlocksByScriptId, updateScriptBlock } = useScriptBlockStore()
   const scriptBlocks = getScriptBlocksByScriptId(block.scriptId)
@@ -129,10 +129,10 @@ export const Block = ({ block }: PropType) => {
             </div>
           </div>
           <TabsContent value="code" className="mt-1">
-            <BlockEditor language="javascript" data={block} />
+            <BlockEditor language="javascript" index={index} data={block} />
           </TabsContent>
           <TabsContent value="text" className="mt-1">
-            <BlockEditor language="markdown" data={block} />
+            <BlockEditor language="markdown" index={index} data={block} />
           </TabsContent>
         </Tabs>
       </div>
