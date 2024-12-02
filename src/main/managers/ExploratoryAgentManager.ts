@@ -5,7 +5,7 @@ import { EventEmitter } from 'events'
 import { WindowManager } from './WindowManager'
 import { AgentMessage } from '../types/agent'
 
-export enum AgentEvents {
+export enum ExploratoryAgentEvents {
   MESSAGE = 'ai-agent:message',
   QUESTION = 'ai-agent:question',
   ERROR = 'ai-agent:error',
@@ -13,7 +13,7 @@ export enum AgentEvents {
   COMPLETED = 'ai-agent:completed'
 }
 
-export class AgentManager extends EventEmitter {
+export class ExploratoryAgentManager extends EventEmitter {
   private isProcessing: boolean = false
   private currentInstruction?: string
   private pendingUserResponse: boolean = false
@@ -35,7 +35,11 @@ export class AgentManager extends EventEmitter {
     }
   }
 
-  private sendMessage(type: AgentMessage['type'], content: string, event = AgentEvents.MESSAGE) {
+  private sendMessage(
+    type: AgentMessage['type'],
+    content: string,
+    event = ExploratoryAgentEvents.MESSAGE
+  ) {
     const message = this.createMessage(type, content)
     this.windowManager.mainWindow?.webContents.send(event, message)
   }
@@ -55,7 +59,7 @@ export class AgentManager extends EventEmitter {
       this.sendMessage(
         'system',
         `Error: ${error instanceof Error ? error.message : String(error)}`,
-        AgentEvents.ERROR
+        ExploratoryAgentEvents.ERROR
       )
     } finally {
       this.isProcessing = false
@@ -90,7 +94,7 @@ export class AgentManager extends EventEmitter {
         this.sendMessage(
           'system',
           `Error: ${error instanceof Error ? error.message : String(error)}`,
-          AgentEvents.ERROR
+          ExploratoryAgentEvents.ERROR
         )
         this.openAIAdapter.addAction(`${error instanceof Error ? error.message : String(error)}`)
       }
@@ -116,7 +120,7 @@ export class AgentManager extends EventEmitter {
         case 'ask_question_to_user': {
           console.log('ask_question_to_user: ', parsedArgs.message)
           this.pendingUserResponse = true
-          this.sendMessage('assistant', parsedArgs.message, AgentEvents.QUESTION)
+          this.sendMessage('assistant', parsedArgs.message, ExploratoryAgentEvents.QUESTION)
           const userResponse = await this.waitForUserResponse()
           this.openAIAdapter.addAction(
             `Asked user: ${parsedArgs.message}\nUser response: ${userResponse}`

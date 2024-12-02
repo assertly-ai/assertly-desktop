@@ -215,7 +215,7 @@ export const PanelLayout = ({
                   </div>
                 </div>
               </div>
-              <div className="h-full w-full rounded-lg shadow-xl bg-white bg-opacity-10" />
+              <div className="h-full w-full rounded-lg" />
             </div>
           )}
         </div>

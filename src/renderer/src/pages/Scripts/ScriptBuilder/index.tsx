@@ -1,19 +1,20 @@
 import { useParams } from 'react-router-dom'
 import { ScriptBlocks } from './ScriptBlocks'
-import { PreviewPanelLayout } from '@renderer/components/PanelLayout/PreviewPanelLayout'
+import { PanelLayout } from '@renderer/components/PanelLayout/PanelLayout'
 
 export const ScriptBuilder = () => {
   const { scriptId } = useParams<{ scriptId: string }>()
 
   return scriptId ? (
-    <PreviewPanelLayout
-      leftPanel={<ScriptBlocks scriptId={Number(scriptId)} />}
+    <PanelLayout
       leftPanelConfig={{
         defaultWidth: 600,
         minWidth: 400,
         maxWidth: 800
       }}
       hasPreview={true}
-    />
+    >
+      <ScriptBlocks scriptId={Number(scriptId)} />
+    </PanelLayout>
   ) : null
 }

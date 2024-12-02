@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@compo
 import { useEffect, useState } from 'react'
 import { sortBy } from 'lodash'
 import { FiPlus } from 'react-icons/fi'
+import ScriptBlock from '@renderer/types/scriptBlock'
 
 type PropType = { scriptId: number }
 
@@ -58,7 +59,9 @@ export const ScriptBlocks = ({ scriptId }: PropType) => {
         </div>
       </div>
       <div className="w-full">
-        {scriptBlocks?.map((block, index) => <Block key={block?.id} index={index} block={block} />)}
+        {scriptBlocks?.map((block: ScriptBlock, index: number) => (
+          <Block key={block?.id} index={index} block={block} />
+        ))}
       </div>
     </div>
   )
