@@ -17,6 +17,7 @@ import { EditorSettings } from './pages/Settings/SettingsContent/EditorSettings'
 import { UserSettings } from './pages/Settings/SettingsContent/UserSettings'
 import { SecretsSettings } from './pages/Settings/SettingsContent/SecretsSettings'
 import { Documents } from './pages/Documents/Documents'
+import { Bugs } from './pages/Bugs/Bugs'
 
 export const router: ReturnType<typeof createMemoryRouter> = createMemoryRouter([
   {
@@ -50,6 +51,10 @@ export const router: ReturnType<typeof createMemoryRouter> = createMemoryRouter(
       {
         path: 'modules',
         element: <ScriptModules />
+      },
+      {
+        path: 'bugs',
+        element: <Bugs />
       },
       {
         path: 'settings',

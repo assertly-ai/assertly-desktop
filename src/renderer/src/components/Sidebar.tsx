@@ -1,6 +1,7 @@
 import { cn } from '@renderer/lib/utils'
 import {
   RiBox2Fill,
+  RiBugLine,
   RiFileCopy2Line,
   RiPlanetLine,
   RiQuillPenLine,
@@ -19,6 +20,11 @@ const NAV_ITEMS = [
     path: '/documents',
     icon: RiFileCopy2Line,
     label: 'Documents'
+  },
+  {
+    path: '/bugs',
+    icon: RiBugLine,
+    label: 'Bugs'
   },
   {
     path: '/scripts',
@@ -56,7 +62,7 @@ export const Sidebar = () => {
               <span className="sr-only">A</span>
               <img src={logoImage} alt="Logo" className="w-full h-full object-cover rounded-md" />
             </NavLink>
-            {NAV_ITEMS.map(({ path, icon: Icon, label }) => (
+            {NAV_ITEMS.map(({ path, icon: Icon }) => (
               <NavLink
                 key={path}
                 to={path}

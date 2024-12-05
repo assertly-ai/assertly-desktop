@@ -66,7 +66,7 @@ export class PreviewManager {
 
     if (type === PreviewType.EXPLORATORY) {
       return {
-        x: SIDE_NAV_WIDTH,
+        x: SIDE_NAV_WIDTH + 400,
         y: 8 + 42,
         width: width - SIDE_NAV_WIDTH - 8 - 400,
         height: height - 16 - 42
