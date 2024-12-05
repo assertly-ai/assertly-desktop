@@ -6,7 +6,6 @@ import ReactDOM from 'react-dom/client'
 import { createMemoryRouter, Navigate, RouterProvider } from 'react-router-dom'
 import AppLayout from './AppLayout'
 import { ScriptBuilder } from './pages/Scripts/ScriptBuilder'
-import { PanelLayout } from './components/PanelLayout/PanelLayout'
 import { ScriptList } from './pages/Scripts/ScriptList'
 import { ScriptModules } from './pages/ScriptModules/ScriptModules'
 import { Explore } from './pages/Explore/Explore'
@@ -17,12 +16,7 @@ import { AISettings } from './pages/Settings/SettingsContent/AISettings'
 import { EditorSettings } from './pages/Settings/SettingsContent/EditorSettings'
 import { UserSettings } from './pages/Settings/SettingsContent/UserSettings'
 import { SecretsSettings } from './pages/Settings/SettingsContent/SecretsSettings'
-
-const DEFAULT_PANEL_CONFIG = {
-  defaultWidth: 600,
-  minWidth: 400,
-  maxWidth: 800
-}
+import { Documents } from './pages/Documents/Documents'
 
 export const router: ReturnType<typeof createMemoryRouter> = createMemoryRouter([
   {
@@ -35,11 +29,11 @@ export const router: ReturnType<typeof createMemoryRouter> = createMemoryRouter(
       },
       {
         path: 'explore',
-        element: (
-          <PanelLayout leftPanelConfig={DEFAULT_PANEL_CONFIG} hasPreview={true}>
-            <Explore />
-          </PanelLayout>
-        )
+        element: <Explore />
+      },
+      {
+        path: 'documents',
+        element: <Documents />
       },
       {
         path: 'scripts',

@@ -1,5 +1,17 @@
 import { BaseHandler } from './BaseHandler'
 import { WindowManager } from '../managers/WindowManager'
+import { PreviewType } from '../managers/PreviewManager'
+
+interface PreviewTogglePayload {
+  show: boolean
+  type: PreviewType
+  sizes?: number[] | number
+}
+
+interface PreviewNavigatePayload {
+  direction: 'back' | 'forward'
+  type: PreviewType
+}
 
 export class WindowHandler extends BaseHandler {
   constructor(private windowManager: WindowManager) {
@@ -7,36 +19,46 @@ export class WindowHandler extends BaseHandler {
   }
 
   setup(): void {
-    this.on('toggle-preview', (_, show: boolean, sizes: number[] | number) => {
+    // Handle preview toggle with type
+    this.on('toggle-preview', (_, payload: PreviewTogglePayload) => {
+      const { show, type, sizes } = payload
       if (Array.isArray(sizes)) {
-        this.windowManager.togglePreviewWindow(show, sizes[1])
+        this.windowManager.togglePreviewWindow(type, show, sizes[1])
       } else {
-        this.windowManager.togglePreviewWindow(show, sizes)
+        this.windowManager.togglePreviewWindow(type, show, sizes)
       }
     })
 
-    this.on('panel-resized', (_, sizes: number[] | number) => {
+    // Handle panel resize
+    this.on('panel-resized', (_, payload: { type: PreviewType; sizes: number[] | number }) => {
+      const { type, sizes } = payload
       if (Array.isArray(sizes)) {
-        this.windowManager.updatePreviewWindowBounds(sizes[1])
+        this.windowManager.updatePreviewSize(type, sizes[1])
       } else {
-        this.windowManager.updatePreviewWindowBounds(sizes)
+        this.windowManager.updatePreviewSize(type, sizes)
       }
     })
 
-    this.on('resize-preview', () => {
-      this.windowManager.updatePreviewWindowBounds()
+    // Handle preview resize
+    this.on('resize-preview', (_, type: PreviewType) => {
+      this.windowManager.updatePreviewSize(type)
     })
 
-    this.on('preview-navigate', (_, direction: 'back' | 'forward') => {
-      this.windowManager.navigatePreview(direction)
+    // Handle preview navigation
+    this.on('preview-navigate', (_, payload: PreviewNavigatePayload) => {
+      const { direction, type } = payload
+      this.windowManager.navigatePreview(type, direction)
     })
 
-    this.on('preview-navigate-to-url', (_, url: string) => {
-      this.windowManager.navigateToUrl(url)
+    // Handle URL navigation
+    this.on('preview-navigate-to-url', (_, payload: { type: PreviewType; url: string }) => {
+      const { type, url } = payload
+      this.windowManager.navigateToUrl(type, url)
     })
 
-    this.handle('get-preview-url', async () => {
-      return this.windowManager.getCurrentUrl()
+    // Get current URL for specific preview type
+    this.handle('get-preview-url', async (_, type: PreviewType) => {
+      return this.windowManager.getCurrentUrl(type)
     })
   }
 }

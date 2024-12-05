@@ -1,5 +1,11 @@
 import { cn } from '@renderer/lib/utils'
-import { RiBox2Fill, RiPlanetLine, RiQuillPenLine, RiSettingsLine } from 'react-icons/ri'
+import {
+  RiBox2Fill,
+  RiFileCopy2Line,
+  RiPlanetLine,
+  RiQuillPenLine,
+  RiSettingsLine
+} from 'react-icons/ri'
 import { NavLink } from 'react-router-dom'
 import logoImage from '../assets/logo.png'
 
@@ -8,6 +14,11 @@ const NAV_ITEMS = [
     path: '/explore',
     icon: RiPlanetLine,
     label: 'Explore'
+  },
+  {
+    path: '/documents',
+    icon: RiFileCopy2Line,
+    label: 'Documents'
   },
   {
     path: '/scripts',
@@ -30,7 +41,7 @@ export const Sidebar = () => {
   return (
     <>
       <div className="flex h-screen">
-        <div className="flex flex-col w-[70px] m-2 bg-white/5 rounded-md shadow-lg border border-white/5 z-50">
+        <div className="flex flex-col w-[70px] m-2 bg-white/5 rounded-lg shadow-lg border border-white/5 z-50">
           <div className="flex flex-col items-center gap-2 p-2 pt-12">
             <NavLink
               key={'logo'}
@@ -58,11 +69,7 @@ export const Sidebar = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <span className="sr-only">{label}</span>
                     <Icon className={cn('w-5 h-5', isActive ? 'text-white' : 'text-white/80')} />
-                    <span className="absolute left-12 top-2 bg-neutral-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap">
-                      {label}
-                    </span>
                   </>
                 )}
               </NavLink>

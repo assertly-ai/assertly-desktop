@@ -12,7 +12,6 @@ export const ScriptBuilder = () => {
         minWidth: 400,
         maxWidth: 800
       }}
-      hasPreview={true}
     >
       <ScriptBlocks scriptId={Number(scriptId)} />
     </PanelLayout>

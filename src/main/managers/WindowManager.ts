@@ -1,12 +1,12 @@
-import { BrowserWindow, WebContentsView, Menu, MenuItem, clipboard, shell } from 'electron'
+import { BrowserWindow, shell } from 'electron'
 import { ElectronAdapter } from '../adapters/ElectronAdapter'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
+import { PreviewManager, PreviewType } from './PreviewManager'
 
 export class WindowManager {
   mainWindow: BrowserWindow | null = null
-  previewWindow: WebContentsView | null = null
-  private lastKnownPercentage: number = 80
+  private previewManager: PreviewManager | null = null
 
   constructor(private electronAdapter: ElectronAdapter) {}
 
@@ -27,7 +27,6 @@ export class WindowManager {
         sandbox: false,
         zoomFactor: 1
       },
-      // Use conditional properties based on the platform
       ...(process.platform === 'darwin'
         ? {
             titleBarStyle: 'hidden',
@@ -35,14 +34,24 @@ export class WindowManager {
             vibrancy: 'fullscreen-ui'
           }
         : {
-            // For Windows and other platforms
             backgroundMaterial: 'acrylic',
-            frame: true // This ensures the titlebar is visible
+            frame: true
           })
     })
 
+    this.setupMainWindowEvents(window)
+    return window
+  }
+
+  private setupMainWindowEvents(window: BrowserWindow): void {
     window.on('ready-to-show', () => {
       window.show()
+    })
+
+    window.on('resize', () => {
+      if (this.previewManager) {
+        this.previewManager.handleWindowResize()
+      }
     })
 
     window.webContents.setWindowOpenHandler((details) => {
@@ -55,213 +64,55 @@ export class WindowManager {
     } else {
       window.loadFile(join(__dirname, '../../out/renderer/index.html'))
     }
+
     this.electronAdapter.watchWindowShortcuts(window)
-    return window
   }
 
   setMainWindow(window: BrowserWindow): void {
     this.mainWindow = window
+    this.previewManager = new PreviewManager(window)
   }
 
-  navigatePreview(direction: 'back' | 'forward'): void {
-    if (!this.previewWindow) return
+  togglePreviewWindow(type: PreviewType, show: boolean, rightPanelPercentage?: number): void {
+    if (!this.previewManager || !this.mainWindow) return
+
+    if (show) {
+      this.previewManager.createPreview(type, rightPanelPercentage)
+    } else {
+      this.previewManager.removePreview(type)
+    }
+  }
+
+  updatePreviewSize(type: PreviewType, rightPanelPercentage?: number): void {
+    if (!this.previewManager || !this.mainWindow) return
+    const preview = this.previewManager.getCurrentPreview(type)
+    if (preview) {
+      this.previewManager.updatePreviewBounds(type, preview, rightPanelPercentage)
+    }
+  }
+
+  navigatePreview(type: PreviewType, direction: 'back' | 'forward'): void {
+    const preview = this.previewManager?.getCurrentPreview(type)
+    if (!preview) return
 
     if (direction === 'back') {
-      this.previewWindow.webContents.navigationHistory.goBack()
+      preview.goBack()
     } else {
-      this.previewWindow.webContents.navigationHistory.goForward()
+      preview.goForward()
     }
   }
 
-  getCurrentUrl(): string {
-    if (!this.previewWindow) return 'about:blank'
-    return this.previewWindow.webContents.getURL()
+  getCurrentUrl(type: PreviewType): string {
+    const preview = this.previewManager?.getCurrentPreview(type)
+    return preview?.getURL() ?? 'about:blank'
   }
 
-  navigateToUrl(url: string): void {
-    if (!this.previewWindow) return
-    this.previewWindow.webContents.loadURL(url)
-  }
-
-  // When creating the preview window, use the last known percentage
-  createPreviewWindow(rightPanelPercentage?: number): WebContentsView {
-    if (this.previewWindow) return this.previewWindow
-
-    this.previewWindow = new WebContentsView({
-      webPreferences: {
-        nodeIntegration: false,
-        contextIsolation: true
-      }
-    })
-
-    this.previewWindow.setBorderRadius(6)
-
-    if (this.mainWindow) {
-      this.mainWindow.contentView.addChildView(this.previewWindow)
-    }
-
-    this.setupContextMenu(this.previewWindow)
-
-    // Use lastKnownPercentage when initializing
-    this.updatePreviewWindowBounds(rightPanelPercentage || this.lastKnownPercentage)
-
-    if (this.mainWindow) {
-      this.mainWindow.on('resize', () => {
-        // Pass the lastKnownPercentage during resize
-        this.updatePreviewWindowBounds(rightPanelPercentage || this.lastKnownPercentage)
-      })
-    }
-
-    this.previewWindow.webContents.once('did-finish-load', () => {
-      if (this.mainWindow) {
-        this.mainWindow.focus()
-      }
-    })
-
-    this.previewWindow.webContents.loadURL('https://google.com')
-    this.previewWindow.webContents.on('did-navigate', () => {
-      if (this.mainWindow) {
-        this.mainWindow.webContents.send(
-          'preview-url-changed',
-          this.previewWindow?.webContents.getURL()
-        )
-      }
-    })
-
-    this.previewWindow.webContents.on('did-navigate-in-page', () => {
-      if (this.mainWindow) {
-        this.mainWindow.webContents.send(
-          'preview-url-changed',
-          this.previewWindow?.webContents.getURL()
-        )
-      }
-    })
-    return this.previewWindow
-  }
-
-  removePreviewWindow(): void {
-    if (this.previewWindow && this.mainWindow) {
-      this.mainWindow.contentView.removeChildView(this.previewWindow)
-      this.previewWindow = null
-    }
-  }
-
-  togglePreviewWindow(show: boolean, rightPanelPercentage?: number): void {
-    if (show) {
-      this.createPreviewWindow(rightPanelPercentage)
-    } else {
-      this.removePreviewWindow()
-    }
-  }
-
-  updatePreviewWindowBounds(rightPanelPercentage?: number): void {
-    if (!this.previewWindow || !this.mainWindow) return
-
-    if (Array.isArray(rightPanelPercentage)) {
-      rightPanelPercentage = rightPanelPercentage[1]
-    }
-
-    if (rightPanelPercentage !== undefined) {
-      this.lastKnownPercentage = rightPanelPercentage
-    }
-
-    const { width, height } = this.mainWindow.getBounds()
-    const desiredWidth = 1512
-    const desiredHeight = 982
-    const MIN_LEFT_PANEL_WIDTH = 400
-    const MAX_LEFT_PANEL_WIDTH = 800
-    const HANDLE_WIDTH = 10
-    const SIDE_NAV_WIDTH = 86
-
-    const adjustedTotalWidth = width - SIDE_NAV_WIDTH
-
-    const leftPanelWidth = Math.min(
-      MAX_LEFT_PANEL_WIDTH,
-      Math.max(
-        MIN_LEFT_PANEL_WIDTH,
-        Math.floor((adjustedTotalWidth * (100 - this.lastKnownPercentage)) / 100)
-      )
-    )
-
-    const availablePreviewWidth = adjustedTotalWidth - leftPanelWidth - HANDLE_WIDTH
-    const scaleFactor = Math.min(
-      (availablePreviewWidth - 16) / desiredWidth,
-      (height - 16) / desiredHeight
-    )
-    this.previewWindow.setBounds({
-      x: SIDE_NAV_WIDTH + leftPanelWidth + HANDLE_WIDTH,
-      y: 8 + 40,
-      width: Math.max(0, availablePreviewWidth - 8),
-      height: height - 16 - 40
-    })
-
-    this.previewWindow.webContents.setZoomFactor(scaleFactor)
+  navigateToUrl(type: PreviewType, url: string): void {
+    const preview = this.previewManager?.getCurrentPreview(type)
+    preview?.loadURL(url)
   }
 
   getAllWindows(): BrowserWindow[] {
     return BrowserWindow.getAllWindows()
-  }
-
-  private setupContextMenu(view: WebContentsView): void {
-    view.webContents.on('context-menu', (_event, params) => {
-      const menu = new Menu()
-
-      if (params.selectionText) {
-        menu.append(
-          new MenuItem({
-            label: 'Copy',
-            click: () => clipboard.writeText(params.selectionText)
-          })
-        )
-      }
-
-      // Navigation items
-      menu.append(new MenuItem({ label: 'Back', click: () => view.webContents.goBack() }))
-      menu.append(new MenuItem({ label: 'Forward', click: () => view.webContents.goForward() }))
-      menu.append(new MenuItem({ label: 'Reload', click: () => view.webContents.reload() }))
-
-      // Zoom controls
-      menu.append(new MenuItem({ type: 'separator' }))
-      menu.append(
-        new MenuItem({
-          label: 'Zoom In',
-          click: () => view.webContents.setZoomLevel(view.webContents.getZoomLevel() + 0.5)
-        })
-      )
-      menu.append(
-        new MenuItem({
-          label: 'Zoom Out',
-          click: () => view.webContents.setZoomLevel(view.webContents.getZoomLevel() - 0.5)
-        })
-      )
-
-      // Developer tools
-      menu.append(new MenuItem({ type: 'separator' }))
-      menu.append(
-        new MenuItem({
-          label: 'Inspect Element',
-          click: () => view.webContents.inspectElement(params.x, params.y)
-        })
-      )
-      menu.append(
-        new MenuItem({
-          label: 'Toggle Developer Tools',
-          click: () => view.webContents.toggleDevTools()
-        })
-      )
-
-      // View page source
-      menu.append(
-        new MenuItem({
-          label: 'View Page Source',
-          click: () =>
-            view.webContents.executeJavaScript(
-              `window.open('view-source:${view.webContents.getURL()}')`
-            )
-        })
-      )
-
-      menu.popup()
-    })
   }
 }
